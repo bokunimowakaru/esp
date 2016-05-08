@@ -38,7 +38,7 @@ void loop() {
     float temp;                             // 温度値用の変数
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
-    delay(10);                              // 起動待ち時間
+    delay(100);                             // 起動待ち時間
     temp=(float)system_adc_read();          // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
     temp *= 1000. / 1023. / 10.;            // 温度(相対値)へ変換
