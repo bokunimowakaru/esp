@@ -14,6 +14,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 01A LED");      // 「Example 01A」をシリアル出力表示
+    WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         Serial.print('.');                  // 進捗表示

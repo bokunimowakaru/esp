@@ -21,6 +21,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 06 LUM");       // 「Example 06」をシリアル出力表示
+    WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(100);                         // 待ち時間処理

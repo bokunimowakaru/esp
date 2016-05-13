@@ -17,6 +17,7 @@ void setup(){                               // 起動時に一度だけ実行す
     lcdSetup();                             // 液晶の初期化
     lcdPrint("Example 05 LCD");             // 「Example 05」をLCDに表示する
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
+    WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理

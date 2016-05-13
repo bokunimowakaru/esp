@@ -20,6 +20,7 @@ void setup(){                               // 起動時に一度だけ実行す
     lpsSetup();                             // 気圧センサの初期化
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 10 hPa");       // 「Example 10」をシリアル出力表示
+    WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(100);                         // 待ち時間処理
