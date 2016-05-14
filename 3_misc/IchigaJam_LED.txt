@@ -5,7 +5,7 @@ rem     Copyright (c) 2015-2016 Wataru KUNINO
 rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
 
 1 'ESP Example
-2 uart 3:? "AT":wait 30
+2 uart 3,2:? "AT":wait 30
 10 ? "AT+RESTORE":gosub 900
 20 ? "AT+CWMODE=1":gosub 900
 30 ? "AT+CWJAP=";chr$(34);
@@ -21,16 +21,16 @@ rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
 210 gosub 950:if K<>asc(":") goto 200
 220 gosub 950:if K<>asc("L") goto 200
 230 gosub 950:if K=asc("0") goto 250
-240 led 1:beep:? "LED=1":goto 200
-250 led 0:beep:? "LED=0":goto 200
+240 led 1:beep:?:? "LED=1":goto 200
+250 led 0:beep:?:? "LED=0":goto 200
 260 goto 200
 270 end
 900 'Rx
-910 wait 30:uart 0
+910 wait 30:uart 0,2
 920 K=inkey():if K=0 goto 940
 930 ? chr$(K);:goto 920
-940 uart 3:return
+940 uart 3,2:return
 950 'Rx0
 960 K=inkey():if K=0 goto 960
-970 if K=33 uart 0:?:end
+970 uart 0,2:?chr$(K);
 980 return

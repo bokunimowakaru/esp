@@ -1,0 +1,49 @@
+cls:new
+rem     Espressif ESP8266 ESP-WROOM-02 Ö³
+rem     Wireless LED for IchigoJam Version 1.2
+rem     Copyright (c) 2015-2016 Wataru KUNINO
+rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
+
+1 'ESP Example
+2 uart 3,2:?"AT":wait 30
+10 ?"AT+RESTORE":gosub 800
+20 ?"AT+CWMODE=1":gosub 800
+30 ?"AT+CWJAP=";chr$(34);
+40 ?"ºº Æ SSID ¦ ·Æ­³";
+50 ?chr$(34);",";chr$(34);
+60 ?"ºº Æ Êß½Ü°ÄÞ ¦ ·Æ­³";
+70 ?chr$(34):wait 400:gosub 800
+80 ?"AT+CIFSR":gosub 800
+100 'Serv
+110 ?"AT+CIPMUX=1":gosub 800
+120 ?"AT+CIPSERVER=1,80":gosub 800
+200 'LED
+210 gosub 850:if K<>asc(":") goto 200
+220 I=0:G="GET /L=":L=-1
+230 gosub 850:if K<>PEEK(G+I) goto 200
+240 I=I+1:if I<5 goto 230
+250 gosub 850:if K<>PEEK(G+I) goto 300
+260 I=I+1:if I<7 goto 250
+270 gosub 850
+280 if K=asc("0") let L,0 else let L,1
+290 led L:beep
+300 gosub 800
+310 ?"AT+CIPSEND=0,46":gosub 800
+320 ?"HTTP/1.1 200 OK"
+330 ?"Content-Length: 6":?
+340 if L>=0 ?"'LED=";L else ?"'BTN=";btn()
+350 gosub 800:goto 200
+800 'Rx
+810 wait 30:uart 0
+820 K=inkey():if K=0 goto 840
+830 ?chr$(K);:goto 820
+840 uart 3,2:return
+850 'Rx0
+860 K=inkey():if K=0 goto 860
+870 uart 0:?chr$(K);
+880 if K=33 ?:end
+890 uart 3,2:return
+
+
+
+HTTP/1.1 200 OK  Content-Length: 5    LED=0  
