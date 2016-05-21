@@ -34,16 +34,11 @@ rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
 340 if L>=0 ?"'LED=";L else ?"'BTN=";btn()
 350 gosub 800:goto 200
 800 'Rx
-810 wait 30:uart 0
+810 wait 30:uart 0,2
 820 K=inkey():if K=0 goto 840
 830 ?chr$(K);:goto 820
 840 uart 3,2:return
 850 'Rx0
 860 K=inkey():if K=0 goto 860
-870 uart 0:?chr$(K);
-880 if K=33 ?:end
-890 uart 3,2:return
-
-
-
-HTTP/1.1 200 OK  Content-Length: 5    LED=0  
+870 uart 0,2:?chr$(K);
+880 uart 3,2:return
