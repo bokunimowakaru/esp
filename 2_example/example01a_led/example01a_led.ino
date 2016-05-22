@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 1A: LEDを点滅させる
+Example 1A: LEDを点滅させる TELNET版
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -13,7 +13,7 @@ WiFiServer server(23);                      // Wi-Fiサーバ(ポート23=TELNET
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 01A LED");      // 「Example 01A」をシリアル出力表示
+    Serial.println("Example 01A LED TELNET");   // 「Example 01A」を出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -41,11 +41,11 @@ void loop(){                                // 繰り返し実行する関数
             switch(c){                      // 文字cに応じて
                 case '0':                       // 文字変数cの内容が「0」のとき
                     digitalWrite(PIN_LED,LOW);  // LEDを消灯
-                    Serial.println("0");        // 文字の内容をシリアルに出力
+                    Serial.println("0");        // 「0」をシリアルに出力
                     break;
                 case '1':                       // 文字変数cの内容が「1」のとき
                     digitalWrite(PIN_LED,HIGH); // LEDを点灯
-                    Serial.println("1");        // 文字の内容をシリアルに出力
+                    Serial.println("1");        // 「1」をシリアルに出力
                     break;
                 case 0xF6:                      // AYT信号
                     Serial.println("AYT");      // 文字の内容をシリアルに出力
