@@ -1,6 +1,5 @@
 AT+CIPSTART="TCP","www.geocities.jp",80
-AT+CIPSEND=80
-GET /bokunimowakaru/cq/esp.txt HTTP/1.1
+AT+CIPSEND=67
+GET /bokunimowakaru/cq/esp.txt HTTP/1.0
 Host: www.geocities.jp
-Accept: */*
 

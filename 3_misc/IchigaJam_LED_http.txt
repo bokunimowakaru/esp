@@ -29,7 +29,7 @@ rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
 290 led L:beep
 300 gosub 800
 310 ?"AT+CIPSEND=0,46":gosub 800
-320 ?"HTTP/1.1 200 OK"
+320 ?"HTTP/1.0 200 OK"
 330 ?"Content-Length: 6":?
 340 if L>=0 ?"'LED=";L else ?"'BTN=";btn()
 350 gosub 800:goto 200

@@ -1,6 +1,5 @@
 AT+CIPSTART="TCP","ntp-a1.nict.go.jp",80
-AT+CIPSEND=68
-GET /cgi-bin/time HTTP/1.1
+AT+CIPSEND=55
+GET /cgi-bin/time HTTP/1.0
 Host: ntp-a1.nict.go.jp
-Accept: */*
 
