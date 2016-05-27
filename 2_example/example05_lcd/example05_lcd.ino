@@ -29,11 +29,11 @@ void setup(){                               // 起動時に一度だけ実行す
 void loop(){                                // 繰り返し実行する関数
     char c;                                 // 文字変数cを定義
     char data[49];                          // 受信用変数を定義(49バイト48文字)
-    char lcd[17];                           // 表示用変数を定義(17バイト16文字)
+    char lcd[49];                           // 表示用変数を定義(49バイト48文字)
     int len;                                // 文字列長を示す整数型変数を定義
     int i,j=0;                              // ループ用の整数型変数i,jを定義
     
-    memset(lcd, 0, 17);                     // 文字列変数lcdの初期化(17バイト)
+    memset(lcd, 0, 49);                     // 文字列変数lcdの初期化(49バイト)
     len = udp.parsePacket();                // 受信パケット長を変数lenに代入
     if(len==0)return;                       // 未受信のときはloop()の先頭に戻る
     udp.read(data, 48);                     // 受信データを文字列変数dataへ代入
