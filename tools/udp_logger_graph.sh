@@ -18,7 +18,7 @@ echo "Listening UDP port "${PORT}"..."              # ポート番号表示
 while true                                          # 永久に
 do                                                  # 繰り返し
     UDP=`sudo netcat -luw0 ${PORT}|tr -d [:cntrl:]|\
-    grep -v [\!\"\$\%\&\'\(\)\*\+\-\:\;\<\=\>\?\[\\\]\^\{\|\}\~]`
+    tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\=\>\?\[\\\]\^\{\|\}\~"`
                                                     # UDPパケットを取得
     DATE=`date "+%Y/%m/%d %R"`                      # 日時を取得
     DEV=${UDP#,*}                                   # デバイス名を取得(前方)
