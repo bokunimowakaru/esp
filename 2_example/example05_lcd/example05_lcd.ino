@@ -28,7 +28,6 @@ void setup(){                               // 起動時に一度だけ実行す
 
 void loop(){                                // 繰り返し実行する関数
     char c;                                 // 文字変数cを定義
-    char data[49];                          // 受信用変数を定義(49バイト48文字)
     char lcd[49];                           // 表示用変数を定義(49バイト48文字)
     int len;                                // 文字列長を示す整数型変数を定義
     int i,j=0;                              // ループ用の整数型変数i,jを定義
@@ -36,13 +35,6 @@ void loop(){                                // 繰り返し実行する関数
     memset(lcd, 0, 49);                     // 文字列変数lcdの初期化(49バイト)
     len = udp.parsePacket();                // 受信パケット長を変数lenに代入
     if(len==0)return;                       // 未受信のときはloop()の先頭に戻る
-    udp.read(data, 48);                     // 受信データを文字列変数dataへ代入
-    if(len>48)len = 48;                     // 受信データは48文字(カナ16字)以内
-    for(i=0;i<len;i++){                     // 受信文字数len回の繰り返し処理
-        if(isprint(data[i])){               // 文字data[i]が表示可能のとき
-            lcd[j]=data[i];                 // 当該文字を変数lcdにコピーする
-            j++;                            // 変数jの値を1だけ増やす
-        }else if(data[i]==0) break;         // 終端コードの時にforループを抜ける
-    }
+    udp.read(lcd, 48);                      // 受信データを文字列変数lcdへ代入
     lcdPrint(lcd);                          // 液晶に表示する
 }

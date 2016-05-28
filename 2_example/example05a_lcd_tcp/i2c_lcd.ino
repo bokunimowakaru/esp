@@ -19,9 +19,11 @@ void _utf_del_uni(char *s){
 			if((byte)s[i+1]==0xBE) s[i+2] += 0x40;
 			i+=2;
 		}
-		s[j]=s[i];
+		if(isprint(s[i])){
+			s[j]=s[i];
+			j++;
+		}
 		i++;
-		j++;
 	}
 	s[j]='\0';
 }
