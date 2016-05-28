@@ -17,7 +17,7 @@ fi                                                  # ifの終了
 echo "Listening UDP port "${PORT}"..."              # ポート番号表示
 while true                                          # 永久に
 do                                                  # 繰り返し
-    UDP=`sudo netcat -luw0 ${PORT}|tr -d '\r'|\
+    UDP=`sudo netcat -luw0 ${PORT}|tr -d [:cntrl:]|\
     grep -v [\!\"\$\%\&\'\(\)\*\+\-\:\;\<\=\>\?\[\\\]\^\{\|\}\~]`
                                                     # UDPパケットを取得
     DATE=`date "+%Y/%m/%d %R"`                      # 日時を取得
