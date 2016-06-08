@@ -1,0 +1,72 @@
+#!/bin/sh
+
+# j3tm0t0/soracomair
+# SORACOM Air ＋ FS01BU を、Raspberry Pi や Intel Edison
+# (debianインストール＆USB-OTGケーブルで接続) で使用するための接続スクリプト
+# (要: wvdial / usb-modeswitch)と、init用スクリプト by dietposter
+#
+# このスクリプトは下記のサイトからダウンロードしたものの一部を改変しました。
+# https://gist.github.com/j3tm0t0/65367f971c3d770557f3
+# 2016/06/08 国野亘
+
+### BEGIN INIT INFO
+# Provides:          soracomair
+# Required-Start:    $remote_fs $syslog 
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Example initscript
+# Description:       This file should be used to construct scripts to be
+#                    placed in /etc/init.d.  This example start a
+#                    single forking daemon capable of writing a pid
+#                    file.  To get other behavoirs, implemend
+#                    do_start(), do_stop() or other functions to
+#                    override the defaults in /lib/init/init-d-script.
+### END INIT INFO
+
+#SORACOM Air接続スクリプトのフルパスを設定
+#cmd="/opt/sora/connect_air.sh"
+
+start(){
+    #working  /opt/sora/connect_air.sh
+    echo -n "connect air...\n"
+    #スクリプトの実行
+    #   bash $cmd &
+    eject sr0
+    sudo modprobe usbserial vendor=0x15eb product=0x7d0e
+
+    echo waiting for modem device
+    for i in {1..10}
+    do
+      [ -e /dev/ttyUSB0 ] && break
+      echo -n .
+      sleep 1
+    done
+    [ $i = 30 ] && ( echo modem not found ; exit 1 )
+    sudo wvdial &
+    return 0
+}
+stop(){
+    echo -n "stopping connect air...\n"
+    #スクリプトが実行されているプロセスのPIDを設定
+    #   pid=`ps ax | grep -v grep | grep "$cmd" | awk '{ print $1 }'`
+    #スクリプトの停止
+    #   kill $pid
+    #ダイヤラーwvdialの停止 pppdも停止する
+    sudo killall wvdial
+
+    return 0
+}
+
+case $1 in
+        start)
+                start
+                        ;;
+        stop)
+                stop
+                        ;;
+        *)
+               echo "Usage: $0 {start|stop}"
+               exit 2
+                        ;;
+esac
