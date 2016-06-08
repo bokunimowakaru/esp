@@ -32,7 +32,7 @@ start(){
     echo -n "connect air...\n"
     #スクリプトの実行
     #   bash $cmd &
-    eject sr0
+    eject sr0 2> /dev/null
     sudo modprobe usbserial vendor=0x15eb product=0x7d0e
 
     echo waiting for modem device
