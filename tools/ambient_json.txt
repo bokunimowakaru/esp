@@ -1,5 +1,0 @@
-POST /api/v2/channels/%d/data HTTP/1.1
-Host: 54.65.206.59
-Content-Length: 
-Content-Type: application/json
-
