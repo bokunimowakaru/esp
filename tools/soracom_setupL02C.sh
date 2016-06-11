@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# j3tm0t0/AK-020_setup.sh
-# run as root to configure your raspbian to use AK-020 with SORACOM Air SIM 
-#
-# このスクリプトは下記のサイトからダウンロードしたものを修正しました。
+# docomo L02C用 セットアップ
 # 2016/06/08 国野亘
+#
+# このスクリプトは下記のサイトの情報を参考にして作成しました。
 # https://gist.githubusercontent.com/j3tm0t0/2a126ba2592202ba5de4498d8a56cfb2
+# http://www.okahiro.info/gd/2016/03/18/post-1249/
 
 # install required packages
 apt-get install -y eject wvdial
@@ -14,15 +14,15 @@ apt-get install -y eject wvdial
 cat << EOF > /etc/wvdial.conf
 [Dialer Defaults]
 Init1 = ATZ
-Init2 = AT+CFUN=1
-Init3 = AT+CGDCONT=1,"IP","soracom.io"
+Init2 = ATH
+Init3 = ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0
 Dial Attempts = 3
 Modem Type = Analog Modem
 Dial Command = ATD
 Stupid Mode = yes
 Baud = 460800
 New PPPD = yes
-Modem = /dev/ttyUSB0
+Modem = /dev/ttyUSB2
 ISDN = 0
 APN = soracom.io
 Phone = *99***1#
@@ -40,3 +40,8 @@ name wvdial
 usepeerdns
 replacedefaultroute
 EOF
+
+# 接続コマンドsoracomのUSB ID設定
+cat soracom|sed "s/vendor=0x.*$/vendor=0x1004 product=0x618f/g">soracom~
+mv soracom~ soracom
+chmod a+rwx soracom

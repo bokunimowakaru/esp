@@ -1,13 +1,18 @@
 #!/bin/sh
 
+# SORACOM Air 接続用スクリプト
+#
+# このスクリプトを実行する前にsoracom_setupAK020またはsoracom_setupL02Cを
+# 実行して必要なソフトのインストールと設定ファイルの作成を行ってください。
+#
+# 2016/06/08 国野亘
+
+# このスクリプトは下記のサイトからダウンロードしたものの一部を改変しました。
+# https://gist.github.com/j3tm0t0/65367f971c3d770557f3
 # j3tm0t0/soracomair
 # SORACOM Air ＋ FS01BU を、Raspberry Pi や Intel Edison
 # (debianインストール＆USB-OTGケーブルで接続) で使用するための接続スクリプト
 # (要: wvdial / usb-modeswitch)と、init用スクリプト by dietposter
-#
-# このスクリプトは下記のサイトからダウンロードしたものの一部を改変しました。
-# https://gist.github.com/j3tm0t0/65367f971c3d770557f3
-# 2016/06/08 国野亘
 
 ### BEGIN INIT INFO
 # Provides:          soracomair
@@ -33,7 +38,7 @@ start(){
     #スクリプトの実行
     #   bash $cmd &
     eject sr0 2> /dev/null
-    sudo modprobe usbserial vendor=0x15eb product=0x7d0e
+    sudo modprobe usbserial vendor=0x1004 product=0x618f
 
     echo waiting for modem device
     for i in {1..10}
@@ -61,13 +66,15 @@ stop(){
 case $1 in
         start)
                 start
+				sleep 10
                         ;;
         stop)
                 stop
+				sleep 3
                         ;;
         *)
                echo "Usage: $0 {start|stop}"
                exit 2
                         ;;
 esac
-
+exit 0
