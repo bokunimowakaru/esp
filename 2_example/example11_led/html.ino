@@ -46,6 +46,7 @@ void html(WiFiClient &client, int target, uint32_t ip){
     client.println("</form>");
     client.println("<hr>");
     client.println("<h3>HTTP POST</h3>");
+    sprintf(s,"<form method=\"POST\" action=\"http://%s/\">",s_ip);
     client.println(s);
     client.println("<input type=\"submit\" name=\"L\" value=\"0 (LED OFF)\">");
     client.println("<input type=\"submit\" name=\"L\" value=\"1 (LED ON)\">");
