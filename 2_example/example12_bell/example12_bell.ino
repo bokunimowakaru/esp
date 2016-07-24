@@ -19,6 +19,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_BUZZER,OUTPUT);             // LEDを接続したポートを出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 12 LED HTTP");  // 「Example 12」をシリアル出力表示
+    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     morse(PIN_BUZZER,50,"HELLO");           // 「HELLO」をモールス信号出力
@@ -40,8 +41,9 @@ void loop(){                                // 繰り返し実行する関数
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
     int len=0;                              // 文字列の長さカウント用の変数
-    int i=0;                                // 待ち受け時間のカウント用の変数
-    int headF=0;                            // HTTPヘッダ用フラグ(0:初期状態)
+    int t=0;                                // 待ち受け時間のカウント用の変数
+    int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
+    int postL=64;                           // POSTデータ長
     
     if(chime){                              // チャイムの有無
         wifi_set_sleep_type(NONE_SLEEP_T);  // スリープ禁止
@@ -53,39 +55,46 @@ void loop(){                                // 繰り返し実行する関数
     Serial.println("Connected");            // 接続されたことをシリアル出力表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
-            i=0;                            // 待ち時間変数をリセット
+            t=0;                            // 待ち時間変数をリセット
             c=client.read();                // データを文字変数cに代入
-            switch(c){                      // 文字cに応じて
-                case '\0':                      // 文字変数cの内容が空のとき
-                case '\r':                      // 文字変数cの内容がCRのとき
-                    break;                      // 何もしない
-                case '\n':                      // 文字変数cの内容がLFのとき
-                    if(strncmp(s,"GET /B",6)==0 && len>6){
-                        chime=atoi(&s[6]);     // 変数chimeに数字を代入
-                    }else if( len==0 ) headF=1; // ヘッダの終了
-                    len=0;                      // 文字列長を0に
-                    break;
-                default:                        // その他の場合
-                    s[len]=c;                   // 文字列変数に文字cを追加
-                    len++;                      // 変数lenに1を加算
-                    s[len]='\0';                // 文字列を終端
-                    if(len>=64) len=63;         // 文字列変数の上限
-                    break;
+            if(c=='\n'){                    // 改行を検出した時
+                if(postF==0){               // ヘッダ処理
+                    if(len>8 && strncmp(s,"GET /?B=",8)==0){
+                        chime=atoi(&s[8]);  // 変数chimeにデータ値を代入
+                        break;              // 解析処理の終了
+                    }else if (len>5 && strncmp(s,"GET /",5)==0){
+                        break;              // 解析処理の終了
+                    }else if(len>6 && strncmp(s,"POST /",6)==0){
+                        postF=1;            // POSTのBODY待ち状態へ
+                    }
+                }else if(postF==1){
+                    if(len>16 && strncmp(s,"Content-Length: ",16)==0){
+                        postL=atoi(&s[16]); // 変数postLにデータ値を代入
+                    }
+                }
+                if( len==0 ) postF++;       // ヘッダの終了
+                len=0;                      // 文字列長を0に
+            }else if(c!='\r' && c!='\0'){
+                s[len]=c;                   // 文字列変数に文字cを追加
+                len++;                      // 変数lenに1を加算
+                s[len]='\0';                // 文字列を終端
+                if(len>=64) len=63;         // 文字列変数の上限
+            }
+            if(postF>=2){                   // POSTのBODY処理
+                if(postL<=0){               // 受信完了時
+                    if(len>2 && strncmp(s,"L=",2)==0){
+                        chime=atoi(&s[2]);  // 変数chimeに数字を代入
+                    }
+                    break;                  // 解析処理の終了
+                }
+                postL--;                    // 受信済POSTデータ長の減算
             }
         }
-        i++;                                // 変数iの値を1だけ増加させる
-        if(headF) break;                    // HTTPヘッダが終わればwhileを抜ける
-        if(i>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
+        t++;                                // 変数iの値を1だけ増加させる
+        if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        client.println("HTTP/1.1 200 OK");  // HTTP OKを応答
-        sprintf(s,"BELL=%d",chime);         // 変数sに「LED=」とchime値を代入
-        client.print("Content-Length: ");   // HTTPヘッダ情報を出力
-        client.println(strlen(s)+2);        // コンテンツ長さを出力(改行2バイト)
-        client.println();                   // HTTPヘッダの終了を出力
-        client.println(s);                  // HTTPコンテンツを出力
-        Serial.println(s);                  // シリアルへコンテンツを出力
-        chime*=10;                          // chime値を10倍に
+        html(client,chime,WiFi.localIP());  // HTMLコンテンツを出力する
     }
     client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示

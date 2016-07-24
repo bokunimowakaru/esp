@@ -15,28 +15,6 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 int led=0;                                  // 現在のLEDの輝度(0は消灯)
 int target=0;                               // LED設定値(0は消灯)
 
-int ledc(int start,int end,int speed){      // ledのアナログ制御用の関数
-    int i;                                  // (startからendへ輝度を推移する)
-    if(speed<1)speed=1;
-    if(start<=end){
-        if(start<1) start=1;
-        if(end>1023) end=1023;
-        for(i=start;i<end;i<<=1){
-            analogWrite(PIN_LED,i);
-            delay(100/speed);
-        }
-    }else{
-        if(start>1023) start=1023;
-        if(end<0) end=0;
-        for(i=start;i>end;i>>=1){
-            analogWrite(PIN_LED,i);
-            delay(100/speed);
-        }
-    }
-    analogWrite(PIN_LED,end);
-    return(end);
-}
-
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
@@ -61,56 +39,63 @@ void loop(){                                // 繰り返し実行する関数
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
     int len=0;                              // 文字列の長さカウント用の変数
-    int i=0;                                // 待ち受け時間のカウント用の変数
-    int headF=0;                            // HTTPヘッダ用フラグ(0:初期状態)
+    int t=0;                                // 待ち受け時間のカウント用の変数
+    int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
+    int postL=64;                           // POSTデータ長
     
     client = server.available();            // 接続されたクライアントを生成
     if(client==0){
         if(target>1 && target<=10){         // 1よりも大きく10以下のとき
-            i=23+random(0,target*100);      // 23～1023までの乱数値を発生
-        //  i=1<<random(0,target-1);        // 別の発生方法
-            led=ledc(led,i,20);             // LEDの輝度を値iに設定
-        }
+            led=ledCtrl(led,23+random(0,target*100),20);
+        }                                   // LEDの輝度を乱数値23～1023に設定
         return;                             // 非接続の時にloop()の先頭に戻る
     }
     Serial.println("Connected");            // 接続されたことをシリアル出力表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
-            i=0;                            // 待ち時間変数をリセット
+            t=0;                            // 待ち時間変数をリセット
             c=client.read();                // データを文字変数cに代入
-            switch(c){                      // 文字cに応じて
-                case '\0':                      // 文字変数cの内容が空のとき
-                case '\r':                      // 文字変数cの内容がCRのとき
-                    break;                      // 何もしない
-                case '\n':                      // 文字変数cの内容がLFのとき
-                    if(strncmp(s,"GET /L",6)==0 && len>6){
-                        target=atoi(&s[6]);     // 変数targetに数字を代入
-                    }else if( len==0 ) headF=1; // ヘッダの終了
-                    len=0;                      // 文字列長を0に
-                    break;
-                default:                        // その他の場合
-                    s[len]=c;                   // 文字列変数に文字cを追加
-                    len++;                      // 変数lenに1を加算
-                    s[len]='\0';                // 文字列を終端
-                    if(len>=64) len=63;         // 文字列変数の上限
-                    break;
+            if(c=='\n'){                    // 改行を検出した時
+                if(postF==0){               // ヘッダ処理
+                    if(len>8 && strncmp(s,"GET /?L=",8)==0){
+                        target=atoi(&s[8]); // 変数targetにデータ値を代入
+                        break;              // 解析処理の終了
+                    }else if (len>5 && strncmp(s,"GET /",5)==0){
+                        break;              // 解析処理の終了
+                    }else if(len>6 && strncmp(s,"POST /",6)==0){
+                        postF=1;            // POSTのBODY待ち状態へ
+                    }
+                }else if(postF==1){
+                    if(len>16 && strncmp(s,"Content-Length: ",16)==0){
+                        postL=atoi(&s[16]); // 変数postLにデータ値を代入
+                    }
+                }
+                if( len==0 ) postF++;       // ヘッダの終了
+                len=0;                      // 文字列長を0に
+            }else if(c!='\r' && c!='\0'){
+                s[len]=c;                   // 文字列変数に文字cを追加
+                len++;                      // 変数lenに1を加算
+                s[len]='\0';                // 文字列を終端
+                if(len>=64) len=63;         // 文字列変数の上限
+            }
+            if(postF>=2){                   // POSTのBODY処理
+                if(postL<=0){               // 受信完了時
+                    if(len>2 && strncmp(s,"L=",2)==0){
+                        target=atoi(&s[2]); // 変数targetに数字を代入
+                    }
+                    break;                  // 解析処理の終了
+                }
+                postL--;                    // 受信済POSTデータ長の減算
             }
         }
-        i++;                                // 変数iの値を1だけ増加させる
-        if(headF) break;                    // HTTPヘッダが終わればwhileを抜ける
-        if(i>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
+        t++;                                // 変数iの値を1だけ増加させる
+        if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        client.println("HTTP/1.1 200 OK");  // HTTP OKを応答
-        sprintf(s,"LED=%d",target);         // 変数sに「LED=」とtarget値を代入
-        client.print("Content-Length: ");   // HTTPヘッダ情報を出力
-        client.println(strlen(s)+2);        // コンテンツ長さを出力(改行2バイト)
-        client.println();                   // HTTPヘッダの終了を出力
-        client.println(s);                  // HTTPコンテンツを出力
-        Serial.println(s);                  // シリアルへコンテンツを出力
-        if(target==0) led=ledc(led,0,4);    // ゆっくりと消灯
-        if(target==1) led=ledc(led,1023,4); // ゆっくりと点灯
-        if(target<=0 && target>=-10) led=ledc(led,-100*target,4);   // 輝度変更
+        html(client,target,WiFi.localIP()); // HTMLコンテンツを出力する
+        if(target==0) led=ledCtrl(led,0,4); // ゆっくりと消灯
+        if(target==1) led=ledCtrl(led,1023,4);  // ゆっくりと点灯
+        if(target<=0 && target>=-10) led=ledCtrl(led,-100*target,4);// 輝度変更
     }                                       // 負のときは-100を掛けて出力
     client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
