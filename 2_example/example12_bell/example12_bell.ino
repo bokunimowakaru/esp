@@ -18,7 +18,7 @@ int chime=0;                                // チャイムOFF
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_BUZZER,OUTPUT);             // LEDを接続したポートを出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 12 LED HTTP");  // 「Example 12」をシリアル出力表示
+    Serial.println("Example 12 BELL HTTP"); // 「Example 12」をシリアル出力表示
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
