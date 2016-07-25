@@ -51,13 +51,15 @@ void lcdOut(byte y,byte *lcd){
 
 void lcdPrint(char *s){
 	byte i,j;
+	char str[65];
 	byte lcd[21];
 	
-	_utf_del_uni(s);
+	strncpy(str,s,64);
+	_utf_del_uni(str);
 	for(j=0;j<2;j++){
 		lcd[_lcd_size_x]='\0';
 		for(i=0;i<_lcd_size_x;i++){
-			lcd[i]=(byte)s[i+_lcd_size_x*j];
+			lcd[i]=(byte)str[i+_lcd_size_x*j];
 			if(lcd[i]==0x00){
 				for(;i<_lcd_size_x;i++) lcd[i]=' ';
 				lcdOut(j,lcd);
@@ -74,12 +76,14 @@ void lcdPrint(char *s){
 
 void lcdPrint2(char *s){
 	byte i;
+	char str[65];
 	byte lcd[21];
 	
-	_utf_del_uni(s);
+	strncpy(str,s,64);
+	_utf_del_uni(str);
 	lcd[_lcd_size_x]='\0';
 	for(i=0;i<_lcd_size_x;i++){
-		lcd[i]=(byte)s[i];
+		lcd[i]=(byte)str[i];
 		if(lcd[i]==0x00){
 			for(;i<_lcd_size_x;i++) lcd[i]=' ';
 			lcdOut(1,lcd);
@@ -90,7 +94,7 @@ void lcdPrint2(char *s){
 }
 
 void lcdPrintIp(uint32_t ip){
-	char lcd[17];
+	char lcd[21];
 	
 	if(_lcd_size_x<=8){
 		sprintf(lcd,"%i.%i.    ",
@@ -113,7 +117,7 @@ void lcdPrintIp(uint32_t ip){
 }
 
 void lcdPrintIp2(uint32_t ip){
-	char lcd[17];
+	char lcd[21];
 	
 	sprintf(lcd,"%i.%i.%i.%i",
 		ip & 255,
