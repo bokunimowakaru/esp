@@ -49,13 +49,15 @@ void lcdOut(byte y,byte *lcd){
 
 void lcdPrint(char *s){
 	byte i,j;
+	char str[49];
 	byte lcd[9];
 	
-	_utf_del_uni(s);
+	strncpy(str,s,48);
+	utf_del_uni(str);
 	for(j=0;j<2;j++){
 		lcd[8]='\0';
 		for(i=0;i<8;i++){
-			lcd[i]=(byte)s[i+8*j];
+			lcd[i]=(byte)str[i+8*j];
 			if(lcd[i]==0x00){
 				for(;i<8;i++) lcd[i]=' ';
 				lcdOut(j,lcd);
