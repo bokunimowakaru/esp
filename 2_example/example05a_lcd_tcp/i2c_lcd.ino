@@ -53,7 +53,7 @@ void lcdPrint(char *s){
 	byte lcd[9];
 	
 	strncpy(str,s,48);
-	utf_del_uni(str);
+	_utf_del_uni(str);
 	for(j=0;j<2;j++){
 		lcd[8]='\0';
 		for(i=0;i<8;i++){
