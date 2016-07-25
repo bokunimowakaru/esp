@@ -33,7 +33,7 @@ void loop(){                                // 繰り返し実行する関数
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数cを定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    char lcd[65]="no data";                 // LCD表示用文字列変数 64文字
+    char lcd[65]="no+data";                 // LCD表示用文字列変数 64文字
     int len=0;                              // 文字列長を示す整数型変数を定義
     int t=0;                                // 待ち受け時間のカウント用の変数
     int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
@@ -88,13 +88,8 @@ void loop(){                                // 繰り返し実行する関数
         t++;                                // 変数iの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
-    for(t=0;t<strlen(lcd);t++){             // 受信データを表示用に書き換える
-        switch(lcd[t]){
-            case ' ':   lcd[t]='\0'; break; // スペース文字を区切り文字に置換
-            case '+':   lcd[t]=' '; break;  // 「+」文字をスペースに置換
-            case '%':	break;	// ASCII 16進数変換を入れる予定
-        }
-    }
+    delay(1);
+    trUri2txt(lcd);                          
     lcdPrint(lcd);                          // 受信文字データを液晶へ表示
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         html(client,lcd,WiFi.localIP());    // HTMLコンテンツを出力する
