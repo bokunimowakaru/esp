@@ -88,8 +88,8 @@ void loop(){                                // 繰り返し実行する関数
         t++;                                // 変数iの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
-    delay(1);
-    trUri2txt(lcd);                          
+    delay(1);                               // クライアント側の応答待ち時間
+    trUri2txt(lcd);                         // URLエンコードの変換処理
     lcdPrint(lcd);                          // 受信文字データを液晶へ表示
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         html(client,lcd,WiFi.localIP());    // HTMLコンテンツを出力する
