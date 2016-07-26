@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 13: LCDへ表示する(HTTP版)
+Example 14: AquosTalkを使った音声出力器(HTTP版)
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -17,7 +17,7 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 
 void setup(){                               // 起動時に一度だけ実行する関数
     Serial.begin(9600);                     // AquesTalkとの通信ポート
-    Serial.print("kon'nnichi/wa.\r");		// 「こんにちわ」
+    Serial.print("kon'nnichi/wa.\r");       // 音声「こんにちわ」を出力する
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定(将来用)
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
@@ -26,9 +26,9 @@ void setup(){                               // 起動時に一度だけ実行す
     }
     server.begin();                         // サーバを起動する
     udp.begin(PORT);                        // UDP通信御開始
-    Serial.print("<NUMK VAL=");             // 「Example 14」をLCDに表示する
-    Serial.print(WiFi.localIP());           // IPアドレスを液晶の2行目に表示
-    Serial.print(">.\r");
+    Serial.print("<NUM VAL=");              // 数字読み上げ用タグ出力
+    Serial.print(WiFi.localIP());           // IPアドレスを読み上げる
+    Serial.print(">.\r");                   // タグの終了を出力する
 }
 
 void loop(){                                // 繰り返し実行する関数
@@ -46,8 +46,8 @@ void loop(){                                // 繰り返し実行する関数
         len = udp.parsePacket();            // UDP受信パケット長を変数lenに代入
         if(len==0)return;                   // TCPとUDPが未受信時にloop()先頭へ
         udp.read(s, 48);                    // UDP受信データを文字列変数sへ代入
-        Serial.print(s);                    // 液晶に表示する
-    	Serial.print("\r");
+        Serial.print(s);                    // AquesTalkへ出力する
+        Serial.print("\r");                 // 改行コード（CR）を出力する
         return;                             // loop()の先頭に戻る
     }
     while(client.connected()){              // 当該クライアントの接続状態を確認
@@ -91,11 +91,11 @@ void loop(){                                // 繰り返し実行する関数
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     delay(1);                               // クライアント側の応答待ち時間
-    trUri2txt(talk);                         // URLエンコードの変換処理
-    Serial.print(talk);                          // 受信文字データを音声出力
-    Serial.print("\r");
+    trUri2txt(talk);                        // URLエンコードの変換処理
+    Serial.print(talk);                     // 受信文字データを音声出力
+    Serial.print("\r");                     // 改行コード（CR）を出力する
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        html(client,talk,WiFi.localIP());    // HTMLコンテンツを出力する
+        html(client,talk,WiFi.localIP());   // HTMLコンテンツを出力する
     }
     client.stop();                          // クライアントの切断
 }
