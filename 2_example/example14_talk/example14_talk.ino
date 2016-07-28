@@ -79,7 +79,7 @@ void loop(){                                // 繰り返し実行する関数
             }
             if(postF>=2){                   // POSTのBODY処理
                 if(postL<=0){               // 受信完了時
-                    if(len>2 && strncmp(s,"TEXT=",5)==0){
+                    if(len>5 && strncmp(s,"TEXT=",5)==0){
                         strncpy(talk,&s[5],64);      // 受信文字列をtalkへコピー
                     }
                     break;                  // 解析処理の終了
