@@ -45,6 +45,7 @@ void loop(){                                // 繰り返し実行する関数
     if(client==0){                          // TCPクライアントが無かった場合
         len = udp.parsePacket();            // UDP受信パケット長を変数lenに代入
         if(len==0)return;                   // TCPとUDPが未受信時にloop()先頭へ
+        memset(s, 0, 49);                   // 文字列変数sの初期化(49バイト)
         udp.read(s, 48);                    // UDP受信データを文字列変数sへ代入
         Serial.print(s);                    // AquesTalkへ出力する
         Serial.print("\r");                 // 改行コード（CR）を出力する
