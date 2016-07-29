@@ -6,9 +6,6 @@ IchigoJam Firmware 1.2以上を推奨
 *******************************************************************************/
 
 #include <ESP8266WiFi.h>                        // Wi-Fi機能を利用するために必要
-extern "C" {
-#include "user_interface.h"                     // ESP8266用の拡張IFライブラリ
-}
 #include <WiFiUdp.h>                            // UDP通信を行うライブラリ
 #define TIMEOUT 20000                           // タイムアウト 20秒
 #define SSID "1234ABCD"                         // 無線LANアクセスポイントのSSID
@@ -22,7 +19,6 @@ char tx[BUF_N+1]="\0";                          // 送信バッファ
 void setup(){                                   // 起動時に一度だけ実行する関数
     Serial.begin(115200);                       // IchigoJamとの通信ポート
     delay(5000);                                // IchigoJamの起動・通信処理待ち
-    wifi_set_sleep_type(NONE_SLEEP_T);          // スリープ禁止
     WiFi.mode(WIFI_STA);                        // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                      // 無線LANアクセスポイントへ接続
     Serial.write(25); Serial.write(16);         // 停止コマンドとDLEコードの送信
@@ -31,12 +27,12 @@ void setup(){                                   // 起動時に一度だけ実�
     Serial.println("\":'");                     // コマンドとして実行する
     while(WiFi.status() != WL_CONNECTED){       // 接続に成功するまで待つ
         delay(500);                             // 待ち時間処理
-        Serial.print("'");
+        Serial.print("'");                      // 無線APへの接続プログレス表示
     }
-    server.begin();                             // サーバを起動する
+    server.begin();                             // TCPサーバを起動する
     udp.begin(PORT);                            // UDP通信御開始
-    Serial.println();delay(1000);
-    Serial.print("' ");                         // 改行を出力
+    Serial.println();delay(1000);               // 改行を出力
+    Serial.print("' ");                         // コメント命令を送信
     Serial.println(WiFi.localIP());             // IPアドレスを出力する
 }
 
@@ -56,16 +52,16 @@ void loop(){                                    // 繰り返し実行する関�
     client = server.available();                // TCPクライアントを生成
     if(client==0){                              // TCPクライアントが無かった場合
         if(tx[0]){                              // 変数txに代入されていた場合
-            c=trUri2c(tx[0]);
-            if(c=='%'){
-                c=trUri2s(tx);
+            c=trUri2c(tx[0]);                   // URIエンコード空白文字の変換
+            if(c=='%'){                         // URIエンコード文字の検出
+                c=trUri2s(tx);                  // アスキー文字へ変換して変数Cへ
             }
             Serial.write(c); delay(18);         // IchigoJamへ出力
             if(c=='\n') delay(100);             // IchigoJamの処理待ち
-            trShift(tx,1);
+            trShift(tx,1);                      // FIFOバッファのシフト処理
         }else{
             len = udp.parsePacket();            // UDP受信パケット長をlenに代入
-            if(len){
+            if(len){                            // 受信データがあった場合、
                 Serial.print("' ");             // コメント命令を送信
                 memset(s, 0, 65);               // 文字列変数sの初期化(65バイト)
                 udp.read(s, 64);                // UDP受信データを変数sへ代入
@@ -89,7 +85,7 @@ void loop(){                                    // 繰り返し実行する関�
                     }else if(len>6 && strncmp(s,"POST /",6)==0){
                         postF=1;                // POSTのBODY待ち状態へ
                     }
-                }else if(postF==1){
+                }else if(postF==1){             // POSTのHEAD処理中のとき、
                     if(len>16 && strncmp(s,"Content-Length: ",16)==0){
                         postL=atoi(&s[16]);     // 変数postLにデータ値を代入
                     }
@@ -111,9 +107,9 @@ void loop(){                                    // 繰り返し実行する関�
     while(Serial.available())Serial.read();     // シリアル受信バッファのクリア
     if(com[0]){                                 // コマンドあり
         trUri2txt(com);                         // URLエンコードの変換処理
-        utf_del_uni(tx);                        // UTF8の制御コードの除去
+        utf_del_uni(com);                       // UTF8の制御コードの除去
         Serial.write(16);                       // DLEコードの送信
-        Serial.println(com);                    // 受信文字データを音声出力
+        Serial.println(com);                    // 文字データを出力
         delay(200);
         rx[0]='\0';
         while(Serial.available() && rxi<64){
