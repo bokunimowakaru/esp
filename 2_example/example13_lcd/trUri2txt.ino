@@ -29,6 +29,7 @@ int trUri2txt(char *s){
             }else s[i]='\0';        // オーバーフロー(64バイト越え)
         }
     }
+    return i;
 }
 
 /*
