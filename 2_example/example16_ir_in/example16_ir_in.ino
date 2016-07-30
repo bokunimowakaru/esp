@@ -18,7 +18,6 @@ Example 16: 赤外線リモコン受信機
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_IR_IN, INPUT);              // IRセンサの入力ポートの設定
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
-    digitalWrite(PIN_LED,HIGH);             // LEDを点灯状態に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 16 ir_in");     // 「Example 16」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
@@ -35,8 +34,10 @@ void loop(){
     byte data[DATA_LEN];                    // リモコン信号データ用
     int len,len8;                           // 信号長 len(bits),len8（bytes）
     byte i;
-    
+
+    digitalWrite(PIN_LED,LOW);              // LEDを消灯状態に
     len = ir_read(data, DATA_LEN, 255);     // 赤外線信号を読み取る
+    digitalWrite(PIN_LED,HIGH);             // LEDを点灯状態に
     len8 = len / 8;                         // ビット長を8で割った値をlen8へ代入
     if(len%8) len8++;                       // 余りがあった場合に1バイトを加算
     if(len8>=2){                            // 2バイト以上の時に以下を実行
