@@ -5,14 +5,13 @@ Example 16: 赤外線リモコン受信機
 
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#define DATA_LEN    16+2                    // リモコンコードのデータ長(byte)+2
+#define DATA_LEN    16                      // リモコンコードのデータ長(byte)
 #define PIN_IR_IN 4                         // IO 4(10番ピン) にIRセンサを接続
 #define PIN_LED 13                          // IO 13(5番ピン)にLEDを接続する
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 29*60*1000000               // スリープ時間 29分(uint32_t)
 #define DEVICE "ir_in_1,"                   // デバイス名(5文字+"_"+番号+",")
 
 void setup(){                               // 起動時に一度だけ実行する関数
