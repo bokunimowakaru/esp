@@ -5,7 +5,7 @@ Example 16: 赤外線リモコン受信機
 
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#define DATA_LEN    16                      // リモコンコードのデータ長(byte)
+#define DATA_LEN_MAX 16                     // リモコンコードのデータ長(byte)
 #define PIN_IR_IN 4                         // IO 4(10番ピン) にIRセンサを接続
 #define PIN_LED 13                          // IO 13(5番ピン)にLEDを接続する
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
@@ -30,12 +30,12 @@ void setup(){                               // 起動時に一度だけ実行す
 
 void loop(){
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
-    byte data[DATA_LEN];                    // リモコン信号データ用
+    byte data[DATA_LEN_MAX];                // リモコン信号データ用
     int len,len8;                           // 信号長 len(bits),len8（bytes）
     byte i;
 
     digitalWrite(PIN_LED,LOW);              // LEDを消灯状態に
-    len = ir_read(data, DATA_LEN, 255);     // 赤外線信号を読み取る
+    len = ir_read(data, DATA_LEN_MAX, 255); // 赤外線信号を読み取る
     len8 = len / 8;                         // ビット長を8で割った値をlen8へ代入
     if(len%8) len8++;                       // 余りがあった場合に1バイトを加算
     if(len8>=2){                            // 2バイト以上の時に以下を実行
