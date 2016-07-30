@@ -67,6 +67,7 @@ void loop(){
         udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
         udp.print(DEVICE);                  // デバイス名を送信
         udp.print(d_len);                   // 信号長を送信
+        udp.print(",");                     // カンマ「,」を送信
         ir_data2txt(s,64,d,d_len);          // 受信データをテキスト文字に変換
         udp.println(s);                     // それを文字をUDP送信
         Serial.println(s);
