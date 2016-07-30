@@ -30,7 +30,7 @@ void html(WiFiClient &client, char *tx, char *rx, uint32_t ip){
     client.println("<h3>HTTP GET</h3>");
     client.print("<p>http://");
     client.print(s_ip);
-    client.println("/?TEXT=文字列</p>");
+    client.println("/?COM=文字列</p>");
     sprintf(s,"<form method=\"GET\" action=\"http://%s/\">",s_ip);
     client.println(s);
     client.println("<input type=\"submit\" name=\"COM\" value=\"LED 1\">");
