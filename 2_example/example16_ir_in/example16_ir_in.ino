@@ -37,10 +37,10 @@ void loop(){
 
     digitalWrite(PIN_LED,LOW);              // LEDを消灯状態に
     len = ir_read(data, DATA_LEN, 255);     // 赤外線信号を読み取る
-    digitalWrite(PIN_LED,HIGH);             // LEDを点灯状態に
     len8 = len / 8;                         // ビット長を8で割った値をlen8へ代入
     if(len%8) len8++;                       // 余りがあった場合に1バイトを加算
     if(len8>=2){                            // 2バイト以上の時に以下を実行
+        digitalWrite(PIN_LED,HIGH);         // LEDを点灯状態に
         udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
         udp.print(DEVICE);                  // デバイス名を送信
         udp.print(len);                     // 信号長を送信
