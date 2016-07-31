@@ -88,7 +88,7 @@ void loop(){                                // 繰り返し実行する関数
                 postL--;                    // 受信済POSTデータ長の減算
             }
         }
-        t++;                                // 変数iの値を1だけ増加させる
+        t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認

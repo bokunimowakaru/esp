@@ -100,7 +100,7 @@ void loop(){                                    // 繰り返し実行する関�
                 if(len>=64) len=63;             // 文字列変数の上限
             }
         }
-        t++;                                    // 変数iの値を1だけ増加させる
+        t++;                                    // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1);     // TIMEOUTしたらwhileを抜ける
     }
     delay(1);                                   // クライアント側の応答待ち時間
