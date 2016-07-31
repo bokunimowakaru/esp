@@ -82,10 +82,10 @@ void loop(){
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udp.read(s, 64);                    // UDP受信データを文字列変数sへ代入
         if(
-        	len>6 && (						// データ長が6バイトより大きくて、
-        		strncmp(s,"ir_rc_",6)==0 ||	// 受信データが「ir_rc_」
-        		strncmp(s,"ir_in_",6)==0	// または「ir_in_」で始まる時
-        	)
+            len>6 && (                      // データ長が6バイトより大きくて、
+                strncmp(s,"ir_rc_",6)==0 || // 受信データが「ir_rc_」
+                strncmp(s,"ir_in_",6)==0    // または「ir_in_」で始まる時
+            )
         ){
             D_LEN=ir_txt2data(D,DATA_LEN_MAX,&s[6]);
         }                                   // 受信TXTをデータ列に変換
