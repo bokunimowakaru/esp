@@ -1,5 +1,6 @@
 /*******************************************************************************
-Example 18: 監視カメラ
+Example 18: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
+
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -15,7 +16,7 @@ extern "C" {
 #define PASS "password"                     // パスワード
 #define FILENAME "/cam.jpg"
 
-SoftwareSerial softwareSerial(12,13);       // 12ピンをRX,13ピンをTXに設定
+SoftwareSerial softwareSerial(12,13);       // IO12をRX,IO13をTXに設定
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 int size=0;                                 // 画像データの大きさ(バイト)
 int update=60;                              // ブラウザのページ更新間隔(秒)
