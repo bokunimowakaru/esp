@@ -42,7 +42,8 @@ void loop(){
     unsigned long highWord;                 // 時刻情報の上位2バイト用
     unsigned long lowWord;                  // 時刻情報の下位2バイト用
     unsigned long time;                     // 1970年1月1日からの経過秒数
-    int waiting=0,data;
+    int waiting=0;                          // 待ち時間カウント用
+    char s[20];                             // 表示用
     
     sendNTPpacket(NTP_SERVER);              // NTP取得パケットをサーバへ送信する
     while(udp.parsePacket()<44){
@@ -58,28 +59,19 @@ void loop(){
     Serial.print("UTC time = ");
     time = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
     time -= 2208988800UL;                   // 1970年と1900年の差分を減算
-    Serial.println(time);
+    time2txt(s,time);                       // 時刻をテキスト文字に変換
+    Serial.println(s);                      // テキスト文字を表示
 
     Serial.print("JST time = ");            // 日本時刻
     time += 32400UL;                        // +9時間を加算
-    data=(int)((time  % 86400L) / 3600);    // 時を計算し変数dataへ代入
+    time2txt(s,time);                       // 時刻をテキスト文字に変換
+    Serial.println(s);                      // テキスト文字を表示
+    
     udpTx.beginPacket(SENDTO, PORT);        // UDP送信先を設定
     udpTx.print(DEVICE);                    // デバイス名を送信
-    udpTx.print(data);                      // データを送信
-    udpTx.print(",");                       // 「,」カンマを送信
-    Serial.print(data);
-    Serial.print(':');
-    data=(int)(time  % 3600) / 60;          // 分を計算し変数dataへ代入
-    if( data < 10 ) Serial.print('0');      // 10未満の時に「0」を付与
-    udpTx.print(data);                      // データを送信
-    udpTx.print(",");                       // 「,」カンマを送信
-    Serial.print(data);
-    Serial.print(':');
-    data=(int)(time  % 3600) / 60;          // 秒を計算し変数dataへ代入
-    if( data < 10 ) Serial.print('0');      // 10未満の時に「0」を付与
-    udpTx.print(data);                      // データを送信
+    s[4]=s[7]=s[13]=s[16]=',';              // 「/」と「:」をカンマに置き換える
+    udpTx.println(s);                       // データを送信
     udpTx.endPacket();                      // UDP送信の終了(実際に送信する)
-    Serial.println(data);
     sleep();
 }
 

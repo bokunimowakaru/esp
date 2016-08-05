@@ -136,9 +136,6 @@ void lcdPrintVal(char *s,int in){
 	lcdPrint2(lcd);
 }
 
-
-#define LEAP_YEAR(Y)     ( ((1970+Y)>0) && !((1970+Y)%4) && ( ((1970+Y)%100) || !((1970+Y)%400) ) )
-
 void lcdPrintTime(unsigned long local){
 	char date[20];	//	0123456789012345678
 					//	2014/01/01,12:34:56
