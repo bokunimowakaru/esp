@@ -40,10 +40,47 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
     client.println("/cam.jpg</p>");
     sprintf(s,"<form method=\"GET\" action=\"http://%s/\">",s_ip);
     client.println(s);
-    client.println("<input type=\"submit\" value=\"画像データの取得\">");
-    client.println("<input type=\"submit\" name=\"INT\" value=\"0 自動更新の停止\">");
-    client.println("<input type=\"submit\" name=\"INT\" value=\"60 自動更新(60秒)\">");
+    client.println("<input type=\"submit\" value=\"画像データの取得\"><br><br>");
+    client.println("自動更新:<input type=\"submit\" name=\"INT\" value=\"0 停止\">");
+    client.println("<input type=\"submit\" name=\"INT\" value=\"60 秒\">");
+    client.println("　<input type=\"submit\" name=\"RESET\" value=\"リセット\"><br><br>");
+    client.println("速度:<input type=\"submit\" name=\"BPS\" value=\"38400 bps\">");
+    client.println("<input type=\"submit\" name=\"BPS\" value=\"115200 bps\"><br><br>");
+    client.println("画像:<input type=\"submit\" name=\"SIZE\" value=\"0 640x480\">");
+    client.println("<input type=\"submit\" name=\"SIZE\" value=\"1 320x240\">");
+    client.println("<input type=\"submit\" name=\"SIZE\" value=\"2 160x120\"><br><br>");
+/*
+    client.println("<input type=\"submit\" name=\"POWER\" value=\"0 POWER OFF\">");
+    client.println("<input type=\"submit\" name=\"POWER\" value=\"1 POWER ON\">");
+*/
     client.println("</form>");
     client.println("</body>");
     client.println("</html>");
 }
+
+void htmlMesg(WiFiClient &client, char *txt, uint32_t ip){
+    char s_ip[16];
+    
+    sprintf(s_ip,"%i.%i.%i.%i",
+        ip & 255,
+        ip>>8 & 255,
+        ip>>16 & 255,
+        ip>>24
+    );
+    client.println("HTTP/1.1 200 OK");              // HTTP OKを応答
+    client.println("Content-Type: text/html");      // HTMLコンテンツ
+    client.println("Connection: close");            // 応答終了後にセッションを閉じる
+    client.println();
+    client.println("<html>");
+    client.println("<head><title>Test Page</title>");
+    client.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">");
+    client.print("<meta http-equiv=\"refresh\" content=\"10;URL=http://");
+    client.print(s_ip);
+    client.println("/\">");
+    client.print("<p>");
+    client.print(txt);
+    client.println("</p>");
+    client.println("</body>");
+    client.println("</html>");
+}
+

@@ -66,7 +66,13 @@ void loop() {
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
-    if(!client.connected()) return;         // 切断された場合はloop()の先頭へ
+    if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
+    Serial.println(s);                      // 受信した命令をシリアル出力表示
+    if(strncmp(s,"GET / ",6)==0){           // コンテンツ取得命令時
+        html(client,size,update,WiFi.localIP()); // コンテンツ表示
+        client.stop();                      // クライアントの切断
+        return;                             // 処理の終了・loop()の先頭へ
+    }
     if(strncmp(s,"GET /cam.jpg",12)==0){    // 画像取得指示の場合
         CamSendTakePhotoCmd();              // カメラを撮影モードに設定
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
@@ -94,9 +100,30 @@ void loop() {
     if(strncmp(s,"GET /?INT=",10)==0){      // 更新時間の設定命令を受けた時
         update = atoi(&s[10]);              // 受信値を変数updateに代入
     }
-    if(strncmp(s,"GET /",5)==0){            // 
-        html(client,size,update,WiFi.localIP()); // コンテンツ表示
+    if(strncmp(s,"GET /?BPS=",10)==0){      // ビットレート設定命令時
+        i = atoi(&s[10]);                   // 受信値を変数iに代入
+        CamBaudRateCmd(i);                  // ビットレート設定
+        delay(100);
+        softwareSerial.begin(i);            // ビットレート変更
     }
+    if(strncmp(s,"GET /?SIZE=",11)==0){     // JPEGサイズ設定命令時
+        i = atoi(&s[11]);                   // 受信値を変数iに代入
+        CamSizeCmd(i);                      // JPEGサイズ設定
+        delay(100);
+        CamSendResetCmd();                  // リセットコマンド
+        softwareSerial.begin(38400);
+    }
+    if(strncmp(s,"GET /?POWER=",12)==0){    // パワー設定命令時
+        i = atoi(&s[12]);                   // 受信値を変数iに代入
+        CamPowerCmd(i);                     // パワー設定コマンド
+    }
+    if(strncmp(s,"GET /?RESET=",12)==0){    // リセット命令時
+        CamSendResetCmd();                  // リセットコマンド
+        softwareSerial.begin(38400);
+        s[11]='\0';
+    }
+    for(i=6;i<strlen(s);i++) if(s[i]==' '||s[i]=='+') s[i]='\0';
+    htmlMesg(client,&s[6],WiFi.localIP()); 	// メッセージ表示
     client.stop();                          // クライアント切断
     Serial.println("Sent HTML");            // シリアル出力表示
 }
