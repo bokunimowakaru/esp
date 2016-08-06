@@ -135,7 +135,7 @@ void lcdPrintVal(char *s,int in){
 	lcdPrint(s);
 	lcdPrint2(lcd);
 }
-
+/*
 void lcdPrintTime(unsigned long local){
 	char date[20];	//	0123456789012345678
 					//	2014/01/01,12:34:56
@@ -152,6 +152,7 @@ void lcdPrintTime(unsigned long local){
 		lcdPrint2(&date[11]);
 	}
 }
+*/
 
 void lcdSetup(byte x, byte y) {
 	if(x==16||x==8||x==20) _lcd_size_x=x;
