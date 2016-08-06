@@ -44,15 +44,15 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
     client.println("自動更新:<input type=\"submit\" name=\"INT\" value=\"0 停止\">");
     client.println("<input type=\"submit\" name=\"INT\" value=\"60 秒\">");
     client.println("　<input type=\"submit\" name=\"RESET\" value=\"リセット\"><br><br>");
-    client.println("速度:<input type=\"submit\" name=\"BPS\" value=\"38400 bps\">");
-    client.println("<input type=\"submit\" name=\"BPS\" value=\"115200 bps\"><br><br>");
+//  client.println("速度:<input type=\"submit\" name=\"BPS\" value=\"38400 bps\">");
+//  client.println("<input type=\"submit\" name=\"BPS\" value=\"115200 bps\"><br><br>");
     client.println("画像:<input type=\"submit\" name=\"SIZE\" value=\"0 640x480\">");
     client.println("<input type=\"submit\" name=\"SIZE\" value=\"1 320x240\">");
     client.println("<input type=\"submit\" name=\"SIZE\" value=\"2 160x120\"><br><br>");
-    client.println("画質:<input type=\"submit\" name=\"RATIO\" value=\"255 高圧縮\">");
-    client.println("<input type=\"submit\" name=\"RATIO\" value=\"155 中圧縮\">");
-    client.println("<input type=\"submit\" name=\"RATIO\" value=\"56 標準\">");
-    client.println("<input type=\"submit\" name=\"RATIO\" value=\"0 最高\"<br><br>");
+//  client.println("画質:<input type=\"submit\" name=\"RATIO\" value=\"255 高圧縮\">");
+//  client.println("<input type=\"submit\" name=\"RATIO\" value=\"155 中圧縮\">");
+//  client.println("<input type=\"submit\" name=\"RATIO\" value=\"56 標準\">");
+//  client.println("<input type=\"submit\" name=\"RATIO\" value=\"0 最高\"<br><br>");
 /*
     client.println("<input type=\"submit\" name=\"POWER\" value=\"0 POWER OFF\">");
     client.println("<input type=\"submit\" name=\"POWER\" value=\"1 POWER ON\">");
