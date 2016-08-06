@@ -35,6 +35,7 @@ void setup(){
     }
     server.begin();                         // サーバを起動する
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル表示
+    lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスを液晶に表示
 }
 
 void loop() {
@@ -69,6 +70,7 @@ void loop() {
     }
     if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
     Serial.println(s);                      // 受信した命令をシリアル出力表示
+    lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
     if(strncmp(s,"GET / ",6)==0){           // コンテンツ取得命令時
         html(client,size,update,WiFi.localIP()); // コンテンツ表示
         client.stop();                      // クライアントの切断
@@ -94,8 +96,9 @@ void loop() {
         CamReadADR0();                      // 読み出しアドレスのリセット
         client.println();                   // 改行を出力
         client.stop();                      // クライアントの切断
-        Serial.print(size);                 // 画像サイズをシリアル出力表示
+        Serial.print(size);                 // ファイルサイズをシリアル出力表示
         Serial.println("Bytes");            // シリアル出力表示
+        lcdPrintVal("Bytes",size);          // ファイルサイズを液晶へ表示
         return;                             // 処理の終了・loop()の先頭へ
     }
     if(strncmp(s,"GET /?INT=",10)==0){      // 更新時間の設定命令を受けた時
@@ -113,6 +116,10 @@ void loop() {
         delay(100);
         CamSendResetCmd();                  // リセットコマンド
         softwareSerial.begin(38400);
+    }
+    if(strncmp(s,"GET /?RATIO=",12)==0){    // 圧縮率設定命令時
+        i = atoi(&s[12]);                   // 受信値を変数iに代入
+        CamRatioCmd(i);                     // 圧縮率設定コマンド
     }
     if(strncmp(s,"GET /?POWER=",12)==0){    // パワー設定命令時
         i = atoi(&s[12]);                   // 受信値を変数iに代入

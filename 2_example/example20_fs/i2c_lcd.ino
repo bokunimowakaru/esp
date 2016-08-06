@@ -2,7 +2,7 @@
 本ソースリストおよびソフトウェアは、ライセンスフリーです。(詳細は別記)
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
-I2C接続の小型液晶に文字を表示する
+I2C接続の小型液晶に文字を表示する[機能拡張版]
 
                                Copyright (c) 2014-2016 Wataru KUNINO
                                http://www.geocities.jp/bokunimowakaru/
@@ -152,7 +152,6 @@ void lcdPrintTime(unsigned long local){
 		lcdPrint2(&date[11]);
 	}
 }
-
 
 void lcdSetup(byte x, byte y) {
 	if(x==16||x==8||x==20) _lcd_size_x=x;
