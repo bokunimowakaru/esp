@@ -93,6 +93,7 @@ void loop() {
             j += len;                       // データサイズの合算
             for(i=0;i<len;i++) client.write((byte)data[i]); // データ送信
         }
+        CamStopTakePhotoCmd();              // 撮影の終了(静止画の破棄)の実行
         CamReadADR0();                      // 読み出しアドレスのリセット
         client.stop();                      // クライアントの切断
         Serial.print(j);                    // ファイルサイズをシリアル出力表示
