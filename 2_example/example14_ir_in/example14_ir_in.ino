@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 16: 赤外線リモコン受信機
+Example 14: 赤外線リモコン受信機
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -18,7 +18,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_IR_IN, INPUT);              // IRセンサの入力ポートの設定
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 16 ir_in");     // 「Example 16」をシリアル出力表示
+    Serial.println("Example 14 ir_in");     // 「Example 14」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ

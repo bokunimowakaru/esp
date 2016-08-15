@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 17: 赤外線リモコン送受信機
+Example 19: 赤外線リモコン送受信機
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -32,8 +32,8 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     ir_send_init();                         // IR出力用LEDの設定(IO 14ポート)
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 17 ir_rc");     // 「Example 17」をシリアル出力表示
-    morse(PIN_LED,50,"EX 17");              // 「EX 17」をモールス信号出力
+    Serial.println("Example 19 ir_rc");     // 「Example 19」をシリアル出力表示
+    morse(PIN_LED,50,"EX 19");              // 「EX 19」をモールス信号出力
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続

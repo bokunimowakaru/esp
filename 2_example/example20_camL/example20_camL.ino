@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 18: 監視カメラ for SeeedStudio Grove Serial Camera Kit 
+Example 20: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
 
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
@@ -27,14 +27,13 @@ void setup(){
     pinMode(PIN_CAM,OUTPUT);                // FETを接続したポートを出力に
     digitalWrite(PIN_CAM,0);                // FETをLOW(ON)にする
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 18 cam");       // 「Example 18」をシリアル出力表示
+    Serial.println("Example 20 cam");       // 「Example 20」をシリアル出力表示
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     delay(100);                             // カメラの起動待ち
-    softwareSerial.begin(115200);           // カメラとのシリアル通信を開始する
-    CamInitialize();                        // カメラの初期化コマンド
-    CamSizeCmd(1);                          // 撮影サイズをQVGAに設定
+    softwareSerial.begin(38400);            // カメラとのシリアル通信を開始する
+    CamSendResetCmd();                      // カメラへリセット命令を送信する
     delay(4000);                            // 完了待ち(開始直後の撮影防止対策)
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
@@ -44,10 +43,11 @@ void setup(){
     lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスを液晶に表示
 }
 
-void loop(){
+void loop() {
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
+    byte data[32];                          // 画像転送用の一時保存変数
     int len;                                // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     int i,j;
@@ -81,14 +81,22 @@ void loop(){
         return;                             // 処理の終了・loop()の先頭へ
     }
     if(strncmp(s,"GET /cam.jpg",12)==0){    // 画像取得指示の場合
-        CamCapture();                       // カメラで写真を撮影する
+        CamSendTakePhotoCmd();              // カメラで写真を撮影する
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
-        size=CamGetData(client);
+        size=CamReadFileSize();             // ファイルサイズを読み取る
+        j=0;                                // 変数j(総受信長)を0に設定
+        while(j<size){                      // 終了フラグが0の時に繰り返す
+            len = CamRead(data);            // カメラからデータを取得
+            j += len;                       // データサイズの合算
+            for(i=0;i<len;i++) client.write((byte)data[i]); // データ送信
+        }
+        CamStopTakePhotoCmd();              // 撮影の終了(静止画の破棄)の実行
+        CamReadADR0();                      // 読み出しアドレスのリセット
         client.stop();                      // クライアントの切断
-        Serial.print(size);                 // ファイルサイズをシリアル出力表示
+        Serial.print(j);                    // ファイルサイズをシリアル出力表示
         Serial.println(" Bytes");           // シリアル出力表示
         lcdPrintVal("TX Bytes",size);       // ファイルサイズを液晶へ表示
         return;                             // 処理の終了・loop()の先頭へ
@@ -96,9 +104,27 @@ void loop(){
     if(strncmp(s,"GET /?INT=",10)==0){      // 更新時間の設定命令を受けた時
         update = atoi(&s[10]);              // 受信値を変数updateに代入
     }
+    if(strncmp(s,"GET /?BPS=",10)==0){      // ビットレート設定命令時
+        i = atoi(&s[10]);                   // 受信値を変数iに代入
+        CamBaudRateCmd(i);                  // ビットレート設定
+        delay(100);                         // 処理完了待ち
+        softwareSerial.begin(i);            // ビットレート変更
+    }
     if(strncmp(s,"GET /?SIZE=",11)==0){     // JPEGサイズ設定命令時
         i = atoi(&s[11]);                   // 受信値を変数iに代入
         CamSizeCmd(i);                      // JPEGサイズ設定
+        delay(100);                         // 処理完了待ち
+        CamSendResetCmd();                  // リセットコマンド
+        softwareSerial.begin(38400);        // シリアル速度を初期値に戻す
+    }
+    if(strncmp(s,"GET /?RATIO=",12)==0){    // 圧縮率設定命令時
+        i = atoi(&s[12]);                   // 受信値を変数iに代入
+        CamRatioCmd(i);                     // 圧縮率設定コマンド
+    }
+    if(strncmp(s,"GET /?RESET=",12)==0){    // リセット命令時
+        CamSendResetCmd();                  // リセットコマンド
+        softwareSerial.begin(38400);        // シリアル速度を初期値に戻す
+        s[11]='\0';                         // RESET=以降に続く文字を捨てる
     }
     for(i=6;i<strlen(s);i++) if(s[i]==' '||s[i]=='+') s[i]='\0';
     htmlMesg(client,&s[6],WiFi.localIP());  // メッセージ表示

@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 15: IchigoJam をつかった情報表示器
+Example 22: IchigoJam をつかった情報表示器
 
 IchigoJam Firmware 1.2以上を推奨
                                             Copyright (c) 2016 Wataru KUNINO

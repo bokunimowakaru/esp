@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 13: LCDへ表示する(HTTP版)
+Example 18: LCDへ表示する(HTTP版)
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -25,7 +25,7 @@ void setup(){                               // 起動時に一度だけ実行す
     }
     server.begin();                         // サーバを起動する
     udp.begin(PORT);                        // UDP通信御開始
-    lcdPrint("Example 13 LCD");             // 「Example 13」をLCDに表示する
+    lcdPrint("Example 18 LCD");             // 「Example 18」をLCDに表示する
     lcdPrintIp2(WiFi.localIP());            // IPアドレスを液晶の2行目に表示
 }
 

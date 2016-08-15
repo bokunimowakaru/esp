@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 19: NTPクライアント
+Example 13: NTPクライアント
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -25,7 +25,7 @@ WiFiUDP udpTx;                              // UDP送信用のインスタンス
 void setup(){
     int waiting=0;                          // アクセスポイント接続待ち用
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 19 NTP");       // 「Example 19」をシリアル出力表示
+    Serial.println("Example 13 NTP");       // 「Example 13」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
