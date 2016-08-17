@@ -31,7 +31,7 @@ void setup(){                               // 起動時に一度だけ実行す
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(100);                         // 待ち時間処理
         waiting++;                          // 待ち時間カウンタを1加算する
-        digitalWrite(PIN_LED,waiting%2);    // LED(EN信号)の点滅
+        digitalWrite(PIN_LED,waiting%2);    // LEDの点滅
         if(waiting%10==0)Serial.print('.'); // 進捗表示
         if(waiting > 300) sleep();          // 300回(30秒)を過ぎたらスリープ
     }
