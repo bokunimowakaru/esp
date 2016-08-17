@@ -9,7 +9,7 @@ Example 12: 加速度センサ ADXL345
 
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#define PIN_EN 13                           // IO 13(5番ピン)をセンサ用の電源に
+#define PIN_LED 13                          // IO 13(5番ピン)にLEDを接続する
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
@@ -23,8 +23,7 @@ void setup(){                               // 起動時に一度だけ実行す
     int waiting=0;                          // アクセスポイント接続待ち用
     int start,i;
     
-    pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
-    digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
+    pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     start=adxlSetup(0);                     // 加速度センサの初期化と結果取得
     for(i=0;i<3;i++) acm[i]=getAcm(i);      // 3軸の加速度を取得し変数acmへ代入
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
@@ -39,6 +38,7 @@ void setup(){                               // 起動時に一度だけ実行す
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(100);                         // 待ち時間処理
         waiting++;                          // 待ち時間カウンタを1加算する
+        digitalWrite(PIN_LED,waiting%2);    // LED(EN信号)の点滅
         if(waiting%10==0)Serial.print('.'); // 進捗表示
         if(waiting > 300) sleep();          // 300回(30秒)を過ぎたらスリープ
     }
@@ -77,7 +77,6 @@ void loop(){
 
 void sleep(){
     delay(200);                             // 送信待ち時間
-    digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理
         delay(100);                         // 100msの待ち時間処理
