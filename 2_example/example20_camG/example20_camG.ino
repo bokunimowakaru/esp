@@ -48,7 +48,7 @@ void loop(){
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    int len;                                // 文字列等の長さカウント用の変数
+    int len=0;                              // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     int i,j;
     
