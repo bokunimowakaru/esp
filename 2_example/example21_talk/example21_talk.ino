@@ -17,8 +17,10 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 
 void setup(){                               // 起動時に一度だけ実行する関数
     Serial.begin(9600);                     // AquesTalkとの通信ポート
-    Serial.print("kon'nnichi/wa.\r");       // 音声「こんにちわ」を出力する
-    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定(将来用)
+    Serial.print("\r$");                    // ブレークコマンドを出力する
+    delay(100);                             // 待ち時間処理
+    Serial.print("$?kon'nnichi/wa.\r");     // 音声「こんにちわ」を出力する
+    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
