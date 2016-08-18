@@ -17,7 +17,7 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 
 void setup(){                               // 起動時に一度だけ実行する関数
     lcdSetup(16,2);                         // 液晶の初期化(16桁×2行)
-    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定(将来用)
+    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
