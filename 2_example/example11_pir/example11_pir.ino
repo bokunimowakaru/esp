@@ -42,16 +42,16 @@ void setup(){                               // 起動時に一度だけ実行す
 void loop(){
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
     
-    udp.beginPacket(SENDTO, PORT);      	// UDP送信先を設定
-    udp.print(DEVICE);                  	// デバイス名を送信
-    udp.print(!pir);               			// 起動直後のセンサ状態を送信
+    udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
+    udp.print(DEVICE);                      // デバイス名を送信
+    udp.print(!pir);                        // 起動直後のセンサ状態を送信
     udp.print(", ");                        // 「,」カンマと「␣」を送信
     pir=digitalRead(PIN_SW);                // 人感センサの状態を取得
     udp.println(!pir);                      // 現在のセンサの状態を送信
     Serial.println(!pir);                   // シリアル出力表示
-    udp.endPacket();                    	// UDP送信の終了(実際に送信する)
+    udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(200);                             // 送信待ち時間
-    sleep();                            	// sleepを実行
+    sleep();                                // sleepを実行
 }
 
 void sleep(){
