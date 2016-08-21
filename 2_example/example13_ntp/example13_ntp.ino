@@ -9,7 +9,7 @@ Example 13: NTPクライアント
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 29*60*1000000               // スリープ時間 29分(uint32_t)
+#define SLEEP_P 59*60*1000000               // スリープ時間 59分(uint32_t)
 #define DEVICE "timer_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
