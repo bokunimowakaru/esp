@@ -4,9 +4,6 @@ Example 13: NTPクライアント
 *******************************************************************************/
 
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
-extern "C" {
-#include "user_interface.h"                 // ESP8266用の拡張IFライブラリ
-}
 #include <WiFiUdp.h>                        // udp通信を行うライブラリ
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
