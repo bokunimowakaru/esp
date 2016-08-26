@@ -56,10 +56,6 @@ void loop(){
     
     Serial.print("Voltage  = ");
     Serial.println(v,3);                    // 電圧値を表示
-    time = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
-    time -= 2208988800UL;                   // 1970年と1900年の差分を減算
-    time2txt(s,time);                       // 時刻をテキスト文字に変換
-    Serial.println(s);                      // テキスト文字を表示
     sendNTPpacket(NTP_SERVER);              // NTP取得パケットをサーバへ送信する
     while(udp.parsePacket()<44){
         delay(100);                         // 受信待ち
