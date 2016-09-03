@@ -36,16 +36,39 @@ echo DAEMON_CONF=\"/etc/hostapd/hostapd.conf\" >> /etc/default/hostapd
 
 echo "設定：/etc/dhcp/dhcpd.conf"
 cp -b /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf~
-cat << EOF >> /etc/dhcp/dhcpd.conf
+cat << EOF > /etc/dhcp/dhcpd.conf
+#
+# Sample configuration file for ISC dhcpd for Debian
+#
+#
+
+# The ddns-updates-style parameter controls whether or not the server will
+# attempt to do a DNS update when a lease is confirmed. We default to the
+# behavior of the version 2 packages ('none', since DHCP v2 didn't
+# have support for DDNS.)
+ddns-update-style none;
+
+# option definitions common to all supported networks...
+#option domain-name "example.org";
+#option domain-name-servers ns1.example.org, ns2.example.org;
+
+default-lease-time 600;
+max-lease-time 7200;
+
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
 authoritative;
+
+# Use this to send dhcp log messages to a different log file (you also
+# have to hack syslog.conf to complete the redirection).
+log-facility local7;
+
 subnet 192.168.0.0 netmask 255.255.255.0 {
-	range 192.168.0.201 192.168.0.254;
-	option broadcast-address 192.168.0.255;
-	option routers 192.168.0.1;
-	default-lease-time 600;
-	max-lease-time 7200;
-	option domain-name "local";
-	option domain-name-servers 8.8.8.8,8.8.4.4;
+        range 192.168.0.201 192.168.0.254;
+        option broadcast-address 192.168.0.255;
+        option routers 192.168.0.1;
+        option domain-name "local";
+        option domain-name-servers 8.8.8.8,8.8.4.4;
 }
 EOF
 
@@ -78,7 +101,7 @@ fi
 date >/home/pi/start.log
 service networking restart >>/home/pi/start.log 2>&1
 service isc-dhcp-server restart >>/home/pi/start.log 2>&1
-service hostapd restart
+service hostapd restart >>/home/pi/start.log 2>&1
 /home/pi/esp/tools/soracom start >>/home/pi/start.log 2>&1
 sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward" >>/home/pi/start.log 2>&1
 iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE >>/home/pi/start.log 2>&1
