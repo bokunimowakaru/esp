@@ -82,7 +82,7 @@ void loop(){                                // 繰り返し実行する関数
             }
             if(postF>=2){                   // POSTのBODY処理
                 if(postL<=0){               // 受信完了時
-                    if(len>2 && strncmp(s,"L=",2)==0){
+                    if(len>2 && strncmp(s,"B=",2)==0){
                         chime=atoi(&s[2]);  // 変数chimeに数字を代入
                     }
                     break;                  // 解析処理の終了
