@@ -64,7 +64,7 @@ authoritative;
 log-facility local7;
 
 subnet 192.168.0.0 netmask 255.255.255.0 {
-        range 192.168.0.201 192.168.0.254;
+        range 192.168.0.2 192.168.0.254;
         option broadcast-address 192.168.0.255;
         option routers 192.168.0.1;
         option domain-name "local";
