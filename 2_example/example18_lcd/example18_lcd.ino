@@ -43,8 +43,8 @@ void loop(){                                // 繰り返し実行する関数
     if(client==0){                          // TCPクライアントが無かった場合
         len = udp.parsePacket();            // UDP受信パケット長を変数lenに代入
         if(len==0)return;                   // TCPとUDPが未受信時にloop()先頭へ
-        memset(s, 0, 49);                   // 文字列変数sの初期化(49バイト)
-        udp.read(s, 48);                    // UDP受信データを文字列変数sへ代入
+        memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
+        udp.read(s, 64);                    // UDP受信データを文字列変数sへ代入
         lcdPrint(s);                        // 液晶に表示する
         return;                             // loop()の先頭に戻る
     }
