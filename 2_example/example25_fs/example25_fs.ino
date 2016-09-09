@@ -52,6 +52,7 @@ void loop() {
     if(time<100){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
         if(TIME)TIME-=millis()/1000;        // 経過時間を減算
+        while(millis()<100)delay(1);        // 100ms超過待ち
     }
     if((time/20)%50==0){                    // 1秒間隔で以下を実行
         if(LCD_EN){                                         // LCD_ENが0以外の時
