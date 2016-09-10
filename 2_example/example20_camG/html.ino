@@ -22,7 +22,9 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
     if(update){
         client.print("<meta http-equiv=\"refresh\" content=\"");
         client.print(update);
-        client.print("\">");
+        client.print(";URL=http://");
+        client.print(s_ip);
+        client.println("/\">");
     }
     client.println("</head>");
     client.println("<body>");
