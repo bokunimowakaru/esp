@@ -20,12 +20,13 @@ while true; do                                          # 永久ループの開�
         head=`echo $data|cut -d' ' -f1-5`               # 先頭5バイトを抽出
         if [ "$head" == "55 00 0a 02 0a" ]; then        # データがあった場合
             DATE=`date "+%Y/%m/%d %R"`                  # 日時を取得
-            TEMP=$(( 0x`echo $data|cut -d' ' -f14`))    # 先頭14バイト目を抽出
+            TEMP=$(( 0x`echo $data|cut -d' ' -f14`))    # 14バイト目(温度)を抽出
+            RSSI=$(( 0x`echo $data|cut -d' ' -f18`))    # 18バイト目(RSSI)を抽出
             TEMP=$(( (255 - $TEMP) * 400 / 255))        # 温度に変換(10倍値)
             DEC=$(( $TEMP / 10))                        # 整数部
             FRAC=$(( $TEMP - $DEC * 10))                # 小数部
-            echo -E $DATE, $DEC.$FRAC|tee -a log_${DEV}.csv  # 日時の表示と保存
-        fi
+            echo -E $DATE, $DEC.$FRAC, -$RSSI|tee -a log_${DEV}.csv
+        fi                                              # 日時,温度の表示と保存
     fi
 done                                                    # 永久に繰り返す
 exit                                                    # 終了
