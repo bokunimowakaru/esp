@@ -24,10 +24,10 @@ Baud = 460800
 New PPPD = yes
 Modem = /dev/ttyUSB2
 ISDN = 0
-APN = soracom.io
+APN = so-net.jp
 Phone = *99***1#
-Username = sora
-Password = sora
+Username = nuro
+Password = nuro
 Carrier Check = no
 Auto DNS = 1
 Check Def Route = 1
@@ -50,7 +50,7 @@ chmod a+rwx soracom
 echo "------------------------------------------------"
 echo "設定が完了しました"
 echo "モデム L-02C をPCに接続し、L-02C接続先(APN)設定ツールを使って設定してください。"
-echo "APN = soracom.io"
+echo "APN = so-net.jp"
 echo "Phone = *99***1#"
 echo "設定後のL-02CをRaspberry Piに接続し、./soracom start を実行してください。"
 exit
