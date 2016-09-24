@@ -4,11 +4,14 @@
 #
 # このスクリプトを実行するとSTM431Jから得られた温度データをAmbientに送信します。
 # [保存先=Ambient(https://ambidata.io/)]
+#
+# 測定間隔と前回の値との差分値についても送信します。
 
 AmbientChannelId=100                                    # AmbientチャネルID
 AmbientWriteKey="0123456789abcdef"                      # ライトキー(16進数)
 HOST="54.65.206.59"                                     # 送信先アドレス
 DEV="ocean_1"                                           # デバイス名を定義
+SECONDS=0                                               # 経過時間をリセット
 
 stty -F /dev/ttyUSB0 57600 -icanon                      # シリアル設定
 while true; do                                          # 永久ループの開始
@@ -26,6 +29,12 @@ while true; do                                          # 永久ループの開�
             echo -E $DATE, $DEC.$FRAC, -$RSSI|tee -a log_${DEV}.csv
             DATA=\"d1\"\:\"$DEC.$FRAC\"                 # データ生成(温度)
             DATA=${DATA},\"d2\"\:\"-$RSSI\"             # データ生成(RSSI)
+            DATA=${DATA},\"d3\"\:\"$SECONDS\"           # データ生成(経過時間)
+            SECONDS=0                                   # 経過時間をリセット
+            if [ $TEMP_ ]; then                         # 前回の温度値が存在する
+                DATA=${DATA},\"d4\"\:\"$(( $TEMP - $TEMP_ ))\"
+            fi                                          # 温度の差分(10倍値)
+            TEMP_=$TEMP                                 # 今回の値を保存
             JSON="{\"writeKey\":\"${AmbientWriteKey}\",${DATA}}"
             curl -s ${HOST}/api/v2/channels/${AmbientChannelId}/data\
                  -X POST -H "Content-Type: application/json" -d ${JSON}
