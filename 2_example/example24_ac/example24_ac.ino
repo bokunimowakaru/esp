@@ -16,8 +16,6 @@ extern "C" {
 #define NTP_PORT 8888                       // NTP待ち受けポート
 
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
-int led=0;                                  // 現在のLEDの輝度(0は消灯)
-int target=0;                               // LED設定値(0は消灯)
 int TIMER_ON=-1;                            // ONタイマー無効
 int TIMER_OFF=-1;                           // OFFタイマー無効
 int TIMER_SLEEP=-1;                         // スリープタイマー無効
