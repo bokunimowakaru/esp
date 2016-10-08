@@ -25,7 +25,7 @@ void html(WiFiClient &client, int chime, uint32_t ip){
     client.println("<h3>chimeBells STATUS</h3>");
     if(chime==0) sprintf(s,"<p>0 (チャイム OFF)</p>");
     else if(chime>0)  sprintf(s,"<p>%d (チャイム %d回)</p>",chime,chime);
-    else sprintf(s,"<p>%d (エラー)</p>",chime);
+    else sprintf(s,"<p>%d (チャイム 単音)</p>",chime);
     client.println(s);
     client.println("<hr>");
     client.println("<h3>HTTP GET</h3>");
