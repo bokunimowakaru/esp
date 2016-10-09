@@ -29,14 +29,14 @@ while true; do                                      # 永遠に繰り返し
     TALK=""                                         # 変数TALKの初期化
     MAIL=""                                         # 変数MAILの初期化
     case "$DEV" in                                  # DEVの内容に応じて
-        "rd_sw_1" ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
+        "rd_sw_"? ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
                     if [ $DET -eq $REED ]; then     # 応答値とREED値が同じとき
                         BELL=2                      # 変数BELLへ2を代入
                         TALK="do'aga/hirakima'_shita."  # 「ドアが開きました」
                         MAIL="ドアが開きました。"
                     fi
                     ;;
-        "pir_s_1" ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
+        "pir_s_"? ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
                     if [ $DET != 0 ]; then          # 応答値が0以外の時
                         BELL=1                      # 変数BELLへ1を代入
                         TALK="jinn'kannse'nnsaga/hannno-shima'_shita."

@@ -25,12 +25,12 @@ while true; do                                      # 永遠に繰り返し
     echo -E $DATE, $UDP                             # 取得日時とデータを表示
     BELL=0                                          # 変数BELLの初期化
     case "$DEV" in                                  # DEVの内容に応じて
-        "rd_sw_1" ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
+        "rd_sw_"? ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
                     if [ $DET -eq $REED ]; then     # 応答値とREED値が同じとき
                         BELL=2                      # 変数BELLへ2を代入
                     fi
                     ;;
-        "pir_s_1" ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
+        "pir_s_"? ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`
                     if [ $DET != 0 ]; then          # 応答値が0以外の時
                         BELL=1                      # 変数BELLへ1を代入
                     fi
