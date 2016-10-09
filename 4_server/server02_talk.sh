@@ -9,7 +9,7 @@ REED=1                                              # ドアスイッチON検出
 DEV_BELL="192.168.0.2"                              # ワイヤレスBELLのIPアドレス
 DEV_TALK="192.168.0.4"                              # ワイヤレスTALKのIPアドレス
 
-echo "Server Example 01 (usage: $0 port)"           # タイトル表示
+echo "Server Example 02 Talk  (usage: $0 port)"     # タイトル表示
 if [ $# -ge 1 ]; then                               # 入力パラメータ数の確認
     if [ $1 -ge 1024 ] && [ $1 -le 65535 ]; then    # ポート番号の範囲確認
         PORT=$1                                     # ポート番号を設定
