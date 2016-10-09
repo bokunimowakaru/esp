@@ -37,7 +37,7 @@ while true; do                                      # 永遠に繰り返し
                     fi ;;
         "Pong" )    CAM=1 ;;
     esac
-    if [ $CAM != 0 ]; then                          # CAMが空で無いとき
+    if [ $CAM != 0 ]; then                          # CAMが0で無いとき
         wget -qT10 $IP_CAM/cam.jpg                  # 写真撮影と写真取得
         SFX=`date "+%Y%m%d-%H%M"`                   # 撮影日時を取得し変数SFXへ
         mv cam.jpg photo/$FILE"_"$SFX.jpg >& /dev/null
