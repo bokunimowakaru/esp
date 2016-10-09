@@ -73,6 +73,6 @@ while true; do                                      # 永遠に繰り返し
         fi                                          # ifの終了
     fi
     if [ -n "$MAIL" ]; then                         # MAILが空で無いとき
-        echo -e $UDP | mutt -s $MAIL $MAILTO        # メール送信の実行
+        echo -E $UDP | mutt -s $MAIL $MAILTO        # メール送信の実行
     fi
 done                                                # 繰り返しここまで
