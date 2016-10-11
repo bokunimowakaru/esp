@@ -28,6 +28,8 @@
 #define NEC			1
 #define SIRC		2
 
+// #define DEBUG_ARDUINO
+
 void ir_send_init(void){
 	pinMode(PIN_IR_OUT, OUTPUT);
 	digitalWrite(PIN_IR_OUT, IR_OUT_OFF);
@@ -86,13 +88,18 @@ int ir_txt2data(byte *data, int max, char *txt){
 			if(in<0) return 0;		// Null検出もここで行っている
 			data[data_i] += (byte)in;
 			data_i++;
-			/*
-			Serial.print(data[data_i]>>4,HEX);
-			Serial.print(data[data_i]&15,HEX);
-			Serial.print(",");
-			*/
 		}
 	}
+	#ifdef DEBUG_ARDUINO
+		Serial.print("data_i=");Serial.println(data_i);
+		Serial.print(len);
+		for(int i=0;i<data_i;i++){
+			Serial.print(",");
+			Serial.print(data[i]>>4,HEX);
+			Serial.print(data[i]&15,HEX);
+		}
+		Serial.println();
+	#endif
 	return len;
 }
 int ir_data2txt(char *txt, int txt_max, byte *data, int data_len){

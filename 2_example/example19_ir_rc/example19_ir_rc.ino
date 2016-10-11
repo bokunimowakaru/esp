@@ -52,11 +52,11 @@ void loop(){
     byte d[DATA_LEN_MAX];                   // リモコン信号データ
     int d_len;                              // リモコン信号長（bit）
     char c;                                 // 文字変数を定義
-    char s[65];                             // 文字列変数を定義 65バイト64文字
+    char s[97];                             // 文字列変数を定義 97バイト96文字
     int len=0;                              // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
-    int postL=64;                           // POSTデータ長
+    int postL=96;                           // POSTデータ長
 
     /* 赤外線受信・UDP送信処理 */
     digitalWrite(PIN_LED,LOW);              // LEDを消灯状態に
@@ -79,8 +79,8 @@ void loop(){
     if(client==0){                          // TCPクライアントが無かった場合
         d_len=udp.parsePacket();            // UDP受信長を変数d_lenに代入
         if(d_len==0)return;                 // TCPとUDPが未受信時にloop()先頭へ
-        memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
-        udp.read(s, 64);                    // UDP受信データを文字列変数sへ代入
+        memset(s, 0, 97);                   // 文字列変数sの初期化(97バイト)
+        udp.read(s, 96);                    // UDP受信データを文字列変数sへ代入
         if(
             len>6 && (                      // データ長が6バイトより大きくて、
                 strncmp(s,"ir_rc_",6)==0 || // 受信データが「ir_rc_」
@@ -118,7 +118,7 @@ void loop(){
                 s[len]=c;                   // 文字列変数に文字cを追加
                 len++;                      // 変数lenに1を加算
                 s[len]='\0';                // 文字列を終端
-                if(len>=64) len=63;         // 文字列変数の上限
+                if(len>=96) len=95;         // 文字列変数の上限
             }
             if(postF>=2){                   // POSTのBODY処理
                 if(postL<=0){               // 受信完了時
@@ -137,7 +137,7 @@ void loop(){
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         if(D_LEN==0)strcpy(s,"データ未受信");
-        ir_data2txt(s,64,D,D_LEN);
+        ir_data2txt(s,96,D,D_LEN);
         html(client,s,D_LEN,IR_TYPE,WiFi.localIP());    // HTMLコンテンツを出力
     }                                       // 負のときは-100を掛けて出力
     client.stop();                          // クライアントの切断
