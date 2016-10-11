@@ -37,7 +37,7 @@ void loop(){                                // 繰り返し実行する関数
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数cを定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    char talk[65]="de'-ta-o'nyu-ryo_kushiteku'dasai.";
+    char talk[65]="";                       // 音声出力用の文字列変数を定義
     int len=0;                              // 文字列長を示す整数型変数を定義
     int t=0;                                // 待ち受け時間のカウント用の変数
     int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
@@ -63,6 +63,7 @@ void loop(){                                // 繰り返し実行する関数
                         strncpy(talk,&s[11],64);     // 受信文字列をtalkへコピー
                         break;              // 解析処理の終了
                     }else if (len>5 && strncmp(s,"GET /",5)==0){
+                        strcpy(talk,"de'-ta-o'nyu-ryo_kushiteku'dasai.");
                         break;              // 解析処理の終了
                     }else if(len>6 && strncmp(s,"POST /",6)==0){
                         postF=1;            // POSTのBODY待ち状態へ
@@ -94,9 +95,11 @@ void loop(){                                // 繰り返し実行する関数
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     delay(1);                               // クライアント側の応答待ち時間
-    trUri2txt(talk);                        // URLエンコードの変換処理
-    Serial.print(talk);                     // 受信文字データを音声出力
-    Serial.print("\r");                     // 改行コード（CR）を出力する
+    if(talk[0]){                            // 文字列が代入されていた場合、
+        trUri2txt(talk);                    // URLエンコードの変換処理
+        Serial.print(talk);                 // 受信文字データを音声出力
+        Serial.print("\r");                 // 改行コード（CR）を出力する
+    }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         html(client,talk,WiFi.localIP());   // HTMLコンテンツを出力する
     }
