@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################
-# Server Example 06: ホームオートメーション 熱中症予防
+# Server Example 07: ホームオートメーション 熱中症予防 [Ambient] [メール送信]
 #                                              Copyright (c) 2016 Wataru KUNINO
 ################################################################################
 
@@ -11,8 +11,12 @@ IR_TYPE=0                                           # 方式 0=AEHA,1=NEC,2=SIRC
 AC_ON="104,AA,5A,CF,10,00,11,20,3F,18,B0,00,F4,B1"  # エアコンの電源入コマンド
 AC_OFF="104,AA,5A,CF,10,00,21,20,3F,18,B0,00,F4,81" # エアコンの電源切コマンド
 TEMP=25                                             # 温度の初期値を常温に仮設定
+AmbientChannelId=100                                # AmbientチャネルID(整数)
+AmbientWriteKey="0123456789abcdef"                  # ライトキー(16桁の16進数)
+HOST="54.65.206.59"                                 # 送信先アドレス(変更不要)
+MAILTO="xbee@dream.jp"                              # メール送信先
 
-echo "Server Example 06 Auto HVAC (usage: $0 port)" # タイトル表示
+echo "Server Example 07 Auto HVAC (usage: $0 port)" # タイトル表示
 curl -s $IP_IR"?TYPE="$IR_TYPE > /dev/null          # リモコン方式の設定
 if [ $# -ge 1 ]; then                               # 入力パラメータ数の確認
     if [ $1 -ge 1024 ] && [ $1 -le 65535 ]; then    # ポート番号の範囲確認
@@ -41,6 +45,10 @@ while true; do                                      # 永遠に繰り返し
     esac
     if [ $VAL != 0 ]; then
         TEMP=`echo $VAL|cut -d. -f1`                # 整数部の切り出し
+        JSON="{\"writeKey\":\"${AmbientWriteKey}\",\"d1\":\"${VAL}\"}"
+        curl -s ${HOST}/api/v2/channels/${AmbientChannelId}/data\
+             -X POST -H "Content-Type: application/json" -d ${JSON}
+                                                    # クラウドへデータ送信
     fi
     if [ $DET != 0 ]; then                          # 人感センサに反応あり
         if [ $TEMP -ge 28 ]||[ $TEMP -lt 15 ]; then # 28℃以上または15℃未満
@@ -48,6 +56,10 @@ while true; do                                      # 永遠に繰り返し
             curl -s $IP_IR -XPOST -d"IR="$AC_ON     # エアコンの電源をONに
             AUTO="ON"                               # 運転中
             SECONDS=0                               # 経過時間をリセット
+            echo -e "現在の室温は$TEMP度です。\n\n温度の推移："\
+"https://ambidata.io/ch/channel.html?id=${AmbientChannelId}&private=true"\
+            | mutt -s "エアコンの電源を入れました" $MAILTO
+                                                    # メール送信の実行
         fi
     fi
     if [ $SECONDS -ge 1800 ]&&[ $AUTO = ON ]; then  # 制御後、30分が経過時
