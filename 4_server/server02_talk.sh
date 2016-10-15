@@ -6,8 +6,8 @@
 
 PORT=1024                                           # 受信UDPポート番号を1024に
 REED=1                                              # ドアスイッチON検出=0 OFF=1
-DEV_BELL="192.168.0.2"                              # ワイヤレスBELLのIPアドレス
-DEV_TALK="192.168.0.4"                              # ワイヤレスTALKのIPアドレス
+IP_BELL="192.168.0.2"                               # ワイヤレスBELLのIPアドレス
+IP_TALK="192.168.0.4"                               # ワイヤレスTALKのIPアドレス
 
 echo "Server Example 02 Talk  (usage: $0 port)"     # タイトル表示
 if [ $# -ge 1 ]; then                               # 入力パラメータ数の確認
@@ -45,9 +45,9 @@ while true; do                                      # 永遠に繰り返し
                     TALK="yobirinnga/osarema'_shita."
                     ;;
     esac
-    if [ -n "$DEV_BELL" ] && [ $BELL != 0 ]; then   # BELLが0で無いとき
+    if [ -n "$IP_BELL" ] && [ $BELL != 0 ]; then    # BELLが0で無いとき
         echo -n "BELL="                             # 「BELL=」を表示
-        RES=`curl -s -m3 $DEV_BELL -XPOST -d"B=$BELL"\
+        RES=`curl -s -m3 $IP_BELL -XPOST -d"B=$BELL"\
         |grep "<p>"|grep -v "http"\
         |cut -d'>' -f2|cut -d'<' -f1`               # ワイヤレスBELL制御
         if [ -n "$RES" ]; then                      # 応答があった場合
@@ -56,9 +56,9 @@ while true; do                                      # 永遠に繰り返し
             echo "ERROR"                            # ERRORを表示
         fi                                          # ifの終了
     fi
-    if [ -n "$DEV_TALK" ] && [ -n "$TALK" ]; then   # TALKが空で無いとき
+    if [ -n "$IP_TALK" ] && [ -n "$TALK" ]; then    # TALKが空で無いとき
         echo -n "TALK="                             # 「TALK=」を表示
-        RES=`curl -s -m3 $DEV_TALK -XPOST -d"TEXT=$TALK"\
+        RES=`curl -s -m3 $IP_TALK -XPOST -d"TEXT=$TALK"\
         |grep "<p>"|grep -v "http"\
         |cut -d'>' -f2|cut -d'<' -f1`               # ワイヤレスTALK制御
         if [ -n "$RES" ]; then                      # 応答があった場合

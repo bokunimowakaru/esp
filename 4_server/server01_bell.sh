@@ -6,7 +6,7 @@
 
 PORT=1024                                           # 受信UDPポート番号を1024に
 REED=1                                              # ドアスイッチON検出=0 OFF=1
-DEV_BELL="192.168.0.2"                              # ワイヤレスBELLのIPアドレス
+IP_BELL="192.168.0.2"                               # ワイヤレスBELLのIPアドレス
 
 echo "Server Example 01 Bell (usage: $0 port)"      # タイトル表示
 if [ $# -ge 1 ]; then                               # 入力パラメータ数の確認
@@ -40,9 +40,9 @@ while true; do                                      # 永遠に繰り返し
         "Pong" )    BELL=-1                         # 変数BELLへ-1を代入
                     ;;
     esac
-    if [ -n "$DEV_BELL" ] && [ $BELL != 0 ]; then   # BELLが0で無いとき
+    if [ -n "$IP_BELL" ] && [ $BELL != 0 ]; then    # BELLが0で無いとき
         echo -n "BELL="                             # 「BELL=」を表示
-        RES=`curl -s -m3 $DEV_BELL -XPOST -d"B=$BELL"\
+        RES=`curl -s -m3 $IP_BELL -XPOST -d"B=$BELL"\
         |grep "<p>"|grep -v "http"\
         |cut -d'>' -f2|cut -d'<' -f1`               # ワイヤレスBELL制御
         if [ -n "$RES" ]; then                      # 応答があった場合

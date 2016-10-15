@@ -1,7 +1,7 @@
 #!/bin/bash
 # 天気をLEDの状態で表示する
 
-DEV_LED="192.168.0.2"                                       # ワイヤレスLEDのIP
+IP_LED="192.168.0.2"                                        # ワイヤレスLEDのIP
 WEATHER=`curl -s rss.weather.yahoo.co.jp/rss/days/43.xml\
 |cut -d'<' -f17|cut -d'>' -f2|tail -1\
 |cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
@@ -11,5 +11,5 @@ case $WEATHER in                                            # 天気に応じた
     "曇" )  LED=-1;;                                        # 曇の時は暗く点灯
     * ) LED=5;;                                             # その他の時は点滅
 esac                                                        # caseの終了
-curl -s $DEV_LED -XPOST -d"L=$LED"|grep "<p>"|grep -v "http"\
+curl -s $IP_LED -XPOST -d"L=$LED"|grep "<p>"|grep -v "http"\
 |cut -d'>' -f2|cut -d'<' -f1                                # ワイヤレスLED制御
