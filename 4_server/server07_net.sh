@@ -36,14 +36,14 @@ while true; do                                      # 永遠に繰り返し
         echo -E $DATE, $UDP|tee -a log_$DEV.csv     # 取得日時とデータを保存
     fi
     DET=0                                           # 変数DETの初期化
-    VAL=0                                           # 変数VALの初期化
+    VAL=-999                                        # 変数VALの初期化
     case "$DEV" in                                  # DEVの内容に応じて
         "pir_s_"? ) DET=`echo -E $UDP|tr -d ' '|cut -d, -f2`;;
         "temp._"? ) VAL=`echo -E $UDP|tr -d ' '|cut -d, -f2`;;
         "humid_"? ) VAL=`echo -E $UDP|tr -d ' '|cut -d, -f2`;;
         "press_"? ) VAL=`echo -E $UDP|tr -d ' '|cut -d, -f2`;;
     esac
-    if [ $VAL != 0 ]; then
+    if [ $VAL != -999 ]; then
         TEMP=`echo $VAL|cut -d. -f1`                # 整数部の切り出し
         JSON="{\"writeKey\":\"${AmbientWriteKey}\",\"d1\":\"${VAL}\"}"
         curl -s ${HOST}/api/v2/channels/${AmbientChannelId}/data\
