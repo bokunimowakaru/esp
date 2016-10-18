@@ -1,0 +1,40 @@
+cls:new
+rem     RasPi Trigger -Cyclic for IchigoJam Version 1.2
+rem     Copyright (c) 2016 Wataru KUNINO
+rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
+
+1 cls:?"RasPi Trigger -Cyclic
+2 ?" for IchigoJam v1.2 ²º³
+3 ?" IN1 Îß°Ä <- ¾Ý» High ACT
+4 ?" IN2 Îß°Ä <- Pi TX
+5 ?" OUT1 Îß°Ä -> USB EN
+6 ?" OUT4 Îß°Ä -> Pi RUN
+7 L=1:?" ·ÄÞ³ =";L;" RUN =";R
+8 T=60:?" ¼­³· =";T/60;" ËÞ®³"
+9 if INKEY()goto 9 else wait60
+
+100 '== Sensor Main ==
+110 I=IN(1):?"in=";I
+120 if I=L gsb 600
+499 gsb 500:goto 100
+
+500 '== Cyclic Sleep ==
+510 led 0:wait T,0:led 1
+520 ?"Wake!
+530 if !BTN() end
+540 if R clt else rtn
+550 if in(2) rtn
+560 if TICK()<300 goto 550
+570 ?"== Stop USB ==
+580 out 1,0:R=0
+590 rtn
+
+600 '== Pow ON Pi ==
+610 clt
+620 if IN(2) ?"Running":rtn
+630 if TICK()<180 goto 620
+640 ?"== Run Pi ==
+650 out 4,0:wait 10:out 4,1
+660 out 1,1:R=1
+670 rtn
+
