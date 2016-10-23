@@ -24,6 +24,7 @@ MAILTO=""
 DATE=`date "+%Y/%m/%d %R"`
 sudo -u pi echo $DATE > /home/pi/start.log
 sudo -u pi /home/pi/esp/tools/soracom start >> /home/pi/start.log 2>&1
+sleep 1
 _IP_G=`cat ~/start.log |grep "local  IP address"|cut -d' ' -f6|tail -1`
 sudo -u pi echo -e "`hostname` が $DATE に起動しました。\n$_IP\n$_IP_G"\
 | sudo -u pi mutt -s "自動起動通知" $MAILTO >> /home/pi/start.log 2>&1
