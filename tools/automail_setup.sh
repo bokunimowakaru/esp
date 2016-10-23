@@ -28,6 +28,6 @@ else
 cat automail.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail.sh
 fi
 sudo chmod a+x automail.sh
-sudo mv -b automail_rc.local /etc/rc.local
+sudo cp -b automail_rc.local /etc/rc.local
 sudo chmod a+x /etc/rc.local
 echo "設定を完了しました。"
