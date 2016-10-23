@@ -7,14 +7,17 @@ else
 fi
 
 MAILTO=""
-DATE=`date "+%Y/%m/%d %R"`
-echo $DATE > /home/pi/start.log
+date > /home/pi/start.log
 /usr/bin/fswebcam /home/pi/cam.jpg >> /home/pi/start.log 2>&1
 /home/pi/esp/tools/soracom start >> /home/pi/start.log 2>&1
 NTP=`ntpq -p|grep \*` >> /home/pi/start.log 2>&1
-if [ "$NTP" != "" ]; then
+if [ "$NTP" = "" ]; then
   DATE="数分前"
+else
+  sleep 1
+  DATE=`date "+%Y/%m/%d %R"`
 fi
+echo $DATE >> /home/pi/start.log
 IP_G=`cat /home/pi/start.log |grep "local  IP address"|cut -d' ' -f6|tail -1`
 echo -e "`hostname` が $DATE に起動しました。\n$IP\n$IP_G"\
 | mutt -s "自動起動通知" -a /home/pi/cam.jpg -- $MAILTO >> /home/pi/start.log 2>&1
