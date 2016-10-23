@@ -1,5 +1,5 @@
 #!/bin/bash
-MAILTO="xbee@dream.jp" # メール送信先
+MAILTO="pi@localhost" # メール送信先
 
 echo "Raspberry Pi 起動後にメールを自動送信するための設定を行うスクリプトです。"
 echo "注意：設定後は、起動しても自動的にシャットダウンしてしまいます。"
