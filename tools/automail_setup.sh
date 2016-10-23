@@ -14,7 +14,7 @@ echo "詳細：https://www.sanslogic.co.uk/fswebcam/"
 echo "インストールする場合は「yes」を入力してください。"
 echo -n "yes/no >"
 read yes
-if [ $yes = "yes" ]; then
+if [ "$yes" = "yes" ]; then
 sudo apt-get install fswebcam
 fi
 
@@ -22,7 +22,7 @@ echo "-------------------------------------------------------------------------"
 echo "自動メール送信を設定します。"
 echo "自動メールの送信先を入力してください"
 read MAILTO
-if [ $yes = "yes" ]; then
+if [ "$yes" = "yes" ]; then
 cat automail_cam.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail.sh
 else
 cat automail.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail.sh
