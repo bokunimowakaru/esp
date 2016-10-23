@@ -23,6 +23,7 @@ fi
 MAILTO=""
 DATE=`date "+%Y/%m/%d %R"`
 sudo -u pi echo $DATE > /home/pi/start.log
+sudo -u pi /usr/bin/fswebcam /home/pi/cam.jpg >> /home/pi/start.log 2>&1
 sudo -u pi /home/pi/esp/tools/soracom start >> /home/pi/start.log 2>&1
 SECONDS=0
 while [ $SECONDS -lt 30 ]; do
@@ -33,7 +34,7 @@ while [ $SECONDS -lt 30 ]; do
 done
 _IP_G=`cat /home/pi/start.log |grep "local  IP address"|cut -d' ' -f6|tail -1`
 sudo -u pi echo -e "`hostname` が $DATE に起動しました。\n$_IP\n$_IP_G"\
-| sudo -u pi mutt -s "自動起動通知" $MAILTO >> /home/pi/start.log 2>&1
+| sudo -u pi mutt -s "自動起動通知" -a /home/pi/cam.jpg $MAILTO >> /home/pi/start.log 2>&1
 sudo -u pi /home/pi/esp/tools/soracom stop >> /home/pi/start.log 2>&1
 wall "The system is going down for power-off (シャットダウンを開始)"
 sleep 10
