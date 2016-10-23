@@ -23,10 +23,11 @@ echo "自動メール送信を設定します。"
 echo "自動メールの送信先を入力してください"
 read MAILTO
 if [ $yes = "yes" ]; then
-cat automail_rclocam.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail_rclocal.txt~
+cat automail_cam.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail.sh
 else
-cat automail_rclocal.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail_rclocal.txt~
+cat automail.txt|sed "s/MAILTO=\"\"/MAILTO=\"$MAILTO\"/g" > automail.sh
 fi
-sudo mv -b automail_rclocal.txt~ /etc/rc.local
+sudo chmod a+x automail.sh
+sudo mv -b automail_rc.local /etc/rc.local
 sudo chmod a+x /etc/rc.local
 echo "設定を完了しました。"
