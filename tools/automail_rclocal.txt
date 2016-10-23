@@ -22,7 +22,9 @@ MAILTO=""
 DATE=`date "+%Y/%m/%d %R"`
 sudo -u pi echo $DATE > /home/pi/start.log
 sudo -u pi /home/pi/esp/tools/soracom start >> /home/pi/start.log 2>&1
-sudo -u pi echo "$HOSTNAME が $DATE に起動しました。" | sudo -u pi mutt -s "自動起動通知" $MAILTO
+sudo -u pi echo "`hostname` が $DATE に起動しました。" | sudo -u pi mutt -s "自動起動通知" $MAILTO >> /home/pi/start.log 2>&1
 sudo -u pi /home/pi/esp/tools/soracom stop >> /home/pi/start.log 2>&1
-sudo shutdown -h -t 10 # シャットダウンまでの猶予時間 10秒
+wall "The system is going down for power-off (シャットダウンを開始)"
+sleep 10
+sudo shutdown -h # now オプションを付与することですぐにシャットダウンする
 exit 0
