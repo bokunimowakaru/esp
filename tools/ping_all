@@ -1,7 +1,14 @@
 #!/bin/bash
+IP=`hostname -I|tr " " "\n"|grep -Eo '([0-9]*\.){3}[0-9]*'|grep -v "127.0."|head -1|cut -d. -f1-3`
 i=1
 while [ ${i} -le 254 ]; do
-	ping -c1 -W1 192.168.0.${i}|grep "time="
+	# echo ${IP}.${i}
+	ping -c1 -W1 ${IP}.${i}|grep "time=" &
+	sleep 0.1
+	PID=`pidof ping|tail -1`
+	if [ -n "$PID" ];then
+		kill $PID
+	fi
 	(( i++ ))
 done
 #arp|grep ":"
