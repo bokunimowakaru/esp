@@ -7,7 +7,7 @@ while [ ${i} -le 254 ]; do
 	if [ "$OS" = "Linux" ]; then
 		ping -c1 -W1 ${IP}.${i}|grep "time=" &
 		sleep 0.1
-		PID=`pidof ping|tail -1`
+		PID=`pidof ping`
 		if [ -n "$PID" ];then
 			kill $PID
 		fi
