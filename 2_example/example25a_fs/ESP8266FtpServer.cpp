@@ -26,7 +26,7 @@
 #include <FS.h>
 
 
-
+#define FTP_DEBUG
 
 WiFiServer ftpServer( FTP_CTRL_PORT );
 WiFiServer dataServer( FTP_DATA_PORT_PASV );
@@ -371,17 +371,17 @@ boolean FtpServer::processCommand()
   //  LIST - List 
   //
   else if( ! strcmp( command, "LIST" ))
-  {
-    if( ! dataConnect())
-      client.println( "425 No data connection");
-    else
+  {															// Serial.println("LIST"); // Debug
+    if( ! dataConnect()){
+      client.println( "425 No data connection"); 			// Serial.println("LIST 425 ERROR"); // Debug
+    }else
     {
-      client.println( "150 Accepted data connection");
+      client.println( "150 Accepted data connection");		// Serial.println("LIST 150 Accept"); // Debug
       uint16_t nm = 0;
       Dir dir=SPIFFS.openDir(cwdName);
-      if( !SPIFFS.exists(cwdName))
-        client.println( "550 Can't open directory " + String(cwdName) );
-      else
+    //  if( !SPIFFS.exists(cwdName)){
+    //    client.println( "550 Can't open directory " + String(cwdName) );  Serial.println("LIST 550 ERROR"); // Debug
+    // }else
       {
         while( dir.next())
         {
