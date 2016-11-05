@@ -388,9 +388,9 @@ boolean FtpServer::processCommand()
 			String fn, fs;
 			fn = dir.fileName();
 			fn.remove(0, 1);
-			fs = String(dir.fileSize());
-            data.println( "+r,s" + fs);
-            data.println( ",\t" + fn );
+			fs = String(dir.fileSize());				Serial.println(fs); Serial.println(fn); // Debug
+            data.print( "01-01-2000  00:00AM " + fs );	// data.println( "+r,s" + fs);
+            data.println( " " + fn ); 					// data.println( ",\t" + fn );	// https://twitter.com/robo8080/status/777444520396926976/photo/1
           nm ++;
         }
         client.println( "226 " + String(nm) + " matches total");
