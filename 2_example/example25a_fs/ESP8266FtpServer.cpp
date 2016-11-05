@@ -421,7 +421,7 @@ boolean FtpServer::processCommand()
 			fn = dir.fileName();
 			fn.remove(0, 1);
 			fs = String(dir.fileSize());
-          data.println( "Type=file;Size=" + fs + ";"+"modify=20000101160656;" +" " + fn);
+          data.println( "Type=file;Size=" + fs + ";"+"modify=20000101000000;" +" " + fn);  // 160656
           nm ++;
         }
         client.println( "226-options: -a -l");

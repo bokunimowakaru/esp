@@ -52,6 +52,13 @@ void html(WiFiClient &client, uint32_t ip, char *date){
     client.println("</form>");
     client.println("<hr>");
     client.println("<h3>FTP Server</h3>");
+    client.print("<p>ftp://");
+    client.print(FTP_USER);
+    client.print(":");
+    client.print(FTP_PASS);
+    client.print("@");
+    client.print(s_ip);    
+    client.println("/</p>");
     client.println("<center><table border>");
     client.println("<tr><td><b>項目</b></td><td><b>値</b></td>");
     client.print("<tr><td>FTP サーバ</td><td>");
