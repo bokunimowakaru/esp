@@ -65,8 +65,20 @@ unsigned long getNTP(char* address, int port){
     lowWord =word(packetBuffer[42],packetBuffer[43]);   // 時刻情報の下位2バイト
     
     local = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
+    #ifdef DEBUG
+    	Serial.println(highWord);
+    	Serial.println(lowWord);
+    	Serial.println(local);
+    #endif
+    if( local < 2208988800UL ) return 0;	// 時刻以外が得られた
     local -= 2208988800UL;                   // 1970年と1900年の差分を減算
+    #ifdef DEBUG
+    	Serial.println(local);
+    #endif
     local += 32400UL;                        // +9時間を加算
+    #ifdef DEBUG
+    	Serial.println(local);
+    #endif
     
     #ifdef DEBUG
 	    Serial.print("JST time = ");            // 日本時刻
