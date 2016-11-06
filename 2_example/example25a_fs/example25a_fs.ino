@@ -48,8 +48,8 @@ void setup(){
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
     while(TIME==0){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
-        TIME-=millis()/1000;                // 起動後の経過時間を減算
     }
+    TIME-=millis()/1000;                    // 起動後の経過時間を減算
     ftpSrv.begin(FTP_USER,FTP_PASS);        //username, password for ftp.
 }
 

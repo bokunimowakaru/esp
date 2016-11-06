@@ -35,8 +35,8 @@ void setup(){
     lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスをLCDに表示
     while(TIME==0){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
-        TIME-=millis()/1000;                // 起動後の経過時間を減算
     }
+    TIME-=millis()/1000;                    // 起動後の経過時間を減算
 }
 
 void loop() {
