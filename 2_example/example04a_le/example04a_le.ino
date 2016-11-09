@@ -34,7 +34,7 @@ void setup(){                               // 起動時に一度だけ実行す
 
 void loop() {
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
-    int adc;                                // 整数型変数adcとiを定義
+    int adc;                                // 整数型変数adcを定義
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     delay(5);                               // 起動待ち時間
