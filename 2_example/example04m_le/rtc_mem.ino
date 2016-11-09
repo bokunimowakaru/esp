@@ -34,11 +34,15 @@ int readRtcInt(){
     if(!ok || strncmp(mem_init.iot,mem_read.iot,3) ){
         Serial.println("Initializing...");
         printRtcInt(mem_init.iot, mem_init.count, mem_init.data, sizeof(mem_init));
-        system_rtc_mem_write(kOffset, &mem_init, sizeof(mem_init));
-        mem_read.count=0;
+        ok=system_rtc_mem_write(kOffset, &mem_init, sizeof(mem_init));
+        mem_read.count=1;
+        if (!ok) Serial.println("readRtcInt : write fail");
+    }else{
+        mem_read.count++;
+        ok = system_rtc_mem_write(kOffset, &mem_read, 4 + sizeof(int) );
         if (!ok) Serial.println("readRtcInt : write fail");
     }
-    WAKE_COUNT=mem_read.count+1;
+    WAKE_COUNT=mem_read.count;
     return mem_read.data;
 }
 
