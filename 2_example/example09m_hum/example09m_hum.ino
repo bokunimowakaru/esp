@@ -23,11 +23,11 @@ http://ambidata.io/ch/channels.html
 Ambient ambient;
 WiFiClient client;
 float temp,hum;                             // センサ用の浮動小数点数型変数
+int mem;                                    // RTCメモリからの数値データ保存用
 extern int WAKE_COUNT;
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
-    int mem;                                // RTCメモリからの数値データ保存用
     pinMode(PIN_LED,OUTPUT);                // LED用ポートを出力に
     digitalWrite(PIN_LED,HIGH);             // LEDの点灯
     hdcSetup();                             // 湿度センサの初期化
@@ -74,8 +74,13 @@ void loop(){
         ambient.set(1,s);                   // Ambient(データ1)へ温度を送信
         dtostrf(hum,5,2,s);                 // 湿度を文字列に変換
         ambient.set(2,s);                   // Ambient(データ2)へ湿度を送信
+        itoa(mem,s,3);                      // 前回との差異を文字列へ変換
+        ambient.set(3,s);                   // Ambient(データ3)へ差異を送信
+        itoa(WAKE_COUNT,s,2);               // 前回からの測定間隔数を文字列へ変換
+        ambient.set(4,s);                   // Ambient(データ4)へ測定間隔数を送信
         ambient.send();                     // Ambient送信の終了(実際に送信する)
     }
+    WAKE_COUNT=1;                           // 起動回数をリセット
     delay(200);                             // 送信待ち時間
     sleep();
 }
