@@ -6,7 +6,7 @@ RTC内のメモリの読み書きドライバ(整数値)
 http://jiwashin.blogspot.jp/2016/07/esp30.html
 https://lowreal.net/2016/01/10/1
 *******************************************************************************/
-
+//#define DEBUG
 #define kOffset         65
 int WAKE_COUNT;
 
@@ -16,12 +16,14 @@ struct RtcStorage{
     int data;
 };
 
+#ifdef DEBUG
 void printRtcInt(char *iot,int count, int data,int size){
     Serial.print("Ident = "); Serial.print(iot);
     Serial.print(", Count = "); Serial.print(count);
     Serial.print(", Value = "); Serial.print(data);
     Serial.print(", Size  = "); Serial.println(size);
 }
+#endif
 
 int readRtcInt(){
     struct RtcStorage mem_init={"IoT",0,0};
@@ -29,11 +31,18 @@ int readRtcInt(){
     bool ok;
 
     ok = system_rtc_mem_read(kOffset, &mem_read, sizeof(mem_read));
-    Serial.println("Read from RTC Memory");
-    printRtcInt(mem_read.iot, mem_read.count, mem_read.data, sizeof(mem_read));
+    #ifdef DEBUG
+        Serial.println("Read from RTC Memory");
+        printRtcInt(mem_read.iot, mem_read.count, mem_read.data, sizeof(mem_read));
+    #else
+        Serial.print(mem_read.count); Serial.print(" ");
+        Serial.println(mem_read.data);
+    #endif
     if(!ok || strncmp(mem_init.iot,mem_read.iot,3) ){
-        Serial.println("Initializing...");
-        printRtcInt(mem_init.iot, mem_init.count, mem_init.data, sizeof(mem_init));
+        #ifdef DEBUG
+            Serial.println("Initializing...");
+            printRtcInt(mem_init.iot, mem_init.count, mem_init.data, sizeof(mem_init));
+        #endif
         ok=system_rtc_mem_write(kOffset, &mem_init, sizeof(mem_init));
         mem_read.count=1;
         if (!ok) Serial.println("readRtcInt : write fail");
@@ -50,8 +59,13 @@ bool writeRtcInt(int in) {
     struct RtcStorage mem={"IoT",WAKE_COUNT,in};
     bool ok;
 
-    Serial.println("Write to RTC Memory");
-    printRtcInt(mem.iot, mem.count, mem.data, sizeof(mem));
+    #ifdef DEBUG
+        Serial.println("Write to RTC Memory");
+        printRtcInt(mem.iot, mem.count, mem.data, sizeof(mem));
+    #else
+        Serial.print(mem.count); Serial.print(" ");
+        Serial.println(mem.data);
+    #endif
     ok = system_rtc_mem_write(kOffset, &mem, sizeof(mem));
     if(!ok) Serial.println("Error : writeRtcInt : system_rtc_mem_write fail");
     return ok;

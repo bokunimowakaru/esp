@@ -54,11 +54,11 @@ void loop() {
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.println(adc);                       // 変数adcの値を送信
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
+    delay(200);                             // 送信待ち時間
     sleep();
 }
 
 void sleep(){
-    delay(200);                             // 送信待ち時間
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理
         delay(100);                         // 100msの待ち時間処理
