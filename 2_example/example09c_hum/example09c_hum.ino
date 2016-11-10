@@ -23,6 +23,8 @@ WiFiClient client;
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
+    pinMode(PIN_LED,OUTPUT);                // LED用ポートを出力に
+    digitalWrite(PIN_LED,HIGH);             // LEDの点灯
     hdcSetup();                             // 湿度センサの初期化
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 09C HUM->Amb"); // 「Example 09」をシリアル出力表示
@@ -43,7 +45,6 @@ void loop(){
     float temp,hum;                         // センサ用の浮動小数点数型変数
     char s[6];
     
-    digitalWrite(PIN_LED,HIGH);             // LEDの点灯
     temp=getTemp();                         // 温度を取得して変数tempに代入
     hum =getHum();                          // 湿度を取得して変数humに代入
     if( temp>-100. && hum>=0.){             // 適切な値の時
