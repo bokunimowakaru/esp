@@ -40,8 +40,8 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println(hum,2);                  // シリアル出力表示
     digitalWrite(PIN_LED,LOW);              // LEDの消灯
     mem =readRtcInt();                      // RTCメモリからの読みとる
+    if(mem) mem=(int)(temp*1000)/mem;       // メモリ値に対する温度値を算出
     if(WAKE_COUNT%SLEEP_N){                 // SLEEP_Nが0以外の時に以下を実行
-        if( mem ) mem=(int)(temp*1000)/mem; // メモリ値に対する温度値を算出
         if( mem>98 && mem<102 ) sleep();    // メモリ値と近い場合にスリープ
     }
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
