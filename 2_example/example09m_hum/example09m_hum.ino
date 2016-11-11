@@ -42,9 +42,8 @@ void setup(){                               // 起動時に一度だけ実行す
     mem =readRtcInt();                      // RTCメモリからの読みとる
     if(WAKE_COUNT%SLEEP_N){                 // SLEEP_Nが0以外の時に以下を実行
         if( mem ) mem=(int)(temp*1000)/mem; // メモリ値に対する温度値を算出
-        if( mem>95 && mem<105 ) sleep();    // メモリ値と近い場合にスリープ
+        if( mem>98 && mem<102 ) sleep();    // メモリ値と近い場合にスリープ
     }
-    writeRtcInt((int)(temp*10));            // 温度値X10をRTCメモリへ保存
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -74,13 +73,17 @@ void loop(){
         ambient.set(1,s);                   // Ambient(データ1)へ温度を送信
         dtostrf(hum,5,2,s);                 // 湿度を文字列に変換
         ambient.set(2,s);                   // Ambient(データ2)へ湿度を送信
-        itoa(mem,s,3);                      // 前回との差異を文字列へ変換
+        if( mem<0 ) mem=0;					// 下限値を0に
+        if( mem>200) mem=200;				// 上限値を200に
+        itoa(mem,s,10);                     // 前回との差異を文字列へ変換
         ambient.set(3,s);                   // Ambient(データ3)へ差異を送信
-        itoa(WAKE_COUNT,s,2);               // 前回からの測定間隔数を文字列へ変換
+        if(WAKE_COUNT>9e4) WAKE_COUNT=9e4;  // 上限値を90000に
+        itoa(WAKE_COUNT,s,10);              // 前回からの測定間隔数を文字列へ変換
         ambient.set(4,s);                   // Ambient(データ4)へ測定間隔数を送信
         ambient.send();                     // Ambient送信の終了(実際に送信する)
     }
     WAKE_COUNT=1;                           // 起動回数をリセット
+    writeRtcInt((int)(temp*10));            // 温度値X10をRTCメモリへ保存
     delay(200);                             // 送信待ち時間
     sleep();
 }
