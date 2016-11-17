@@ -165,4 +165,5 @@ void loop() {
         lcdPrintVal("Bytes",i);             // ファイルサイズを表示
         return;                             // 処理の終了・loop()の先頭へ
     }
+    client.stop();                          // クライアントの切断
 }
