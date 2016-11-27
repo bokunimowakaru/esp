@@ -59,7 +59,7 @@ int ssidpass_write(char *in){
     }
     i++; j=i;
     while(i<strlen(in)){
-        if( in[i]=='\r' || in[i]=='\n' || i-j>31) break;
+        if( in[i]==' ' || in[i]==':' || in[i]=='\r' || in[i]=='\n' || i-j>31) break;
         PASS[i-j]=in[i];
         i++;
         PASS[i-j]='\0';

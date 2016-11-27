@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 22: IchigoJam をつかった情報表示器
+Example 22a: IchigoJam をつかった情報表示器 i.My.espJam
 
 Arduino IDE Version 1.6.8以上を推奨（Version 1.6.5ではコンパイルできない）
 esp8266 by esp8266 Community Version 2.3.0以上を推奨
@@ -117,6 +117,7 @@ void setup(){                                   // 起動時に一度だけ実�
     delay(5000);                                // IchigoJamの起動・通信処理待ち
     Serial.write(25); Serial.write(16);         // 停止コマンドとDLEコードの送信
     Serial.println("cls:?\"ESP Wi-Fi");         // シリアル出力表示
+    delay(500);                                 // シリアル出力の完了待ち
     while(!SPIFFS.begin())delay(1000);          // ファイルシステムの開始
     connect();                                  // SSIDが初期状態以外の時に接続
 }
@@ -143,7 +144,6 @@ void loop(){                                    // 繰り返し実行する関�
         while(millis()<100)delay(1);            // 100ms超過待ち
     }
     time2txt(date,TIME+time/1000);              // 日時をテキストに変換する
-    ftpSrv.handleFTP();                         // make sure in loop you call
     if(Serial.available()){
         c=Serial.read();
         if(c=='\n'||c=='\r'){
@@ -152,18 +152,32 @@ void loop(){                                    // 繰り返し実行する関�
                 disconnect();
                 ssidpass_write(&mj[7]);
                 connect();
+            }else if(strcmp(mj,"MJ IP")==0){
+                Serial.print("'");              // コメント命令を送信
+                Serial.println(ip); delay(100); // IPアドレスを出力する
+            }else if(strcmp(mj,"MJ APC")==0){
+                connect();
+            }else if(strcmp(mj,"MJ APD")==0){
+                disconnect();
+            }else if(strcmp(mj,"MJ APS")==0){
+                if(WiFiStat<1)strcpy(tx,"'0\n");
+                else{
+                    strcpy(tx,"'1 (-)\n");
+                    tx[4]='0'+WiFiStat;
+                }
             }else if(strcmp(mj,"MJ FORMAT")==0){
                 SPIFFS.format();                // ファイル全消去
                 ssidpass_init();                // 設定ファイル保存
                 strcpy(tx,"'DONE FORMAT\n");    // シリアル出力表示
             }else if(strcmp(mj,"MJ DATE")==0){
-                tx[0]='\'';
+                strcpy(tx,"'");
                 strcat(tx,date);
                 strcat(tx,"\n");
             }else if(strcmp(mj,"MJ FILES")==0){
                 Dir dir = SPIFFS.openDir("/");
+                tx[0]='\0';
                 while(dir.next()){
-                    strcat(tx,"'MJ LOAD ");
+                    strcat(tx,"'?\"MJ LOAD ");
                     String string=dir.fileName();
                     string.toCharArray(s,32);
                     if(strlen(s)>1) strcat(tx,&s[1]);
@@ -202,6 +216,23 @@ void loop(){                                    // 繰り返し実行する関�
                 }else{
                     strcpy(tx,"'no File\n");
                 }
+            }else if(strncmp(mj,"MJ ",3)==0){   // HELP用：最後に記述する
+                if(isupper((int)mj[3])){
+                    tx[0]=0; //0123456789012345678901234567890
+                    strcat(tx,"'ｺﾏﾝﾄﾞ ﾉ ﾂｶｲｶﾀ for i.My.espJam\n");
+                    strcat(tx,"' ?\"MJ FORMAT : SPIFFS ｼｮｷｶ\n");
+                    strcat(tx,"' ?\"MJ APC ssid pass : ｾﾂｿﾞｸ\n");
+                    strcat(tx,"' ?\"MJ FILES : ﾌｧｲﾙ ﾉ ｶｸﾆﾝ\n");
+                    utf_del_uni(tx); if(strlen(tx) > BUF_N-128) return;
+                    strcat(tx,"' ?\"MJ LOAD file : ﾌｧｲﾙ ﾛｰﾄﾞ\n");
+                    strcat(tx,"' ?\"MJ DATE : ｼﾞｺｸ ｦ ﾋｮｳｼﾞ\n");
+                    strcat(tx,"' ?\"MJ IP : IP ｱﾄﾞﾚｽ ﾉ ｶｸﾆﾝ\n");
+                    strcat(tx,"' ?\"MJ APD : ｾﾂﾀﾞﾝ\n");
+                    utf_del_uni(tx); if(strlen(tx) > BUF_N-128) return;
+                    strcat(tx,"' ?\"MJ APC : ｻｲ ｾﾂｿﾞｸ\n");
+                    strcat(tx,"' ?\"MJ APS : ｾﾂｿﾞｸ ｼﾞｮｳﾀｲ\n");
+                    utf_del_uni(tx);
+                }
             }
             mj[0]='\0';
         }else if(c==' '){
@@ -212,11 +243,12 @@ void loop(){                                    // 繰り返し実行する関�
         }
         if( strlen(mj)>=63 ) mj[63]='\0';
     }
+    ftpSrv.handleFTP();                         // make sure in loop you call
     client = server.available();                // TCPクライアントを生成
     if(client==0){                              // TCPクライアントが無かった場合
         if(tx[0]){                              // 変数txに代入されていた場合
             Serial.write(tx[0]); delay(18);     // IchigoJamへ出力
-            if(c=='\n') delay(100);             // IchigoJamの処理待ち
+            if(tx[0]=='\n') delay(100);         // IchigoJamの処理待ち
             trShift(tx,1);                      // FIFOバッファのシフト処理
         }else{
             delay(11);
@@ -304,6 +336,10 @@ void loop(){                                    // 繰り返し実行する関�
                 }
             }
         }
+        if(!client.connected())return;
+        html(client,"",rx,ip,date);             // HTMLコンテンツを出力する
+        client.stop();                          // クライアントの切断
+        return;
     }else if(postF>=2 && postL>4){
         strcpy(rx,"HTTP POST データ転送");
         com[4]='\0'; tx[0]='\0';                // 文字列変数の初期化
@@ -319,13 +355,18 @@ void loop(){                                    // 繰り返し実行する関�
             }
             trUri2txt(tx);
         }
+        if(!client.connected())return;
         html(client,"",rx,ip,date);
+        client.stop();                          // クライアントの切断
         Serial.write(16);                       // IchigoJamへDLEコードを送信
-    }
-    if(!client.connected())return;              // 切断された場合はloop()の先頭へ
-    if(strncmp(s,"GET / ",6)==0){               // コンテンツ要求があった時
+        return;
+    }else if(strncmp(s,"GET / ",6)==0){         // コンテンツ要求があった時
+        if(!client.connected())return;          // 切断された場合はloop()の先頭へ
         html(client,"",rx,ip,date);             // HTMLコンテンツを出力する
+        client.stop();                          // クライアントの切断
+        return;
     }else if(strncmp(s,"GET /",5)==0){          // コンテンツ要求時
+        if(!client.connected())return;          // 切断された場合はloop()の先頭へ
         for(i=5;i<strlen(s);i++){                       // 文字列を検索
             if(s[i]==' '||s[i]=='&'||s[i]=='+'){        // 区切り文字のとき
                 s[i]='\0';                              // 文字列を終端する
