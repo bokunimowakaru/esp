@@ -70,6 +70,10 @@ void loop(){                                // 繰り返し実行する関数
                         target=atoi(&s[8]); // 変数targetにデータ値を代入
                         pin=0;
                         break;              // 解析処理の終了
+                    }else if(len>10 && strncmp(s,"GET /?RGB=",10)==0){
+                        target=atoi(&s[10]); // 変数targetにデータ値を代入
+                        pin=3;
+                        break;              // 解析処理の終了
                     }else if(len>8 && strncmp(s,"GET /?R=",8)==0){
                         target=atoi(&s[8]); // 変数targetにデータ値を代入
                         pin=PIN_LED_R;
@@ -123,6 +127,13 @@ void loop(){                                // 繰り返し実行する関数
             ledR=ledCtrl(PIN_LED_R,ledR,t,1000);
             ledG=ledCtrl(PIN_LED_G,ledG,t,1000);
             ledB=ledCtrl(PIN_LED_B,ledB,t,1000);
+        }else if(pin==3 && target>=0 ){
+            ledB=ledCtrl(PIN_LED_B,ledB,(target%10)*100,1000);
+            target/=10;
+            ledG=ledCtrl(PIN_LED_G,ledG,(target%10)*100,1000);
+            target/=10;
+            ledR=ledCtrl(PIN_LED_R,ledR,(target%10)*100,1000);
+            target=999;
         }else{
             switch(pin){
                 case PIN_LED_R:
