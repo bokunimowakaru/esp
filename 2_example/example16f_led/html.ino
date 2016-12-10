@@ -24,9 +24,8 @@ void html(WiFiClient &client, int target, int R, int G, int B, uint32_t ip){
     client.println("<body>");
     client.println("<h3>RGB LED STATUS</h3>");
     if(target==0) sprintf(s,"<p>0 (LED OFF R=%d,G=%d,B=%d)</p>",R/100,G/100,B/100);
-    if(target==1) sprintf(s,"<p>1 (LED ON R=%d,G=%d,B=%d)</p>",R/100,G/100,B/100);
-    if(target>1)  sprintf(s,"<p>%d (キャンドル)</p>",target);
-    if(target<0)  sprintf(s,"<p>%d (輝度=%d%%)</p>",target,-target*10);
+    if(target>0)  sprintf(s,"<p>1 (LED ON R=%d,G=%d,B=%d)</p>",R/100,G/100,B/100);
+    if(target<0)  sprintf(s,"<p>%d (輝度=%d%% R=%d,G=%d,B=%d)</p>",target,-target*10,R/100,G/100,B/100);
     client.println(s);
     client.println("<hr>");
     client.println("<h3>HTTP GET</h3>");
