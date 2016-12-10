@@ -108,6 +108,22 @@ void loop(){                                // 繰り返し実行する関数
                 if(postL<=0){               // 受信完了時
                     if(len>2 && strncmp(s,"L=",2)==0){
                         target=atoi(&s[2]); // 変数targetに数字を代入
+                    }else if(len>4 && strncmp(s,"RGB=",4)==0){
+                        target=atoi(&s[4]); // 変数targetにデータ値を代入
+                        pin=3;
+                        break;              // 解析処理の終了
+                    }else if(len>2 && strncmp(s,"R=",2)==0){
+                        target=atoi(&s[2]); // 変数targetにデータ値を代入
+                        pin=PIN_LED_R;
+                        break;              // 解析処理の終了
+                    }else if(len>2 && strncmp(s,"G=",2)==0){
+                        target=atoi(&s[2]); // 変数targetにデータ値を代入
+                        pin=PIN_LED_G;
+                        break;              // 解析処理の終了
+                    }else if(len>2 && strncmp(s,"B=",2)==0){
+                        target=atoi(&s[2]); // 変数targetにデータ値を代入
+                        pin=PIN_LED_B;
+                        break;              // 解析処理の終了
                     }
                     break;                  // 解析処理の終了
                 }
