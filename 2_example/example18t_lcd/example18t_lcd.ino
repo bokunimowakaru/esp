@@ -75,6 +75,7 @@ void loop(){                                // 繰り返し実行する関数
             TIME+=atoi(&s[19]); TIME*=60;
             TIME+=atoi(&s[22]); TIME*=60;
             TIME+=atoi(&s[25]);
+            TIME-=millis()/1000;
         }
         // 012345678901234567890123456
         // timer_1,2016,10,11,18,46,36
