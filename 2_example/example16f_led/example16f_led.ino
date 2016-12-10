@@ -131,7 +131,6 @@ void loop(){                                // 繰り返し実行する関数
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        html(client,target,ledR,ledG,ledB,WiFi.localIP()); // HTMLコンテンツ出力
         t=0;
         if(target==0) t=0;
         if(target==1) t=1023;
@@ -150,16 +149,17 @@ void loop(){                                // 繰り返し実行する関数
         }else{
             switch(pin){
                 case PIN_LED_R:
-                    ledR=ledCtrl(PIN_LED_R,ledR,t,4);
+                    ledR=ledCtrl(PIN_LED_R,ledR,t,1000);
                     break;
                 case PIN_LED_G:
-                    ledG=ledCtrl(PIN_LED_G,ledG,t,4);
+                    ledG=ledCtrl(PIN_LED_G,ledG,t,1000);
                     break;
                 case PIN_LED_B:
-                    ledB=ledCtrl(PIN_LED_B,ledB,t,4);
+                    ledB=ledCtrl(PIN_LED_B,ledB,t,1000);
                     break;
             }
         }
+        html(client,target,ledR,ledG,ledB,WiFi.localIP()); // HTMLコンテンツ出力
     }                                       // 負のときは-100を掛けて出力
     client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
