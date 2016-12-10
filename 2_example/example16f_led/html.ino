@@ -4,7 +4,7 @@ HTMLコンテンツ LEDの輝度制御
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
-void html(WiFiClient &client, int target, uint32_t ip){
+void html(WiFiClient &client, int target, int R, int G, int B, uint32_t ip){
     char s[65],s_ip[16];
     
     sprintf(s_ip,"%i.%i.%i.%i",
@@ -23,8 +23,8 @@ void html(WiFiClient &client, int target, uint32_t ip){
     client.println("</head>");
     client.println("<body>");
     client.println("<h3>RGB LED STATUS</h3>");
-    if(target==0) sprintf(s,"<p>0 (LED OFF)</p>");
-    if(target==1) sprintf(s,"<p>1 (LED ON)</p>");
+    if(target==0) sprintf(s,"<p>0 (LED OFF R=%d,G=%d,B=%d)</p>",R/100,G/100,B/100);
+    if(target==1) sprintf(s,"<p>1 (LED ON R=%d,G=%d,B=%d)</p>",R/100,G/100,B/100);
     if(target>1)  sprintf(s,"<p>%d (キャンドル)</p>",target);
     if(target<0)  sprintf(s,"<p>%d (輝度=%d%%)</p>",target,-target*10);
     client.println(s);

@@ -108,22 +108,19 @@ void loop(){                                // 繰り返し実行する関数
                 if(postL<=0){               // 受信完了時
                     if(len>2 && strncmp(s,"L=",2)==0){
                         target=atoi(&s[2]); // 変数targetに数字を代入
+                        pin=0;
                     }else if(len>4 && strncmp(s,"RGB=",4)==0){
                         target=atoi(&s[4]); // 変数targetにデータ値を代入
                         pin=3;
-                        break;              // 解析処理の終了
                     }else if(len>2 && strncmp(s,"R=",2)==0){
                         target=atoi(&s[2]); // 変数targetにデータ値を代入
                         pin=PIN_LED_R;
-                        break;              // 解析処理の終了
                     }else if(len>2 && strncmp(s,"G=",2)==0){
                         target=atoi(&s[2]); // 変数targetにデータ値を代入
                         pin=PIN_LED_G;
-                        break;              // 解析処理の終了
                     }else if(len>2 && strncmp(s,"B=",2)==0){
                         target=atoi(&s[2]); // 変数targetにデータ値を代入
                         pin=PIN_LED_B;
-                        break;              // 解析処理の終了
                     }
                     break;                  // 解析処理の終了
                 }
@@ -134,7 +131,7 @@ void loop(){                                // 繰り返し実行する関数
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        html(client,target,WiFi.localIP()); // HTMLコンテンツを出力する
+        html(client,target,ledR,ledG,ledB,WiFi.localIP()); // HTMLコンテンツ出力
         t=0;
         if(target==0) t=0;
         if(target==1) t=1023;
