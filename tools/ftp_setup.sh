@@ -8,4 +8,8 @@
 
 echo "vsftpdをインストールします"
 sudo apt-get install vsftpd
+sudo service vsftpd stop
+cat /etc/vsftpd.conf|sed -e "s/#write_enable=YES/write_enable=YES/g" > vsftpd.tmp
+sudo mv -b vsftpd.tmp /etc/vsftpd.conf
+sudo chown root:root /etc/vsftpd.conf
 sudo service vsftpd start
