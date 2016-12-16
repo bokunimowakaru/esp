@@ -1,5 +1,6 @@
 /*******************************************************************************
-Example 15: 監視カメラ for SeeedStudio Grove Serial Camera Kit [FTP送信機能付き]
+Example 15: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
+ [FTP送信機能付き]
 
 ※本スケッチ内define部のFTP_TO、FTP_USER、FTP_PASS、FTP_DIRを設定して下さい。
 
@@ -45,6 +46,9 @@ int size=0;                                 // 画像データの大きさ(バ�
 unsigned long TIME;                         // 写真公開時刻(起動後の経過時間)
 
 void setup(){ 
+    byte data[32];                          // 画像転送用の一時保存変数
+    int len,i,j;                            // 文字列等の長さカウント用の変数
+
     lcdSetup(8,2);                          // 液晶の初期化(8桁×2行)
     pinMode(PIN_CAM,OUTPUT);                // FETを接続したポートを出力に
     digitalWrite(PIN_CAM,LOW);              // FETをLOW(ON)にする
@@ -57,10 +61,9 @@ void setup(){
     Dir dir = SPIFFS.openDir("/");          // ファイルシステムの確認
     if(dir.next()==0) SPIFFS.format();      // ディレクトリが無い時に初期化
     delay(100);                             // カメラの起動待ち
-    softwareSerial.begin(115200);           // カメラとのシリアル通信を開始する
+    softwareSerial.begin(38400);            // カメラとのシリアル通信を開始する
     lcdPrint("Cam Init");                   // 「Cam Init」を液晶に表示
-    CamInitialize();                        // カメラの初期化コマンド
-    CamSizeCmd(1);                          // 撮影サイズをQVGAに設定(0でVGA)
+    CamSendResetCmd();                      // カメラへリセット命令を送信する
     delay(4000);                            // 完了待ち(開始直後の撮影防止対策)
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
@@ -69,8 +72,18 @@ void setup(){
     file = SPIFFS.open(FILENAME,"w");       // 保存のためにファイルを開く
     if(file==0) sleep();                    // ファイルを開けれなければ戻る
     lcdPrint("Cam Capt");                   // 「Cam Capt」を液晶に表示
-    CamCapture();                           // カメラで写真を撮影する
-    size=CamGetData(file);                  // 撮影した画像をファイルに保存
+    CamSendTakePhotoCmd();                  // カメラで写真を撮影する
+    size=CamReadFileSize();                 // ファイルサイズを読み取る
+    j=0;                                    // 変数j(総受信長)を0に設定
+    while(j<size){                          // 終了フラグが0の時に繰り返す
+        len = CamRead(data);                // カメラからデータを取得
+        j += len;                           // データサイズの合算
+        for(i=0;i<len;i++) file.write((byte)data[i]);   // データ保存
+    }
+    CamStopTakePhotoCmd();                  // 撮影の終了(静止画の破棄)の実行
+    CamReadADR0();                          // 読み出しアドレスのリセット
+    CamSizeCmd(1);                          // 次回のJPEGサイズをQVGAに(0=VGA)
+    CamSendResetCmd();                      // カメラへリセット命令を送信する
     file.close();                           // ファイルを閉じる
     lcdPrint("FTP send");                   // 「FTP send」を液晶に表示
     byte ret=doFTP(FILENAME);               // FTPで送信する＜追加＞
@@ -90,8 +103,11 @@ void setup(){
     udp.print(WiFi.localIP());              // 本機のIPアドレスを送信
     udp.println(FILENAME);                  // ファイル名を送信
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
-    TIME=millis()+TIMEOUT;                  // 終了時刻を保存(現時刻＋TIMEOUT)
+    Serial.print("http://");                // デバイス名を送信
+    Serial.print(WiFi.localIP());           // 本機のIPアドレスを送信
+    Serial.println(FILENAME);               // ファイル名を送信
     lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスを液晶に表示
+    TIME=millis()+TIMEOUT;                  // 終了時刻を保存(現時刻＋TIMEOUT)
 }
 
 void loop(){
