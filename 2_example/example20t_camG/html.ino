@@ -30,6 +30,8 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
         client.println(F("/\">"));
     }
     client.println(F("</head>"));
+    if(client.available())return;
+    if(!client.connected())return;
     client.println(F("<body>"));
     client.println(F("<h3>防犯カメラ STATUS</h3>"));
     for(i=(PICT_NUM-1);i>=0;i--){
@@ -38,9 +40,10 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
         }else sprintf(s,"<img width=160 height=120 src=\"cam000.jpg\"> ");
         client.println(s);
         if( i%3==(PICT_NUM%3) ) client.println(F("<br><br>"));
-        while(client.available())return;
-        if(!client.connected())return;
     }
+    delay(10);
+    if(client.available())return;
+    if(!client.connected())return;
     if(PICT_NUM%3) client.println(F("<br><br>"));
     client.print(F("画像サイズ = 約 "));
     client.print(size/1000);
@@ -57,6 +60,9 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
     else sprintf(s,"/cam000.jpg");
     client.print(s);
     client.println(F("</p>"));
+    delay(10);
+    if(client.available())return;
+    if(!client.connected())return;
     sprintf(s,"<form method=\"GET\" action=\"http://%s/\">",s_ip);
     client.println(s);
     client.println(F("<input type=\"submit\" value=\"画面の更新\">"));
