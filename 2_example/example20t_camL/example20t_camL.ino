@@ -91,7 +91,7 @@ void loop() {
             lcdPrint("Done Cap");           // 「Done Cap」を液晶に表示
             Serial.print(size);             // ファイルサイズをシリアル出力表示
             Serial.println(" Bytes");       // シリアル出力表示
-            photo_n++; if(photo_n>999) photo_n=0;
+            photo_n++; if(photo_n>199) photo_n=0;
         }else Serial.println("File open ERROR");
         shot_time=millis()/1000ul+(unsigned long)update; // 次回の撮影時刻を設定
         return;
