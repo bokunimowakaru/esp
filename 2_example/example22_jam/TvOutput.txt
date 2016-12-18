@@ -11,6 +11,7 @@ rem http://www.geocities.jp/bokunimowakaru/q/15/
 200 'LOOP
 210 I=inkey()
 220 ifI=10andX+Ygosub950:goto100
+225 ifI=13andX+Ygosub950:goto100
 230 ifI<=32orI=39orY>1goto200
 240 poke #900+X+Y*32,I
 250 X=X+1:ifX>7letX,0:Y=Y+1
