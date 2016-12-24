@@ -199,6 +199,7 @@ void CamBaudRateCmd(int in){
 }
 
 void CamSizeCmd(int in){
+    CamSizeCmd2(in);
     softwareSerial.write((byte)0x56);
     softwareSerial.write((byte)0x00);
     softwareSerial.write((byte)0x31);

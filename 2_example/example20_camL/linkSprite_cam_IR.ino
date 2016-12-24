@@ -199,6 +199,7 @@ void CamBaudRateCmd(int in){
 }
 
 void CamSizeCmd(int in){
+    CamSizeCmd2(in);
     softwareSerial.write((byte)0x56);
     softwareSerial.write((byte)0x00);
     softwareSerial.write((byte)0x31);
@@ -207,6 +208,22 @@ void CamSizeCmd(int in){
     softwareSerial.write((byte)0x01);
     softwareSerial.write((byte)0x00);
     softwareSerial.write((byte)0x19);
+    if(in==0){          // 640 x 480
+        softwareSerial.write((byte)0x00);
+    }else if(in==2){    // 160 x 120
+        softwareSerial.write((byte)0x22);
+    }else{              // 320 x 240
+        softwareSerial.write((byte)0x11);
+    }
+    delay(25);
+    while(softwareSerial.available()>0) softwareSerial.read();
+}
+
+void CamSizeCmd2(int in){ // リセット不要（ただし、毎回の設定が必要）
+    softwareSerial.write((byte)0x56);
+    softwareSerial.write((byte)0x00);
+    softwareSerial.write((byte)0x54);
+    softwareSerial.write((byte)0x01);
     if(in==0){          // 640 x 480
         softwareSerial.write((byte)0x00);
     }else if(in==2){    // 160 x 120
