@@ -27,7 +27,7 @@
 #define PIN_SW 0                            // IO 0 にスイッチを接続
 #define AmbientChannelId 725                // チャネルID(整数)
 #define AmbientWriteKey "ad3e53b54fe16764"  // ライトキー(16桁の16進数)
-#define HOST "54.65.206.59"                 // 
+#define HOST "54.65.206.59"                 // AmbientのIPアドレス(変更しない)
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 
@@ -41,33 +41,29 @@ void setup(){                               // 起動時に一度だけ実行す
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
-        Serial.print('.');
-    }Serial.println();
+        Serial.print('.');                  // 「.」をシリアル出力表示
+    }Serial.println();                      // 改行をシリアル出力表示
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
 }
 
 void loop(){                                // 繰り返し実行する関数
-    WiFiClient client;
-    unsigned long t0,t1;
+    WiFiClient client;                      // 開発中のWiFiClientを使用してみる
+    unsigned long t0,t1;                    // ボタン押下・解放時刻を保持
     char s[64],data[64],http[384];
 
     while(digitalRead(PIN_SW));             // Hレベル(スイッチ解放)時に繰り返し
-    t0=millis();
+    t0=millis();                            // 1回目のボタン押し時刻を保持
     while(!digitalRead(PIN_SW));            // ボタンが開放されるまで待つ
-    digitalWrite(PIN_LED,HIGH);
+    digitalWrite(PIN_LED,HIGH);             // LEDを点灯
     delay(8);                               // 8msの待ち時間処理を実行
     while(digitalRead(PIN_SW));             // Hレベル(スイッチ解放)時に繰り返し
-    t1=millis();
-    delay(100);
-    while(!digitalRead(PIN_SW));            // チャタリング防止措置
-    dtostrf(1000.L/(double)(t1-t0),5,2,s);
+    t1=millis();                            // 2回目のボタン押し時刻を保持
+    delay(100);                             // チャタリング防止措置
+    while(!digitalRead(PIN_SW));            // 意図しない繰り返し処理の防止
+    dtostrf(1000.L/(double)(t1-t0),5,2,s);  // 以下、送信データ作成
     sprintf(data,"{\"writeKey\":\"%s\",\"d1\":\"%s\"}",AmbientWriteKey,s);
     Serial.print(s);
     Serial.println(" Hz");
-    if(!client.connect(HOST,80)){
-        Serial.println("connection failed");
-        return;
-    }
     sprintf(http,"POST /api/v2/channels/%d/data HTTP/1.0\r\n",AmbientChannelId);
     sprintf(s,"Host: %s\r\n",HOST);
     strcat(http,s);
@@ -76,8 +72,12 @@ void loop(){                                // 繰り返し実行する関数
     strcat(http,"Content-Type: application/json\r\n");
     strcat(http,"\r\n");
     strcat(http,data);
-    client.print(http);
-    delay(30);
+    if(!client.connect(HOST,80)){           // AmbientへTCP接続を実行
+        Serial.println("connection failed");    // 接続失敗表示
+        return;                                 // loop関数の先頭へ戻る
+    }
+    client.print(http);                     // TCPによるデータ送信
+    delay(30);                              // 送信完了待ち
     client.stop();                          // クライアントの切断
-    digitalWrite(PIN_LED,LOW);
+    digitalWrite(PIN_LED,LOW);              // LEDの消灯
 }
