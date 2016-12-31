@@ -10,7 +10,7 @@ new
 8 ' CC BY Wataru Kunino
 rem http://www.geocities.jp/bokunimowakaru/cq/15
 100 'MAIN
-110 P=#C13
+110 P=#C1A
 120 A=ana(2):?"ana(2)=";A
 130 gosub600:gosub600:gosub600:gosub600
 200 'SLEEP

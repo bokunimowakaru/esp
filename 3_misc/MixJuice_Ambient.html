@@ -1,0 +1,290 @@
+<HTML LANG="ja">
+<head>
+<META NAME="Content-Type" content="text/html">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=UTF-8">
+<title>
+IchigoJam + MixJuiceで製作するIoTセンサ
+</title>
+</head>
+
+<body><center>
+
+<table width="800">
+<tr>
+<td itemprop="articleBody" class="entryTd">
+<div class="rte clearFix">
+
+<h1>IchigoJam + MixJuiceで製作するIoTセンサ</h1>
+<div>
+　IchigoJamは、株式会社jig.jpが開発した教育用パソコンとして使用可能なマイコンボードです。マイコンにはNXP社のLPC1114が用いられ、jig.jp社が独自開発した IchigoJam BASIC によるプログラミングが可能です。ここでは、IchigoJam専用のワイヤレス拡張シールドMixJuice(開発元＝NaturalStyle社、販売＝PCN社)との組み合わせで、センサ情報を送信する実験をしてみましょう。</div>
+<div><br></div>
+<div>照度センサNJL7502Lのコレクタ(アノード)側をVcc(3.3V)へ、エミッタ(カソード)側をIchigoJamのIN2端子へ接続します。また、IN2端子とGNDとの間に10kΩ～100kΩ程度の抵抗器を接続します。</div>
+<div>MixJuiceの基板上にもIchigoJamと同じコネクタが出ているので、写真のように実装すると良いでしょう。</div>
+<div><br></div>
+
+<blockquote class="quote2"><div><div align="center"><img src="MixJuice_Ambient/img_5_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 6" width="560" height="400" class="popup_img_600_429"/></div>
+IchigoJamへワイヤレス拡張シールドMixJuiceを装着し、ミニブレッドボード(55穴または25穴)上に照度センサを接続したときの様子。使用したミニブレッドボード内では、写真の左右方向に配線されている。</div></blockquote>
+
+<blockquote class="quote2"><div><div align="center"><img src="MixJuice_Ambient/img_4_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 1" width="560" height="420" class="popup_img_600_450"/></div>
+<div>ボクが作った基板「IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)のPersonal Computer基板」へ、IchigoJam用ワイヤレスシールド「MixJuice」を接続し、照度センサを接続したときの様子。</div>
+<div><a href="http://www.geocities.jp/bokunimowakaru/diy/ichigojam/pcb.html" target="_blank">http://www.geocities.jp/bokunimowakaru/diy/ichigojam/pcb.html</a></div>
+<div><font color="#8b8b8b">(参考情報)　Personal Computer基板の5V電源回路にはMixJuiceをドライブする十分な能力がある。しかし、IchigoJam Uから実装されるようになったCN5が実装されていない。そこで、5V用の電源線を Personal Computer基板上 のArduino互換の拡張IO(CN9)を使用する(写真右側の赤色ジャンパ線)。</font></div>
+</div></blockquote>
+<div><br></div>
+
+<h3>IoTセンサ用クラウドサービスAmibient</h3>
+<div>AmbientはIoTセンサのセンサ値をグラフ化して表示するクラウドサービスです。下記のページにアクセスして、ユーザ登録を行い、チャンネルを作成すると、&#9312;チャネルID、&#9313;リードキー、&#9314;ライトキーが発行されます。このうちの&#9312;チャネルIDと&#9314;ライトキーをIchigoJam上で作成するプログラムに組み込むことで、IchigoJamからAmbientへデータ送信が行えるようになります。</div>
+<blockquote class="quote3"><div>Ambient：</div>
+<div><a href="https://ambidata.io/" target="_blank">https://ambidata.io/</a></div>
+<div><br></div>
+<div><div align="center"><img src="MixJuice_Ambient/img_1_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 4" width="400" height="467" class="popup_img_400_467"/></div>
+</div>
+</blockquote>
+<div><br></div>
+
+<h3>IchigoJam BASIC用サンプルプログラム(1)実験用:約30秒ごとに送信</h3>
+<div>実際に動かす前に、まずはBASICのサンプルプログラムから紹介します。このサンプルプログラム(1)は、約30秒おきにIN2端子に接続した照度センサの値をAmbientへ送信します。</div>
+<div>ただし、行番号2のMJ PCTコマンドは<font color="#ff0000"><strong>MixJuiceのファームウェアのVersion 1.2</strong></font>からサポートされた命令です。古いファームウェアでは動作しません(次節に詳細)。</div>
+<div>IchigoJamのファームウェアにはバージョン1.1.1以上を使用してください。行番号2～5には、MixJuiceへ送信するコマンドが書かれていますが、赤文字の部分を修正する必要があります。行番号3の部分にはAmbientから発行された&#9312;チャネルIDを、行番号4には&#9314;ライトキーを書いてください。</div>
+<blockquote class="quote3"><div><strong>サンプルプログラム(1)実験用:約30秒ごとに送信</strong></div><br><div>new<br>
+1 cls:?&quot;Ambient&quot;:uart1<br>
+2 &#39;MJ PCT application/json<br>
+3 &#39;MJ POST START ambidata.io/api/v2/channels/<em><font color="#ff0000">ここにチャネルIDを書く</font></em>/data<br>
+4 &#39;{&quot;writeKey&quot;:&quot;<font color="#ff0000"><em>ここにライトキーを書く</em></font>&quot;,&quot;d1&quot;:&quot;#&quot;}<br>
+5 &#39;MJ POST END<br>
+rem http://www.geocities.jp/bokunimowakaru/cq/15<br>
+100 &#39;MAIN<br>
+110 P=#C1A<br>
+120 A=ana(2):?&quot;ana(2)=&quot;;A<br>
+130 gosub600:gosub600:gosub600:gosub600<br>
+140 wait 1800<br>
+150 goto 100<br>
+600 &#39;TX<br>
+610 ifpeek(P)&lt;&gt;asc(&quot;&#39;&quot;)letP,P+1:goto610<br>
+620 P=P+1:ifpeek(P)=asc(&quot;#&quot;)?A;:goto620<br>
+630 ifpeek(P)&lt;&gt;0?chr$(peek(P));:goto620<br>
+640 ?:return<br></div>
+<div><br></div>
+<div>行番号110：行番号2～5に書かれたコマンドの位置を示すための変数Pを定義。初期値として行番号2のコマンド位置を代入する。MixJuiceへコマンド文字を1文字づつ送るにつれて、行番号620で変数Pの値を1だけ増加させる。</div>
+<div>行番号120：IN2のアナログ値を入力するコマンド。</div>
+<div>行番号130：行番号2～4のMixJuice用コマンドを実行するためのgosub命令。</div>
+<div>行番号140：30秒間の待ち時間処理。30秒×60=1800を設定。</div>
+<div>行番号150：行番号100へ戻る。</div></blockquote>
+<div><br></div>
+
+<h3>プログラム(1)の実験に必要なもの</h3>
+<ul><li>IchigoJam U または IchigoJam T (<a href="http://ichigojam.net/" target="_blank">http://ichigojam.net/</a>)</li>
+<li>MixJuice (<a href="http://mixjuice.shizentai.jp/" target="_blank">http://mixjuice.shizentai.jp/</a>)</li>
+<li>55穴または25穴ミニ・ブレッドボード</li>
+<li>照度センサ NJL7502L</li>
+<li>抵抗器 10kΩ</li>
+<li>ジャンパ線 橙2本、青1本</li>
+<li>MixJuiceファーム書き換え用の部材</li>
+<ul><li>USBシリアル変換アダプタ</li>
+<li>ジャンパ線 赤2本</li>
+<li>ジャンパワイヤ 4本、その他</li></ul>
+</ul><div><br></div>
+
+<h3>MixJuice用ファームウェアのバージョンアップ</h3>
+<div>この実験にはMixJuiceのファームウェアVer 1.2以上が必要です。MixJuiceのファームウェアのバージョンをIchigoJamから確認するには、MixJuiceをIchigoJamへ取り付けた状態で、以下のコマンドを入力します。</div>
+<blockquote class="quote3"><div>?&quot;MJ VER</div></blockquote>
+<div>MixJuiceのファームウェアは下記からダウンロードすることができます。PCN社から販売されている純正のMixJuiceだけでなく、市販のワイヤレスモジュールESP-WROOM-02へ書き込むことも可能です。ただし無断で配布することはできません。</div>
+<blockquote class="quote3"><div>MixJuice：</div>
+<div><a href="http://mixjuice.shizentai.jp/" target="_blank">http://mixjuice.shizentai.jp/</a></div></blockquote>
+<div>書き換えにはUSBシリアル変換アダプタと、ファームウェアを書き換ツールが必要です。書き込みツールはESPモジュールの開発元のEspressifからダウンロードすることができます。ESP8266 Flash Download Tools v2.3または2.4、V3.3.6などを使用してください（バージョンによってはMixJuiceに対応していない）。</div>
+<blockquote class="quote3"><div>Espressifダウンロードページ：<br>
+<a href="https://espressif.com/en/support/download/overview?keys=&amp;field_type_tid%5B%5D=16" target="_blank">https://espressif.com/en/support/download/overview?keys=&amp;field_type_tid%5B%5D=16</a></div></blockquote>
+<div>ファームウェア書き換え時は、MixJuiceをIchigoJamへ<strong><u>接続しないでください</u></strong>。MixJuiceのIO 0(CN4の一番奥)をGNDに接続し、USBシリアル変換アダプタを接続します。MixJuiceの電源を入れると、ファームウェア書き換えモードで起動し、LED 1が薄く点灯します。</div>
+<div><br></div>
+
+<div><div align="center"><img src="MixJuice_Ambient/img_6_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 3" width="560" height="327"></div>
+</div>
+<div><div align="center"><img src="MixJuice_Ambient/img_8_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 5" width="560" height="373"></div>
+</div>
+<div><br></div>
+<div>ESP8266 Flash Download Toolsを起動するとコンソール画面(CLI画面)と以下のようなGUI画面が開きます。一番上のボックスへファイル「mixjuice.bin」を入力し、書き込みます。</font></div>
+<div><br></div>
+<div><div align="center"><img src="MixJuice_Ambient/img_7_m.png" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 2"></div>
+</div>
+<div><br></div>
+<div>書き込みが完了したら、USBシリアル変換アダプタやIO0に接続したジャンパ線などを取り外してください。</div>
+<div><br></div>
+
+<h3>プログラムの実行方法</h3>
+<div>それでは、MixJuiceをIchigoJamへ取り付けて動かしてみましょう。MixJuiceとIchigoJamの電源はマイクロUSB端子から供給します。両方のマイクロUSB端子に電源を供給する方法のほか、MixJuiceのマイクロUSB端子から供給した電源を、IchigoJamのCN5へ供給することも可能です。</div>
+<div>プログラムを動かす前に、MixJuiceをインターネットにWi-Fi経由で接続する必要があります。Wi-Fi接続するには、下記のコマンドをIchigoJamから入力してください(SSIDとPASSはお手持ちの無線LANアクセスポイントに書かれた内容を使用してください)。</div>
+<blockquote class="quote3"><div>?&quot;MJ APC <font color="#ff0000"><em>SSID PASS</em></font></div></blockquote>
+<div><br></div>
+<div>接続が完了したら、プログラムを入力(または転送)し、IchigoJam上でRUNコマンドを実行すると、以下のようなメッセージが表示されるとともに、Ambientへ照度センサの値を送信します。</div>
+<blockquote class="quote3"><div><font color="#ff0000"><strong>RUN</strong></font><br>
+ana(2)=1023<br>
+&#39;MJ PCT application/json<br>
+&#39;MJ POST START ambidata.io/api/v2/channels/688/data/<br>
+&#39;{&quot;writeKey&quot;:&quot;0123456789abcdef&quot;,&quot;d1&quot;:&quot;#&quot;}<br>
+&#39;MJ POST END</div></blockquote>
+<div>IchigoJamを使ったIoTセンサをクラウドサービスAmbientへ送信する方法について説明しましたが、電源にはUSBアダプタを使用しました。次は乾電池を使った実験です。<br>
+<div><br></div>
+
+</div></td></tr>
+
+<tr><td><hr></td></tr><!----------------------------章区切り------------------------------------------>
+
+<tr>
+<td itemprop="articleBody" class="entryTd">
+<div class="rte clearFix">
+
+<h1>単3アルカリ電池を使用して長期間駆動</h1>
+<div>今度は電源に単3アルカリ電池3本を使用して長期間の駆動が可能なIoTセンサを製作してみましょう。プログラム(1)が動作中の消費電流はおよそ90mAです。2000mAhの単3電池だと22時間ほどしか動作しません。そこで、送信頻度を下げ、送信していない期間中はスリープにして、電池を長持ちさせます(2か月程度の動作が可能になる)。</div>
+<div><br></div>
+<div><div align="center"><img src="MixJuice_Ambient/img_0_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 1" width="560" height="420" class="popup_img_600_450"/></div>
+<div></div>
+<blockquote class="quote2">単3アルカリ電池で長時間の駆動が可能な IchigoJam + MixJuiceによるIoTセンサの製作例。IchigoJamとMixJuiceのスリープ機能を使用して実用的なIoTセンサの実験を行った。</blockquote></div>
+<div><br></div>
+
+<h3>乾電池駆動を実現するための工夫</h3>
+<div>単3アルカリ乾電池で長期間の駆動を実現するには、動作時間をなるべく短くし、何もしていない時間を増やすことで平均の消費電力を抑えます。動作中の90mAに対し、何もしていない待機中の消費電流は1mAほどまで下がります。例えば60分に一度だけ送信し、残り時間は待機するような動作を行えば、何か月も動かし続けることができるようになります。</div>
+<div>今回の実験では、このような乾電池駆動を実現するためのポイントについて説明します。このままでも1～2か月程度は動作することを確認済みです。3か月以上動かし続けるにはMixJuiceの電源回路を改造したり、スリープ時間をより長くするような改造が必要です。うまく制御すれば半年以上、持たせることも出来るでしょう。</div>
+<div><br></div>
+
+<h3>プログラム(2)と(3)の実験に必要なもの</h3>
+<ul><li>IchigoJam U または IchigoJam T (<a href="http://ichigojam.net/" target="_blank">http://ichigojam.net/</a>)</li>
+<li>MixJuice (<a href="http://mixjuice.shizentai.jp/" target="_blank">http://mixjuice.shizentai.jp/</a>)</li>
+<li>55穴または25穴ミニ・ブレッドボード</li>
+<li>照度センサ NJL7502L</li>
+<li>抵抗器 10kΩ</li>
+<li>ジャンパ線 橙2本、黄1本、青1本</li>
+<li>電池ボックス・ジャンパワイヤ</li></ul>
+<div><br></div>
+
+<h3>ハードウェアの変更</h3>
+<div>プログラム(1)の実験で製作したハードウェアの電源を乾電池(直列3本)に変更します。下図右側の5ピンソケット(CN5)の一番上が電池の＋(プラス)側です。一番下が電池の－(マイナス)側です。</div>
+<div>また、MixJuiceのスリープ機能を使用するために、ジャンパ線(黄色)を使って、MixJuice基板上のCN4の2番ピンと6番ピンを接続してください。</div>
+<div><br></div>
+<div><div align="center"><img src="MixJuice_Ambient/img_2_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 3" width="560" height="420" class="popup_img_600_450"/></div>
+<div></div>
+<blockquote class="quote2">電源には単3電池3本を使用し、CN5へ接続する。また、MixJuiceのCN4の2番ピンと4番ピンに黄色のジャンパを接続する。照度センサNJL7502Lのコレクタ(アノード)はVcc(3.3V)へ、エミッタ(カソード)はIN2端子へ接続。IN2端子とGNDとの間には10kΩ～100kΩ程度の抵抗器を接続。</blockquote></div>
+<div><br></div>
+<div>もちろん、CQ出版社「IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)」で製作したPersonal Computer基板や Micro Computer基板でも動作します</div>
+<div><br></div>
+
+<h3>IchigoJam BASIC用サンプルプログラム(2)乾電池駆動:約1分毎に起動</h3>
+<div>約1分毎に送信を行い、送信後にスリープへ移行するサンプル・プログラムを以下に示します。行番号3と4には、Ambientから発行された&#9312;チャネルIDと&#9314;ライトキーを書いてください。<br>
+実行すると、約1分おきにIN2端子に接続した照度センサの値をAmbientへ送信します。行番号7のWの値を600くらいにしてスリープ時間を10秒くらいにしてみると分かりやすいでしょう。</div>
+
+<blockquote class="quote3"><div><strong>サンプルプログラム(2)乾電池駆動:約1分毎に起動</strong></div><br><div>new<br>
+1 cls:?&quot;Ambient&quot;:uart1<br>
+2 &#39;MJ PCT application/json<br>
+3 &#39;MJ POST START ambidata.io/api/v2/channels/<font color="#ff0000"><em>ここにチャネルIDを書く</em></font>/data<br>
+4 &#39;{&quot;writeKey&quot;:&quot;<font color="#ff0000"><em>ここにライトキーを書く</em></font>&quot;,&quot;d1&quot;:&quot;#&quot;}<br>
+5 &#39;MJ POST END<br>
+6 ?&quot;ｱﾅﾛｸﾞ ﾆｭｳﾘｮｸ A=IN2<br>
+7 <strong><font color="#ff0000">W=3000:?&quot;ｿｸﾃｲ ｶﾝｶｸ W=&quot;;W</font></strong><br>
+8 &#39; CC BY Wataru Kunino<br>
+rem http://www.geocities.jp/bokunimowakaru/cq/15<br>
+100 &#39;MAIN<br>
+110 P=#C1A<br>
+120 A=ana(2):?&quot;ana(2)=&quot;;A<br>
+130 gosub600:gosub600:gosub600:gosub600<br>
+200 <strong><font color="#ff0000">&#39;SLEEP</font></strong><br>
+210 <strong><font color="#ff0000">?&quot;MJ SLEEP &quot;;W/60:wait30</font></strong><br>
+220 <strong><font color="#ff0000">ifinkey()goto220</font></strong><br>
+230 <strong><font color="#ff0000">led0:waitW+360,0:led1</font></strong><br>
+240 <strong><font color="#ff0000">ifinkey()goto240</font></strong><br>
+250 <strong><font color="#ff0000">?&quot;MJ APS&quot;:wait30</font></strong><br>
+260 <strong><font color="#ff0000">ifinkey()&lt;&gt;asc(&quot;1&quot;)goto250</font></strong><br>
+270 <strong><font color="#ff0000">goto100</font></strong><br>
+600 &#39;TX<br>
+610 ifpeek(P)&lt;&gt;asc(&quot;&#39;&quot;)letP,P+1:goto610<br>
+620 P=P+1:ifpeek(P)=asc(&quot;#&quot;)?A;:goto620<br>
+630 ifpeek(P)&lt;&gt;0?chr$(peek(P));:goto620<br>
+640 ?:return</div>
+<div><br></div>
+<div>行番号210：MixJuiceをスリープモードに移行する。<br>
+行番号220：キーバッファをクリアする(wait命令が適切に動かすため)。<br>
+行番号230：IchigoJamをスリープする(MixJuiceよりも6秒だけ長く)。<br>
+行番号240：キーバッファをクリアする。<br>
+行番号250：MixJuiceが動作状態かどうかを確認する。<br>
+行番号260：動作状態でなければ行番号250に戻る。<br>
+行番号270：行番号100に戻って繰り返し処理を行う。</div></blockquote>
+<div><br></div>
+
+<h3>より電池を長持ちさせる方法</h3>
+<div>より電池寿命を延ばすには、スリープ時間を長くします。ここではスリープ時間を20分にしてみました。MixJuice側は最大約60分まで設定することが出来ます。一方、IchigoJam側のwaitコマンドは最大9分までしか指定できません。そこで、複数回に分けて実行する必要があります。ここではIchigoJamを1秒ごとに起動し、MixJuiceが動作していなければ、すぐにスリープするようにしました。<br>
+プログラムの行番号7の変数Wに測定間隔を「分」の単位で入力してください。行番号8で「秒」に変換して処理を行います。</div>
+<blockquote class="quote3"><div><strong>サンプルプログラム(3)乾電池駆動:約20分毎に起動</strong></div><br>
+<div>new<br>
+1 cls:?&quot;Ambient&quot;:uart1<br>
+2 &#39;MJ PCT application/json<br>
+3 &#39;MJ POST START ambidata.io/api/v2/channels/<font color="#ff0000"><em>ここにチャネルIDを書く</em></font>/data<br>
+4 &#39;{&quot;writeKey&quot;:&quot;<font color="#ff0000"><em>ここにライトキーを書く</em></font>&quot;,&quot;d1&quot;:&quot;#&quot;}<br>
+5 &#39;MJ POST END<br>
+6 ?&quot;ｱﾅﾛｸﾞ ﾆｭｳﾘｮｸ A=IN2<br>
+<font color="#ff0000"><strong>7 W=20:?&quot;ｿｸﾃｲ ｶﾝｶｸ W=&quot;;W;&quot; min.&quot;</strong></font><br>
+<strong><font color="#ff0000">8&nbsp;V=W*60/63*60:video0:uart1</font></strong><br>
+9 &#39; CC BY Wataru Kunino<br>
+rem http://www.geocities.jp/bokunimowakaru/cq/15<br>
+100 &#39;MAIN<br>
+110 P=#C1A<br>
+<strong><font color="#ff0000">120 A=0:forI=1to10:A=A+ana(2):next:?&quot;ana(2)=&quot;;A</font></strong><br>
+130 gosub600:gosub600:gosub600:gosub600</div>
+<div>200 &#39;MJ SLP<br>
+210 ifinkey()goto210<br>
+220 ?&quot;MJ SLEEP &quot;;<strong><font color="#ff0000">W*60</font></strong>:wait30:<font color="#ff0000"><strong>I=0</strong></font><br>
+230 ifinkey()goto230<br>
+<font color="#ff0000">240 ?&quot;MJ VER&quot;:wait30<br>
+250 ifinkey()=asc(&quot;&#39;&quot;)goto200</font><br>
+300 &#39;15 SLP<br>
+310 ifinkey()goto310<br>
+320 led0:wait<strong><font color="#ff0000">57</font></strong>,0:led1:<strong><font color="#ff0000">I=I+1</font></strong><br>
+<strong><font color="#ff0000">330 ifI&lt;Vgoto310</font></strong><br>
+340 ifinkey()goto340<br>
+350 ?&quot;MJ APS&quot;:wait<strong><font color="#ff0000">33</font></strong><br>
+360 ifinkey()&lt;&gt;asc(&quot;1&quot;)goto300<br>
+370 goto100<br>
+600 &#39;TX<br>
+610 ifpeek(P)&lt;&gt;asc(&quot;&#39;&quot;)letP,P+1:goto610<br>
+620 P=P+1:ifpeek(P)=asc(&quot;#&quot;)?A;:goto620<br>
+630 ifpeek(P)&lt;&gt;0?chr$(peek(P));:goto620<br>
+640 ?:return</div>
+<div><br></div>
+<div>主な修正部の解説：</div>
+<div>行番号7：測定間隔を「分」の単位で入力するように修正(1分から60分)まで設定可能。</div>
+<div>行番号8：IchigoJamのスリープ時間Vを設定。MixJuiceよりも5%だけ短くする。TV出力OFF。</div>
+<div>行番号120：IN2端子から10回入力。変数Aは、その合計値。</div>
+<div>行番号220：MixJuiceをスリープに移行する。変数Iを0にセットする。</div>
+<div>行番号300：ここからがIchigoJamのスリープ処理。</div>
+<div>行番号320：約1秒間だけIchigoJamのスリープを実行する。変数Iに1(秒)を加算する。</div>
+<div>行番号330：変数Iのスリープ時間が、V(秒)以上になるまで行番号310に戻る。</div>
+<div>行番号350：ネットワークに接続されているかどうかを確認する。</div>
+</blockquote>
+<div>さらに電池寿命を延ばすには、送信間隔やIchigoJamの待機間隔を長くします。低消費電力のレギュレータへ交換します。レギュレータによってはスタンバイ電流が0.1mA以下のものもあり、待機電力を大幅に削減することができるでしょう。</div>
+<div><br></div>
+
+<h3>単4電池による実証実験で27日間(単3に換算して54日間)の動作を確認済み</h3>
+<div>上記のプログラム(3)を用いて実証を行ってみました。単3電池と比べて容量が約半分の単4電池を使うことで、実験期間の短縮を行っています。<br>
+2016年12月4日に開始し、31日までの27日間の動作が確認できました。これは単3電池に換算して約54日間に相当します。冬季は電池の寿命が短くなるので、夏場の実験に比べて、若干、厳しめにつき、およそ2か月くらい動作することが分かりました。</div>
+<blockquote class="quote2">
+<div>照度センサ部を電池電圧の検出回路に変更：</div>
+<div><div align="center"><img src="MixJuice_Ambient/pic_0.gif" width="500" height="83" ></div>
+</div></blockquote>
+
+<blockquote class="quote2">
+<div><div align="center"><img src="MixJuice_Ambient/img_3_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 4" width="560" height="420" class="popup_img_600_450"/></div>
+実証実験に製作した回路。容量が単3電池の約半分となる<strong><font color="#ff0000">単4電池</font></strong>を使用した。IchigoJamとMixJuiceには純正品を使用した。照度センサの代わりに電池電圧を測定するための可変抵抗器に変更。レギュレータのスタンバイ電流が大きい。</div></blockquote>
+
+<blockquote class="quote2">
+<div><div align="center"><img src="MixJuice_Ambient/img_9_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 4" width="560" height="389"></div>
+実証実験により2016年12月4日に開始し、31日までの27日間の動作が確認できた。開始直後にジャンパ線の接触不良があったので、一部のデータ(12月5日・約24時間分)を修正。終止付近の電圧上昇の原因は不明。</div>
+</blockquote>
+<div><br></div>
+
+<h3>関連情報</h3>
+<div>IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)<br>
+<a href="http://www.geocities.jp/bokunimowakaru/diy/ichigojam/pcb.html" target="_blank">http://www.geocities.jp/bokunimowakaru/diy/ichigojam/pcb.html</a></div>
+<div><br></div>
+<div>by ボクにもわかるIchigoJam用マイコンボード<br>
+<a href="http://www.geocities.jp/bokunimowakaru/q/15" target="_blank">http://www.geocities.jp/bokunimowakaru/q/15</a><br></div>
+
+</div></td></tr></table>
+
+</center></body>
