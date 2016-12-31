@@ -1,0 +1,28 @@
+rem https://t.co/3o3ijmNQTy
+new
+1 cls:?"Ambient":uart1
+2 'MJ PCT application/json
+3 'MJ POST START ambidata.io/api/v2/channels/ここにチャネルIDを書く/data
+4 '{"writeKey":"ここにライトキーを書く","d1":"#"}
+5 'MJ POST END
+6 ?"ｱﾅﾛｸﾞ ﾆｭｳﾘｮｸ A=IN2
+7 W=3000:?"ｿｸﾃｲ ｶﾝｶｸ W=";W
+8 ' CC BY Wataru Kunino
+rem http://www.geocities.jp/bokunimowakaru/cq/15
+100 'MAIN
+110 P=#C13
+120 A=ana(2):?"ana(2)=";A
+130 gosub600:gosub600:gosub600:gosub600
+200 'SLEEP
+210 ?"MJ SLEEP ";W/60:wait30
+220 ifinkey()goto220
+230 led0:waitW+360,0:led1
+240 ifinkey()goto240
+250 ?"MJ APS":wait30
+260 ifinkey()<>asc("1")goto250
+270 goto100
+600 'TX
+610 ifpeek(P)<>asc("'")letP,P+1:goto610
+620 P=P+1:ifpeek(P)=asc("#")?A;:goto620
+630 ifpeek(P)<>0?chr$(peek(P));:goto620
+640 ?:return
