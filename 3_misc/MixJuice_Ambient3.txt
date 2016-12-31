@@ -1,0 +1,37 @@
+rem http://www.geocities.jp/bokunimowakaru/diy/ichigojam/MixJuice_Ambient.html
+rem https://t.co/3o3ijmNQTy
+
+new
+1 cls:?"Ambient":uart1
+2 'MJ PCT application/json
+3 'MJ POST START ambidata.io/api/v2/channels/ここにチャネルIDを書く/data
+4 '{"writeKey":"ここにライトキーを書く","d1":"#"}
+5 'MJ POST END
+6 ?"ｱﾅﾛｸﾞ ﾆｭｳﾘｮｸ A=IN2
+7 W=20:?"ｿｸﾃｲ ｶﾝｶｸ W=";W;" min."
+8 V=W*60/63*60:video0
+9 ' CC BY Wataru Kunino
+rem http://www.geocities.jp/bokunimowakaru/cq/15
+100 'MAIN
+110 P=#C1A
+120 A=0:forI=1to10:A=A+ana(2):next:?"ana(2)=";A
+130 gosub600:gosub600:gosub600:gosub600
+200 'MJ SLP
+210 ifinkey()goto210
+220 ?"MJ SLEEP ";W*60:wait30:I=0
+230 ifinkey()goto230
+240 ?"MJ VER":wait30
+250 ifinkey()=asc("'")goto200
+300 '15 SLP
+310 ifinkey()goto310
+320 led0:wait57,0:led1:I=I+1
+330 ifI<Vgoto310
+340 ifinkey()goto340
+350 ?"MJ APS":wait33
+360 ifinkey()<>asc("1")goto300
+370 goto100
+600 'TX
+610 ifpeek(P)<>asc("'")letP,P+1:goto610
+620 P=P+1:ifpeek(P)=asc("#")?A;:goto620
+630 ifpeek(P)<>0?chr$(peek(P));:goto620
+640 ?:return
