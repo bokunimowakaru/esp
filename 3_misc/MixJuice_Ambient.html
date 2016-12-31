@@ -16,24 +16,25 @@ IchigoJam + MixJuiceで製作するIoTセンサ
 
 <h1>IchigoJam + MixJuiceで製作するIoTセンサ</h1>
 <div>
-　IchigoJamは、株式会社jig.jpが開発した教育用パソコンとして使用可能なマイコンボードです。マイコンにはNXP社のLPC1114が用いられ、jig.jp社が独自開発した IchigoJam BASIC によるプログラミングが可能です。ここでは、IchigoJam専用のワイヤレス拡張シールドMixJuice(開発元＝NaturalStyle社、販売＝PCN社)との組み合わせで、センサ情報を送信する実験をしてみましょう。</div>
+　IchigoJamは、株式会社jig.jpが開発した教育用パソコンとして使用可能なマイコンボードです。マイコンにはNXP社のLPC1114が用いられ、jig.jp社が独自開発した IchigoJam BASIC によるプログラミングが可能です。ここでは、IchigoJam専用のワイヤレス拡張シールドMixJuice(開発元＝NaturalStyle社、販売＝PCN社)との組み合わせで、センサ情報をAmbientへ送信する実験を行います。</div>
 <div><br></div>
-<div>照度センサNJL7502Lのコレクタ(アノード)側をVcc(3.3V)へ、エミッタ(カソード)側をIchigoJamのIN2端子へ接続します。また、IN2端子とGNDとの間に10kΩ～100kΩ程度の抵抗器を接続します。</div>
-<div>MixJuiceの基板上にもIchigoJamと同じコネクタが出ているので、写真のように実装すると良いでしょう。</div>
+
+<h3>ハードウェアの概要</h3>
+<div>照度センサにはJRCのNJL7502Lを使用しました。NJL7502Lのコレクタ(アノード)側をVcc(3.3V)へ、エミッタ(カソード)側をIchigoJamのIN2端子へ接続します。また、IN2端子とGNDとの間に10kΩ～100kΩ程度の抵抗器を接続します。</div>
 <div><br></div>
 
 <blockquote class="quote2"><div><div align="center"><img src="MixJuice_Ambient/img_5_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 6" width="560" height="400" class="popup_img_600_429"/></div>
 IchigoJamへワイヤレス拡張シールドMixJuiceを装着し、ミニブレッドボード(55穴または25穴)上に照度センサを接続したときの様子。使用したミニブレッドボード内では、写真の左右方向に配線されている。</div></blockquote>
 
 <blockquote class="quote2"><div><div align="center"><img src="MixJuice_Ambient/img_4_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 1" width="560" height="420" class="popup_img_600_450"/></div>
-<div>ボクが作った基板「IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)のPersonal Computer基板」へ、IchigoJam用ワイヤレスシールド「MixJuice」を接続し、照度センサを接続したときの様子。</div>
+<div>CQ出版社の「IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)」に付属の「Personal Computer基板」へ、IchigoJam用ワイヤレス拡張シールドMixJuiceを接続し、照度センサを接続したときの様子。</div>
 <div><a href="http://www.geocities.jp/bokunimowakaru/diy/ichigojam/pcb.html" target="_blank">http://www.geocities.jp/bokunimowakaru/diy/ichigojam/pcb.html</a></div>
-<div><font color="#8b8b8b">(参考情報)　Personal Computer基板の5V電源回路にはMixJuiceをドライブする十分な能力がある。しかし、IchigoJam Uから実装されるようになったCN5が実装されていない。そこで、5V用の電源線を Personal Computer基板上 のArduino互換の拡張IO(CN9)を使用する(写真右側の赤色ジャンパ線)。</font></div>
+<div><font color="#8b8b8b">(参考情報)　Personal Computer基板の5V電源回路にはMixJuiceをドライブする十分な能力があるが、IchigoJam UやTのようなCN5が実装されていない。そこで、5V用の電源線を Personal Computer基板上 のArduino互換の拡張IO(CN9)を使用した(写真右側の赤色ジャンパ線)。</font></div>
 </div></blockquote>
 <div><br></div>
 
 <h3>IoTセンサ用クラウドサービスAmibient</h3>
-<div>AmbientはIoTセンサのセンサ値をグラフ化して表示するクラウドサービスです。下記のページにアクセスして、ユーザ登録を行い、チャンネルを作成すると、&#9312;チャネルID、&#9313;リードキー、&#9314;ライトキーが発行されます。このうちの&#9312;チャネルIDと&#9314;ライトキーをIchigoJam上で作成するプログラムに組み込むことで、IchigoJamからAmbientへデータ送信が行えるようになります。</div>
+<div>AmbientはIoTセンサのセンサ値をグラフ化して表示するクラウドサービスです。下記のページにアクセスして、ユーザ登録を行い、チャンネルを作成すると、&#9312;チャネルID、&#9313;リードキー、&#9314;ライトキーが発行されます。このうちの&#9312;チャネルIDと&#9314;ライトキーをIchigoJam上で作成するプログラム内に記述することで、IchigoJamからAmbientへデータ送信が行えるようになります。</div>
 <blockquote class="quote3"><div>Ambient：</div>
 <div><a href="https://ambidata.io/" target="_blank">https://ambidata.io/</a></div>
 <div><br></div>
@@ -43,9 +44,9 @@ IchigoJamへワイヤレス拡張シールドMixJuiceを装着し、ミニブレ
 <div><br></div>
 
 <h3>IchigoJam BASIC用サンプルプログラム(1)実験用:約30秒ごとに送信</h3>
-<div>実際に動かす前に、まずはBASICのサンプルプログラムから紹介します。このサンプルプログラム(1)は、約30秒おきにIN2端子に接続した照度センサの値をAmbientへ送信します。</div>
-<div>ただし、行番号2のMJ PCTコマンドは<font color="#ff0000"><strong>MixJuiceのファームウェアのVersion 1.2</strong></font>からサポートされた命令です。古いファームウェアでは動作しません(次節に詳細)。</div>
-<div>IchigoJamのファームウェアにはバージョン1.1.1以上を使用してください。行番号2～5には、MixJuiceへ送信するコマンドが書かれていますが、赤文字の部分を修正する必要があります。行番号3の部分にはAmbientから発行された&#9312;チャネルIDを、行番号4には&#9314;ライトキーを書いてください。</div>
+<div>まずはBASICのサンプルプログラムから紹介します。このサンプルプログラム(1)は、約30秒おきにIN2端子に接続した照度センサの値をAmbientへ送信します。</div>
+<div>ただし、行番号2のMJ PCTコマンドは<font color="#ff0000"><strong>MixJuiceのファームウェアのVersion 1.2</strong></font>からサポートされた命令です。古いファームウェアでは動作しません(次節に詳細)。IchigoJamのファームウェアについてはバージョン1.1.1以上を使用してください。</div>
+<div>行番号2～5には、MixJuiceへ送信するコマンドが書かれています。この中の赤文字部分を修正する必要があります。行番号3の部分にはAmbientから発行された&#9312;チャネルIDを、行番号4には&#9314;ライトキーを書いてください。</div>
 <blockquote class="quote3"><div><strong>サンプルプログラム(1)実験用:約30秒ごとに送信</strong></div><br><div>new<br>
 1 cls:?&quot;Ambient&quot;:uart1<br>
 2 &#39;MJ PCT application/json<br>
@@ -164,7 +165,7 @@ ana(2)=1023<br>
 <div></div>
 <blockquote class="quote2">電源には単3電池3本を使用し、CN5へ接続する。また、MixJuiceのCN4の2番ピンと4番ピンに黄色のジャンパを接続する。照度センサNJL7502Lのコレクタ(アノード)はVcc(3.3V)へ、エミッタ(カソード)はIN2端子へ接続。IN2端子とGNDとの間には10kΩ～100kΩ程度の抵抗器を接続。</blockquote></div>
 <div><br></div>
-<div>もちろん、CQ出版社「IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)」で製作したPersonal Computer基板や Micro Computer基板でも動作します</div>
+<div>もちろん、CQ出版社「IchigoJam用コンピュータ電子工作学習キット(IF ICH-KIT)」で製作したPersonal Computer基板でも動作します</div>
 <div><br></div>
 
 <h3>IchigoJam BASIC用サンプルプログラム(2)乾電池駆動:約1分毎に起動</h3>
@@ -208,7 +209,7 @@ rem http://www.geocities.jp/bokunimowakaru/cq/15<br>
 行番号270：行番号100に戻って繰り返し処理を行う。</div></blockquote>
 <div><br></div>
 
-<h3>より電池を長持ちさせる方法</h3>
+<h3>より電池を長持ちさせるサンプルプログラム(3)乾電池駆動:約20分毎に起動</h3>
 <div>より電池寿命を延ばすには、スリープ時間を長くします。ここではスリープ時間を20分にしてみました。MixJuice側は最大約60分まで設定することが出来ます。一方、IchigoJam側のwaitコマンドは最大9分までしか指定できません。そこで、複数回に分けて実行する必要があります。ここではIchigoJamを1秒ごとに起動し、MixJuiceが動作していなければ、すぐにスリープするようにしました。<br>
 プログラムの行番号7の変数Wに測定間隔を「分」の単位で入力してください。行番号8で「秒」に変換して処理を行います。</div>
 <blockquote class="quote3"><div><strong>サンプルプログラム(3)乾電池駆動:約20分毎に起動</strong></div><br>
@@ -261,8 +262,8 @@ rem http://www.geocities.jp/bokunimowakaru/cq/15<br>
 <div><br></div>
 
 <h3>単4電池による実証実験で27日間(単3に換算して54日間)の動作を確認済み</h3>
-<div>上記のプログラム(3)を用いて実証を行ってみました。単3電池と比べて容量が約半分の単4電池を使うことで、実験期間の短縮を行っています。<br>
-2016年12月4日に開始し、31日までの27日間の動作が確認できました。これは単3電池に換算して約54日間に相当します。冬季は電池の寿命が短くなるので、夏場の実験に比べて、若干、厳しめにつき、およそ2か月くらい動作することが分かりました。</div>
+<div>上記のプログラム(3)を用いて実証実験を行ってみました。単3電池と比べて容量が約半分の単4電池を使うことで、実験期間の短縮を行っています。</div>
+<div>実証実験では、2016年12月4日に動作を開始し、12月31日までの27日間の動作が確認できました。これは単3電池に換算して約54日間に相当します。単3電池を使えば、およそ2か月くらい動作することが分かりました。</div>
 <blockquote class="quote2">
 <div>照度センサ部を電池電圧の検出回路に変更：</div>
 <div><div align="center"><img src="MixJuice_Ambient/pic_0.gif" width="500" height="83" ></div>
@@ -270,11 +271,11 @@ rem http://www.geocities.jp/bokunimowakaru/cq/15<br>
 
 <blockquote class="quote2">
 <div><div align="center"><img src="MixJuice_Ambient/img_3_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 4" width="560" height="420" class="popup_img_600_450"/></div>
-実証実験に製作した回路。容量が単3電池の約半分となる<strong><font color="#ff0000">単4電池</font></strong>を使用した。IchigoJamとMixJuiceには純正品を使用した。照度センサの代わりに電池電圧を測定するための可変抵抗器に変更。レギュレータのスタンバイ電流が大きい。</div></blockquote>
+実証実験に製作した回路。容量が単3電池の約半分となる<strong><font color="#ff0000">単4電池</font></strong>を使用した。IchigoJamとMixJuiceには純正品を使用した。照度センサの代わりに電池電圧を測定するための可変抵抗器に変更して電池電圧を観測。</div></blockquote>
 
 <blockquote class="quote2">
 <div><div align="center"><img src="MixJuice_Ambient/img_9_m.jpg" alt="&#x0030a4;&#x0030e1;&#x0030fc;&#x0030b8; 4" width="560" height="389"></div>
-実証実験により2016年12月4日に開始し、31日までの27日間の動作が確認できた。開始直後にジャンパ線の接触不良があったので、一部のデータ(12月5日・約24時間分)を修正。終止付近の電圧上昇の原因は不明。</div>
+実証実験により2016年12月4日に開始し、12月31日までの27日間の動作が確認できた。開始直後にジャンパ線の接触不良があったため、一部のデータ(12月5日・約24時間分)を修正。終止付近の電圧上昇の原因は不明。</div>
 </blockquote>
 <div><br></div>
 
