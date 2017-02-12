@@ -113,9 +113,6 @@ void loop() {
     if(strncmp(s,"GET /?SIZE=",11)==0){     // JPEGサイズ設定命令時
         i = atoi(&s[11]);                   // 受信値を変数iに代入
         CamSizeCmd(i);                      // JPEGサイズ設定
-        delay(100);                         // 処理完了待ち
-        CamSendResetCmd();                  // リセットコマンド
-        softwareSerial.begin(38400);        // シリアル速度を初期値に戻す
     }
     if(strncmp(s,"GET /?RATIO=",12)==0){    // 圧縮率設定命令時
         i = atoi(&s[12]);                   // 受信値を変数iに代入

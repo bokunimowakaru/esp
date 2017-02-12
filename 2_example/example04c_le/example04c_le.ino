@@ -44,7 +44,7 @@ void setup(){
 
 void loop(){
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
-    int adc;                                // 整数型変数adcとiを定義
+    int adc;                                // 整数型変数adcを定義
     char s[20];                             // 表示用
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに

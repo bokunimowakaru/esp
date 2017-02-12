@@ -35,8 +35,8 @@ void setup(){
     lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスをLCDに表示
     while(TIME==0){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
-        TIME-=millis()/1000;                // 起動後の経過時間を減算
     }
+    TIME-=millis()/1000;                    // 起動後の経過時間を減算
 }
 
 void loop() {
@@ -74,7 +74,7 @@ void loop() {
         sprintf(filename,"/%s.txt",s);
         file = SPIFFS.open(filename,"a");   // 追記保存のためにファイルを開く
         if(file==0)return;                  // ファイルを開けれなければ戻る
-        for(i=8;i<strlen(s);i++) if(s[i]=='\r'||s[i]=='\n') s[i]='\0';
+        for(i=8;i<64;i++) if(s[i]=='\r'||s[i]=='\n') s[i]='\0';
         lcdPrint(s);                        // 液晶に表示する
         time2txt(date,TIME+time/1000);      // 日時をテキストに変換する
         file.print(date);                   // 日時を出力する
