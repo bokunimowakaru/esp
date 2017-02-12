@@ -5,14 +5,14 @@ i=1
 while [ ${i} -le 254 ]; do
 	# echo ${IP}.${i}
 	if [ "$OS" = "Linux" ]; then
-		ping -c1 -W1 ${IP}.${i}|grep "time=" &
-		sleep 0.1
+		sudo ping -c1 -W1 ${IP}.${i}|grep "time=" &
+		sleep 0.01
 		PID=`pidof ping`
 		if [ -n "$PID" ];then
-			kill $PID
+			sudo kill $PID
 		fi
 	else
-		ping -n 1 -w 100 ${IP}.${i}|grep -a 'ms TTL='
+		sudo ping -n 1 -w 100 ${IP}.${i}|grep -a 'ms TTL='
 	fi
 	(( i++ ))
 done
