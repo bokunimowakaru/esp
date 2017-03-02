@@ -1,7 +1,7 @@
 /*******************************************************************************
 FTP送信用クライアント for ESP-WROOM-02
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                           Copyright (c) 2016-2017 Wataru KUNINO
 
 参考文献
   |本ソースコードの作成に当たり、下記の情報を参考にしました(2016/12/14)
@@ -32,29 +32,29 @@ byte doFTP(char *filename){
     }
     if(eRcv(client,outBuf,&outCount)) return 21;
 
-    sprintf(outBuf,"USER %s\r",FTP_USER);
-    client.println(outBuf);
+    sprintf(outBuf,"USER %s\r\n",FTP_USER);
+    client.print(outBuf);
     delay(FTP_WAIT);
-    Serial.println(outBuf);
+    Serial.print(outBuf);
     if(eRcv(client,outBuf,&outCount)) return 22;
 
-    sprintf(outBuf,"PASS %s\r",FTP_PASS);
-    client.println(outBuf);
+    sprintf(outBuf,"PASS %s\r\n",FTP_PASS);
+    client.print(outBuf);
     delay(FTP_WAIT);
     Serial.println(F("PASS"));
     if(eRcv(client,outBuf,&outCount)) return 23;
 
-    client.println(F("SYST\r"));
+    client.print(F("SYST\r\n"));
     delay(FTP_WAIT);
     Serial.println(F("SYST"));
     if(eRcv(client,outBuf,&outCount)) return 24;
 
-    client.println(F("Type I\r"));
+    client.print(F("Type I\r\n"));
     delay(FTP_WAIT);
     Serial.println(F("Type I"));
     if(eRcv(client,outBuf,&outCount)) return 25;
 
-    client.println(F("PASV\r"));
+    client.print(F("PASV\r\n"));
     delay(FTP_WAIT);
     Serial.println(F("PASV"));
     if(eRcv(client,outBuf,&outCount)) return 26;
@@ -82,10 +82,10 @@ byte doFTP(char *filename){
         file.close();
         return 31;
     }
-    sprintf(outBuf,"STOR %s%s\r",FTP_DIR,filename);
-    client.println(outBuf);
+    sprintf(outBuf,"STOR %s%s\r\n",FTP_DIR,filename);
+    client.print(outBuf);
     delay(FTP_WAIT);
-    Serial.println(outBuf);
+    Serial.print(outBuf);
     if(eRcv(client,outBuf,&outCount)){
         dclient.stop();
         file.close();
@@ -99,7 +99,7 @@ byte doFTP(char *filename){
     dclient.stop();
     Serial.println(F("Data disconnected"));
     if(eRcv(client,outBuf,&outCount)) return 33;
-    client.println(F("QUIT\r"));
+    client.print(F("QUIT\r\n"));
     delay(FTP_WAIT);
     Serial.println(F("QUIT"));
     if(eRcv(client,outBuf,&outCount)) return 91;
@@ -138,7 +138,7 @@ byte eRcv(WiFiClient &client,char *outBuf,byte *outCount){
             Serial.write('>');
             Serial.println(outBuf);
             if(outBuf[0] >= '4'){
-                client.println(F("QUIT\r"));
+                client.print(F("QUIT\r\n"));
                 delay(FTP_WAIT);
                 Serial.println(F("QUIT"));
                 return 1;
@@ -155,7 +155,7 @@ byte eRcv(WiFiClient &client,char *outBuf,byte *outCount){
 
 void efail(WiFiClient &client){
     byte thisByte = 0;
-    client.println(F("QUIT\r"));
+    client.print(F("QUIT\r\n"));
     delay(FTP_WAIT);
     while(!client.available()){
         if(!client.connected()) return;
