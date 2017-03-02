@@ -43,12 +43,7 @@ byte doFTP(char *filename){
     delay(FTP_WAIT);
     Serial.println(F("PASS"));
     if(eRcv(client,outBuf,&outCount)) return 23;
-
-    client.print(F("SYST\r\n"));
-    delay(FTP_WAIT);
-    Serial.println(F("SYST"));
-    if(eRcv(client,outBuf,&outCount)) return 24;
-
+    
     client.print(F("Type I\r\n"));
     delay(FTP_WAIT);
     Serial.println(F("Type I"));
