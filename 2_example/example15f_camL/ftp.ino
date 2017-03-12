@@ -1,148 +1,174 @@
 /*******************************************************************************
-FTP送信用クライアント for ESP-WROOM-02
+FTP送信用クライアント for ESP-WROOM-02 Yahoo! ジオシティーズ対応版
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
 
 参考文献
-  |本ソースコードの作成に当たり、下記の情報を参考にしました(2016/12/14)
+  ■ 本ソースコードの作成に当たり、下記の情報を参考にしました(2016/12/14)
   |
   | FTP passive client for IDE v1.0.1 and w5100/w5200
   | Posted October 2012 by SurferTim
   | Modified 6 June 2015 by SurferTim
   |
   | http://playground.arduino.cc/Code/FTP
+  
+  ■ Yahoo! ジオシティーズ (Geo Cities) へのアップロード等に対応するために
+  |下記への書き込み情報を参考にしました。
+  | esp8266/Arduino Ussues
+  | Add FTP Client library  #1183
+  |
+  | https://github.com/esp8266/Arduino/issues/1183
 *******************************************************************************/
 
 #define FTP_WAIT 1
+#define BUFFER_SIZE 128
 
 byte doFTP(char *filename){
-    char outBuf[128];
-    byte outCount;
+    char ftpBuf[BUFFER_SIZE];
     WiFiClient client;
     WiFiClient dclient;
+    int i;
     
     File file = SPIFFS.open(filename,"r");
     if(!file){
-        Serial.println(F("SPIFFS open fail"));
+        Serial.println("SPIFFS open fail");
         return 11;
     }
-    Serial.println(F("SPIFFS opened"));
+    Serial.println("SPIFFS opened");
     if (client.connect(FTP_TO,21)) {
-        Serial.println(F("Command connected"));
+        Serial.println("Command connected");
     }
-    if(eRcv(client,outBuf,&outCount)) return 21;
+    if(eRcv(client,ftpBuf)) return 21;
 
-    sprintf(outBuf,"USER %s\r\n",FTP_USER);
-    client.print(outBuf);
+    sprintf(ftpBuf,"USER %s\r\n",FTP_USER);
+    client.print(ftpBuf);
     delay(FTP_WAIT);
-    Serial.print(outBuf);
-    if(eRcv(client,outBuf,&outCount)) return 22;
+    Serial.print(ftpBuf);
+    if(eRcv(client,ftpBuf)) return 22;
 
-    sprintf(outBuf,"PASS %s\r\n",FTP_PASS);
-    client.print(outBuf);
+    sprintf(ftpBuf,"PASS %s\r\n",FTP_PASS);
+    client.print(ftpBuf);
     delay(FTP_WAIT);
-    Serial.println(F("PASS"));
-    if(eRcv(client,outBuf,&outCount)) return 23;
-
-    client.print(F("Type I\r\n"));
+    Serial.println("PASS");
+    if(eRcv(client,ftpBuf)) return 23;
+    
+    client.print("Type I\r\n");
     delay(FTP_WAIT);
-    Serial.println(F("Type I"));
-    if(eRcv(client,outBuf,&outCount)) return 25;
+    Serial.println("Type i");
+    if(eRcv(client,ftpBuf)) return 25;
 
-    client.print(F("PASV\r\n"));
+    client.print("PASV\r\n");
     delay(FTP_WAIT);
-    Serial.println(F("PASV"));
-    if(eRcv(client,outBuf,&outCount)) return 26;
+    Serial.println("PASV");
+    delay(100);
+    if(eRcv(client,ftpBuf)) return 26;
 
-    char *tStr = strtok(outBuf,"(,");
+    char *tStr = strtok(ftpBuf,"(,");
+    if(tStr == NULL) return 27;
     int array_pasv[6];
-    for ( int i = 0; i < 6; i++) {
+    for (i = 0; i < 6; i++) {
         tStr = strtok(NULL,"(,");
         array_pasv[i] = atoi(tStr);
         if(tStr == NULL){
-            Serial.println(F("Bad PASV Answer"));    
+            Serial.println("Bad PASV Answer");
+            return 28;
         }
     }
+    
     unsigned int hiPort,loPort;
     hiPort = array_pasv[4] << 8;
     loPort = array_pasv[5] & 255;
-    Serial.print(F("Data port: "));
+    Serial.print("Data port: ");
     hiPort = hiPort | loPort;
     Serial.println(hiPort);
     if (dclient.connect(FTP_TO,hiPort)) {
-        Serial.println(F("Data connected"));
+        Serial.println("Data connected");
     }else{
-        Serial.println(F("Data connection failed"));
+        Serial.println("Data connection failed");
         client.stop();
         file.close();
         return 31;
     }
-    sprintf(outBuf,"STOR %s%s\r\n",FTP_DIR,filename);
-    client.print(outBuf);
+    sprintf(ftpBuf,"STOR %s%s\r\n",FTP_DIR,filename);
+    client.print(ftpBuf);
     delay(FTP_WAIT);
-    Serial.print(outBuf);
-    if(eRcv(client,outBuf,&outCount)){
+    Serial.print(ftpBuf);
+    if(eRcv(client,ftpBuf)){
         dclient.stop();
         file.close();
         return 32;
     }
-    Serial.println(F("Writing"));
+    Serial.println("Writing");
+    i=0;
     while(file.available()){
-        if(!dclient.connected()) break;
-        dclient.write((byte)file.read());
+        ftpBuf[i]=file.read();
+        i++;
+        if(i >= BUFFER_SIZE){
+            if(!dclient.connected()) break;
+            dclient.write( (byte *)ftpBuf, BUFFER_SIZE);
+            i=0;
+            Serial.print(".");
+            delay(1);
+        }
+    }
+    if(i > 0){
+        if(dclient.connected()){
+            dclient.write((byte *)ftpBuf, i);
+        }
     }
     dclient.stop();
-    Serial.println(F("Data disconnected"));
-    if(eRcv(client,outBuf,&outCount)) return 33;
-    client.print(F("QUIT\r\n"));
+    Serial.println("Data disconnected");
+    if(eRcv(client,ftpBuf)) return 33;
+    client.print("QUIT\r\n");
     delay(FTP_WAIT);
-    Serial.println(F("QUIT"));
-    if(eRcv(client,outBuf,&outCount)) return 91;
+    Serial.println("QUIT");
+    if(eRcv(client,ftpBuf)) return 91;
     client.stop();
-    Serial.println(F("Command disconnected"));
+    Serial.println("Command disconnected");
     file.close();
-    Serial.println(F("SPIFFS closed"));
+    Serial.println("SPIFFS closed");
     return 0;
 }
 
-byte eRcv(WiFiClient &client,char *outBuf,byte *outCount){
-    byte thisByte,i=0;
+byte eRcv(WiFiClient &client,char *ftpBuf){
+    byte thisByte,i=0,len=0;
 
     while(!client.available()){
         delay(FTP_WAIT);
         if(!client.connected()){
-            Serial.println(F("FTP:eRcv:disC"));
+            Serial.println("FTP:eRcv:disC");
             return 11;
         }
         i++;
-        if(i>1000){ // 少なくとも200ms以上必要
-            Serial.println(F("FTP:eRcv:noRes"));
+        if(i>1000){ // 200ms以上必要
+            Serial.println("FTP:eRcv:noRes");
             return 12;
         }
     }
-    (*outCount) = 0;
     while(client.connected()){
         if(!client.available()){
             delay(FTP_WAIT);
             if(!client.available()) break;
         }
         thisByte = client.read();
-    //  Serial.write(thisByte);
         if(thisByte==(byte)'\r');
         else if(thisByte==(byte)'\n'){
             Serial.write('>');
-            Serial.println(outBuf);
-            if(outBuf[0] >= '4'){
-                client.print(F("QUIT\r\n"));
+            Serial.println(ftpBuf);
+            if(ftpBuf[0] >= '4'){
+                client.print("QUIT\r\n");
                 delay(FTP_WAIT);
-                Serial.println(F("QUIT"));
+                Serial.println("QUIT");
                 return 1;
             }
-            (*outCount) = 0;
-        }else if((*outCount) < 127){
-            outBuf[(*outCount)] = thisByte;
-            (*outCount)++;      
-            outBuf[(*outCount)] = 0;
+            if(len>3 && ftpBuf[3] == ' '){
+                return 0;
+            }
+            len = 0;
+        }else if(len < BUFFER_SIZE - 1 ){
+            ftpBuf[len] = thisByte;
+            len++;      
+            ftpBuf[len] = 0;
         }
     }
     return 0;
@@ -150,7 +176,7 @@ byte eRcv(WiFiClient &client,char *outBuf,byte *outCount){
 
 void efail(WiFiClient &client){
     byte thisByte = 0;
-    client.print(F("QUIT\r\n"));
+    client.print("QUIT\r\n");
     delay(FTP_WAIT);
     while(!client.available()){
         if(!client.connected()) return;
@@ -161,5 +187,5 @@ void efail(WiFiClient &client){
         Serial.write(thisByte);
     }
     client.stop();
-    Serial.println(F("Command disconnected"));
+    Serial.println("Command disconnected");
 }
