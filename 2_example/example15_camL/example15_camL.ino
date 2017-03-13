@@ -1,7 +1,7 @@
 /*******************************************************************************
 Example 15: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                           Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
 #include <SoftwareSerial.h>
@@ -120,11 +120,22 @@ void loop(){
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
+        /*  以下(計4行)、処理速度が遅かった
         for(t=0;t<size;t++){                // ファイルサイズ分の繰り返し処理
             if(!file.available()) break;    // ファイルが無ければ転送終了
             if(!client.connected()) break;  // 切断されていた場合は転送終了
             client.write((byte)file.read());// ファイルの転送
         }
+        以下(計9行)のように修正し、高速化を行った */
+        t=0; while(file.available()){       // ファイルがあれば繰り返し処理実行
+            s[t]=file.read(); t++;          // ファイルの読み込み
+            if(t >= 64){                    // 64バイトに達した時に転送処理
+                if(!client.connected()) break;              // 接続状態確認
+                client.write( (byte *)s, 64);               // 64バイト送信
+                t=0; delay(1);                              // 送信完了待ち
+            }
+        }
+        if(t>0 && client.connected()) client.write((byte *)s,t);
         file.close();                       // ファイルを閉じる
     }
     client.stop();                          // クライアントの切断
