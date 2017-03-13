@@ -1,4 +1,8 @@
 /*******************************************************************************
+監視カメラ用ドライバ linkSprite_cam_IR.ino for Linksprite JPEG Serial Camera
+
+                                           Copyright (c) 2016-2017 Wataru KUNINO
+
 Linksprite社の LinkSprite_cam_IR.ino を基に国野 亘が改変しました。
 下記のライセンスの基に配布します。
 

@@ -1,5 +1,12 @@
 /*******************************************************************************
-SerialCamera_DemoCode_CJ-OV528.ino を基に国野 亘が改変しました。
+監視カメラ用ドライバ grove_cam.ino for SeeedStudio Grove Serial Camera Kit 
+
+                                           Copyright (c) 2016-2017 Wataru KUNINO
+
+作成にあたり下記のソースコードを利用しました。
+https://github.com/Seeed-Studio/Grove_Serial_Camera_Kit
+http://www.seeedstudio.com/wiki/Grove_-_Serial_Camera_Kit
+	SerialCamera_DemoCode_CJ-OV528.ino
 *******************************************************************************/
 
 #define DEBUG
