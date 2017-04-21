@@ -1,6 +1,19 @@
 /*******************************************************************************
 Example 1S: LEDを点滅させる HTTP版 固定IPアドレス
 
+    WiFi.config(
+        IPAddress(192,168,0,12),            /* 固定IPアドレス */
+        IPAddress(192,168,0,1),             /* ゲートウェイアドレス */
+        IPAddress(255,255,255,0)            /* ネットマスク */
+    );
+    
+    WiFi.config(
+        IPAddress(192,168,0,12),            /* 固定IPアドレス */
+        IPAddress(192,168,0,1),             /* ゲートウェイアドレス */
+        IPAddress(255,255,255,0),           /* ネットマスク */
+        IPAddress(8,8,8,8)                  /* DNSサーバ(省略可能) */
+    );
+
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
@@ -17,9 +30,10 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println("Example 01S LED STAT"); // 「Example 01S」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.config(
-    	IPAddress(192,168,0,12),			/* 固定IPアドレス */
-    	IPAddress(192,168,0,1),       		/* ゲートウェイアドレス */
-    	IPAddress(255,255,255,0)      		/* ネットマスク */
+        IPAddress(192,168,0,12),            /* 固定IPアドレス */
+        IPAddress(192,168,0,1),             /* ゲートウェイアドレス */
+        IPAddress(255,255,255,0),           /* ネットマスク */
+        IPAddress(8,8,8,8)                  /* DNSサーバ(省略可能) */
     );
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -32,6 +46,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
     Serial.println(WiFi.gatewayIP());       // ゲートウェイのIPアドレスを出力
     Serial.println(WiFi.subnetMask());      // ネットマスクのIPアドレスを出力
+    Serial.println(WiFi.dnsIP());           // DNSのIPアドレスを出力
 }
 
 void loop(){                                // 繰り返し実行する関数
