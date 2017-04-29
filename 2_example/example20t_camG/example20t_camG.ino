@@ -35,7 +35,7 @@ void setup(){
     pinMode(PIN_CAM,OUTPUT);                // FETを接続したポートを出力に
     digitalWrite(PIN_CAM,0);                // FETをLOW(ON)にする
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 20 cam");       // 「Example 20」をシリアル出力表示
+    Serial.println("Example 20t cam");      // 「Example 20t」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(!SPIFFS.begin()) delay(100);      // ファイルシステムの開始
@@ -61,7 +61,7 @@ void loop() {
     char s[65];                             // 文字列変数を定義 65バイト64文字
     int len=0;                              // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
-    int i,j;
+    int i;
     char filename[]="/cam***.jpg";          // 画像ファイル名(ダウンロード用)
                                             // filename[4-6]は写真番号100～
 
@@ -106,7 +106,7 @@ void loop() {
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
-    delay(1);
+    delay(10);
     client.flush();                         // バッファ内のデータを破棄する
     if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
     Serial.print(s);                        // 受信した命令をシリアル出力表示
@@ -123,6 +123,8 @@ void loop() {
         file = SPIFFS.open(filename,"r");       // 読み込みのためにファイルを開く
         if(file){                               // ファイルを開けることが出来た時、
             client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
+            client.print("Content-Length: ");                   // コンテンツ大きさ
+            client.println( file.size() );
             client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
             client.println("Connection: close");                // 応答後に閉じる
             client.println();                                   // ヘッダの終了

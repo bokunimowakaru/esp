@@ -114,7 +114,7 @@ void loop() {
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
-    delay(1);
+    delay(10);
     client.flush();                         // バッファ内のデータを破棄する
     if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
     Serial.print(s);                        // 受信した命令をシリアル出力表示
@@ -131,6 +131,8 @@ void loop() {
         file = SPIFFS.open(filename,"r");       // 読み込みのためにファイルを開く
         if(file){                               // ファイルを開けることが出来た時、
             client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
+            client.print("Content-Length: ");                   // コンテンツ大きさ
+            client.println( file.size() );
             client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
             client.println("Connection: close");                // 応答後に閉じる
             client.println();                                   // ヘッダの終了
