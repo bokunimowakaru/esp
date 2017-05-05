@@ -15,6 +15,8 @@
 起動後、ボタンを2回押すと、速度値（Hz）がAmbientへ送信されます。上記のAmbientの
 ウェブサイトで確認することが出来ます。
 
+※シリアル通信の速度をESP32デフォルト設定の115.2kbpsへ変更しました。
+
 ※Ambientのライトキーの取り扱いには十分にご注意ください。
 ※不正な取り扱いが行われた場合は、実験を中止いたします。
 ※送信したデータは、インターネット上へ公開されます。
@@ -34,7 +36,7 @@
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     pinMode(PIN_SW,INPUT_PULLUP);           // スイッチを接続したポートを入力に
-    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("Example Ambient SW");   // 「Example 02」をシリアル出力表示
 
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
