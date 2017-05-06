@@ -1,10 +1,9 @@
 /*******************************************************************************
-Example 1B: LEDを点滅させる HTTP版
-                                            Copyright (c) 2016 Wataru KUNINO
+Example 33B(=32+01B): ESP32でLEDを点滅させる
+                                           Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
-
-#include <ESP8266WiFi.h>                    // Wi-Fi機能を利用するために必要
-#define PIN_LED 13                          // IO 13(5番ピン)にLEDを接続する
+#include <WiFi.h>                           // ESP32用WiFiライブラリ
+#define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define TIMEOUT 20000                       // タイムアウト 20秒
@@ -12,8 +11,8 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
-    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
-    Serial.println("Example 01B LED HTTP"); // 「Example 01B」をシリアル出力表示
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
+    Serial.println("ESP32 eg.01B LED HTTP");// 「Example 01B」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -36,7 +35,7 @@ void loop(){                                // 繰り返し実行する関数
     int headF=0;                            // HTTPヘッダ用フラグ(0:初期状態)
     
     client = server.available();            // 接続されたクライアントを生成
-    if(client==0) return;                   // 非接続の時にloop()の先頭に戻る
+    if(!client) return;                     // 非接続の時にloop()の先頭に戻る
     Serial.println("Connected");            // 接続されたことをシリアル出力表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
