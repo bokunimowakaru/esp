@@ -1,0 +1,37 @@
+/*
+参考文献：
+https://github.com/espressif/esp-idf/blob/master/components/esp32/include/esp_deep_sleep.h
+
+esp_deep_sleep_enable_timer_wakeup(uint64_t time_in_us);
+    Enable wakeup by timer
+    @param time_in_us   time before wakeup, in microseconds
+    
+esp_deep_sleep_enable_ext0_wakeup(gpio_num_t gpio_num, int level);
+    Enable wakeup using [A] pin
+    external wakeup feature of RTC_IO peripheral
+    @param gpio_num     GPIO number used as wakeup source. Only GPIOs which are have RTC 
+                        functionality can be used: 0,2,4,12-15,25-27,32-39. 
+
+esp_deep_sleep_pd_config(esp_deep_sleep_pd_domain_t domain, 
+                                                    esp_deep_sleep_pd_option_t option);
+    Set power down mode for an RTC power domain in deep sleep
+    @param domain       power domain to configure
+                        ESP_PD_DOMAIN_RTC_PERIPH,      //!< RTC IO, sensors and ULP co-processor 
+                        ESP_PD_DOMAIN_RTC_SLOW_MEM,    //!< RTC slow memory 
+                        ESP_PD_DOMAIN_RTC_FAST_MEM,    //!< RTC fast memory 
+                        ESP_PD_DOMAIN_MAX              //!< Number of domains 
+    @param option       power down option (ESP_PD_OPTION_OFF, ESP_PD_OPTION_ON, or ESP_PD_OPTION_AUTO)
+                        ESP_PD_OPTION_OFF,      //!< Power down the power domain in deep sleep 
+                        ESP_PD_OPTION_ON,       //!< Keep power domain enabled during deep sleep 
+                        ESP_PD_OPTION_AUTO      //!< Keep power domain enabled in deep sleep, 
+                        if it is needed by one of the wakeup options. Otherwise power it down 
+                        
+esp_deep_sleep_start();
+    Enter deep sleep with the configured wakeup options
+    ### This function does not return
+
+esp_deep_sleep(uint64_t time_in_us);
+    Enter deep-sleep mode
+    esp_deep_sleep DOES NOT shut down WiFi, BT, and higher level protocol connections gracefully. 
+    @param time_in_us   deep-sleep time, unit: microsecond
+*/

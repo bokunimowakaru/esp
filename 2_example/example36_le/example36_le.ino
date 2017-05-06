@@ -12,12 +12,13 @@ Example 36(=32+4): 乾電池駆動に向けた低消費電力動作のサンプ�
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000                  // スリープ時間 50秒(uint32_t)
+#define DEVICE "adcnv_1,"                   // デバイス名(5文字+"_"+番号+",")
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     pinMode(PIN_AIN,INPUT);
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
-    Serial.println("ESP32 eg.04 SW");       // 「ESP32 eg.04」をシリアル出力表示
+    Serial.println("ESP32 eg.04 LE");       // 「ESP32 eg.04」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -37,6 +38,7 @@ void loop() {
     adc=analogRead(PIN_AIN);                // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
+    udp.print(DEVICE);                      // デバイス名を送信
     udp.println(adc);                       // 変数adcの値を送信
     Serial.println(adc);                    // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
@@ -49,41 +51,3 @@ void loop() {
     esp_deep_sleep_start();                 // スリープモードへ移行する
     while(1) delay(100);                    // 終了(永久ループ)
 }
-/*
-esp_deep_sleep_enable_timer_wakeup(uint64_t time_in_us);
-    Enable wakeup by timer
-    @param time_in_us   time before wakeup, in microseconds
-    
-esp_deep_sleep_enable_ext0_wakeup(gpio_num_t gpio_num, int level);
-    Enable wakeup using [A] pin
-    external wakeup feature of RTC_IO peripheral
-    @param gpio_num     GPIO number used as wakeup source. Only GPIOs which are have RTC 
-                        functionality can be used: 0,2,4,12-15,25-27,32-39. 
-
-esp_deep_sleep_pd_config(esp_deep_sleep_pd_domain_t domain, 
-                                                    esp_deep_sleep_pd_option_t option);
-    Set power down mode for an RTC power domain in deep sleep
-    @param domain       power domain to configure
-                        ESP_PD_DOMAIN_RTC_PERIPH,      //!< RTC IO, sensors and ULP co-processor 
-                        ESP_PD_DOMAIN_RTC_SLOW_MEM,    //!< RTC slow memory 
-                        ESP_PD_DOMAIN_RTC_FAST_MEM,    //!< RTC fast memory 
-                        ESP_PD_DOMAIN_MAX              //!< Number of domains 
-    @param option       power down option (ESP_PD_OPTION_OFF, ESP_PD_OPTION_ON, or ESP_PD_OPTION_AUTO)
-                        ESP_PD_OPTION_OFF,      //!< Power down the power domain in deep sleep 
-                        ESP_PD_OPTION_ON,       //!< Keep power domain enabled during deep sleep 
-                        ESP_PD_OPTION_AUTO      //!< Keep power domain enabled in deep sleep, 
-                        if it is needed by one of the wakeup options. Otherwise power it down 
-                        
-esp_deep_sleep_start();
-    Enter deep sleep with the configured wakeup options
-    ### This function does not return
-
-esp_deep_sleep(uint64_t time_in_us)
-    Enter deep-sleep mode
-    esp_deep_sleep DOES NOT shut down WiFi, BT, and higher level protocol connections gracefully. 
-    @param time_in_us   deep-sleep time, unit: microsecond
-    
-参考文献：
-https://github.com/espressif/esp-idf/blob/master/components/esp32/include/esp_deep_sleep.h
-*/
-
