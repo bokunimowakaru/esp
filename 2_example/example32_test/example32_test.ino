@@ -25,8 +25,8 @@
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#define PIN_LED 2                           // IO 2 にLEDを接続
-#define PIN_SW 0                            // IO 0 にスイッチを接続
+#define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
+#define PIN_SW 0                            // GPIO 0(25番ピン)にスイッチを接続
 #define AmbientChannelId 725                // チャネルID(整数)
 #define AmbientWriteKey "ad3e53b54fe16764"  // ライトキー(16桁の16進数)
 #define HOST "54.65.206.59"                 // AmbientのIPアドレス(変更しない)

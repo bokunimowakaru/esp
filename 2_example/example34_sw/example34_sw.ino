@@ -5,8 +5,8 @@ Example 34(=32+2): スイッチ状態を送信する
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#define PIN_LED 2                           // IO 2 にLEDを接続
-#define PIN_SW 0                            // IO 0 にスイッチを接続
+#define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
+#define PIN_SW 0                            // GPIO 0(25番ピン)にスイッチを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
