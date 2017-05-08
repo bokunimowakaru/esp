@@ -43,11 +43,5 @@ void loop() {
     Serial.println(adc);                    // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(200);                             // 送信待ち時間
-    esp_deep_sleep_enable_timer_wakeup(SLEEP_P);
-    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_OFF);
-    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM,ESP_PD_OPTION_OFF);
-    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM,ESP_PD_OPTION_OFF);
-    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_OFF);
-    esp_deep_sleep_start();                 // スリープモードへ移行する
-    while(1) delay(100);                    // 終了(永久ループ)
+    esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }

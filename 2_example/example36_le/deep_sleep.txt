@@ -35,3 +35,17 @@ esp_deep_sleep(uint64_t time_in_us);
     esp_deep_sleep DOES NOT shut down WiFi, BT, and higher level protocol connections gracefully. 
     @param time_in_us   deep-sleep time, unit: microsecond
 */
+
+
+/*
+	従来方法：
+
+    delay(200);                             // 送信待ち時間
+    esp_deep_sleep_enable_timer_wakeup(SLEEP_P);
+    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_OFF);
+    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM,ESP_PD_OPTION_OFF);
+    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM,ESP_PD_OPTION_OFF);
+    esp_deep_sleep_pd_config(ESP_PD_DOMAIN_MAX,ESP_PD_OPTION_OFF);
+    esp_deep_sleep_start();                 // スリープモードへ移行する
+    while(1) delay(100);                    // 終了(永久ループ)
+*/
