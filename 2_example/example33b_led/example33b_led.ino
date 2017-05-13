@@ -72,8 +72,9 @@ void loop(){                                // 繰り返し実行する関数
             "LED=%01d<br><a href=\"/L1\">LED ON </a>,http://%d.%d.%d.%d/L1<br>",
             digitalRead(PIN_LED),ip[0],ip[1],ip[2],ip[3]);
         client.print("Content-Length: ");   // HTTPヘッダ情報を出力
-        client.println(strlen(s)*2-10+2);   // コンテンツ長さを出力(改行2バイト)
+        client.println(15+strlen(s)*2-9+2); // コンテンツ長さを出力(改行2バイト)
         client.println();                   // HTTPヘッダの終了を出力
+        client.println("<html>");           // HTML開始タグを出力(IE以外で必要)
         client.println(s);                  // HTTPコンテンツを出力
         Serial.println(s);                  // シリアルへコンテンツを出力
         sprintf(s,
@@ -81,6 +82,7 @@ void loop(){                                // 繰り返し実行する関数
             ip[0],ip[1],ip[2],ip[3]);
         client.println(s);                  // HTTPコンテンツを出力
         Serial.println(s);                  // シリアルへコンテンツを出力
+        client.println("</html>");          // HTML終了タグを出力(IE以外で必要)
     }
     client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
