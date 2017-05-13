@@ -5,7 +5,7 @@ Example 33D(=32+01D): ESP32でLEDを点滅させる
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
-#define SSID "ESP_SoftAP"                   // 無線LANアクセスポイントのSSID
+#define SSID_AP "ESP_SoftAP"                // 無線LANアクセスポイントのSSID
 #define TIMEOUT 20000                       // タイムアウト 20秒
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 
@@ -13,7 +13,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.01D LED HTTP");// 「Example 01D」をシリアル出力表示
-    WiFi.softAP(SSID);                      // ソフトウェアAPの起動
+    WiFi.softAP(SSID_AP);                   // ソフトウェアAPの起動
     WiFi.softAPConfig(
         IPAddress(192,168,1,2),             /* 固定IPアドレス */
         IPAddress(192,168,1,1),             /* ゲートウェイアドレス */
@@ -21,7 +21,7 @@ void setup(){                               // 起動時に一度だけ実行す
     );
     server.begin();                         // サーバを起動する
     Serial.println("\nStarted");            // 起動したことをシリアル出力表示
-    Serial.println(SSID);                   // 本APのSSIDをシリアル出力
+    Serial.println(SSID_AP);                // 本APのSSIDをシリアル出力
     Serial.println(WiFi.softAPIP());        // 本APのIPアドレスをシリアル出力
 }
 
