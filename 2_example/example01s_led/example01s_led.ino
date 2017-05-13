@@ -16,7 +16,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println("Example 01S LED STAT"); // 「Example 01S」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.config(
-        IPAddress(192,168,0,12),            /* 固定IPアドレス */
+        IPAddress(192,168,0,143),            /* 固定IPアドレス */
         IPAddress(192,168,0,1),             /* ゲートウェイアドレス */
         IPAddress(255,255,255,0),           /* ネットマスク */
         IPAddress(8,8,8,8)                  /* DNSサーバ(省略可能) */
@@ -76,27 +76,23 @@ void loop(){                                // 繰り返し実行する関数
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         client.println("HTTP/1.1 200 OK");  // HTTP OKを応答
-        if( led==0 || led==1 ){             // 変数ledが0または1のとき
-            sprintf(s,"LED=%d",led);        // 文字列変数に「LED=」とled値を代入
-            client.print("Content-Length: ");   // HTTPヘッダ情報を出力
-            client.println(strlen(s)+2);    // コンテンツ長さを出力(改行2バイト)
-            client.println();               // HTTPヘッダの終了を出力
-            client.println(s);              // HTTPコンテンツを出力
-            Serial.println(s);              // シリアルへコンテンツを出力
-            digitalWrite(PIN_LED,led);      // LEDの制御
-        }else{
-            IPAddress ip=WiFi.localIP();    // 変数ipに本機のIPアドレスを代入
-            sprintf(s,"LED ON = http://%d.%d.%d.%d/L1",ip[0],ip[1],ip[2],ip[3]);
-            client.print("Content-Length: ");   // HTTPヘッダ情報を出力
-            client.println(strlen(s)*2+4+6);// コンテンツ長さを出力(改行2バイト)
-            client.println();               // HTTPヘッダの終了を出力
-            client.println(s);              // HTTPコンテンツを出力
-            client.println("<BR>");         // HTMLの改行を出力
-            Serial.println(s);              // シリアルへコンテンツを出力
-            sprintf(s,"LED OFF= http://%d.%d.%d.%d/L0",ip[0],ip[1],ip[2],ip[3]);
-            client.println(s);              // HTTPコンテンツを出力
-            Serial.println(s);              // シリアルへコンテンツを出力
-        }
+        if(led>=0)digitalWrite(PIN_LED,led);// LEDの制御
+        IPAddress ip=WiFi.localIP();        // 変数ipに本機のIPアドレスを代入
+        sprintf(s,
+            "LED=%01d<br><a href=\"/L1\">LED ON </a>,http://%d.%d.%d.%d/L1<br>",
+            digitalRead(PIN_LED),ip[0],ip[1],ip[2],ip[3]);
+        client.print("Content-Length: ");   // HTTPヘッダ情報を出力
+        client.println(15+strlen(s)*2-9+2); // コンテンツ長さを出力(改行2バイト)
+        client.println();                   // HTTPヘッダの終了を出力
+        client.println("<html>");           // HTML開始タグを出力(IE以外で必要)
+        client.println(s);                  // HTTPコンテンツを出力
+        Serial.println(s);                  // シリアルへコンテンツを出力
+        sprintf(s,
+            "<a href=\"/L0\">LED OFF</a>,http://%d.%d.%d.%d/L0<br>",
+            ip[0],ip[1],ip[2],ip[3]);
+        client.println(s);                  // HTTPコンテンツを出力
+        Serial.println(s);                  // シリアルへコンテンツを出力
+        client.println("</html>");          // HTML終了タグを出力(IE以外で必要)
     }
     client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示

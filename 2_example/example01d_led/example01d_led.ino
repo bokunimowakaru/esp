@@ -1,9 +1,9 @@
 /*******************************************************************************
-Example 33D(=32+01D): ESP32でLEDを点滅させる
+Example 1D: LEDを点滅させる
 デモ用：展示会などでPCやスマホから直接ESPモジュールへ接続する場合のサンプル
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
-#include <WiFi.h>                           // ESP32用WiFiライブラリ
+#include <ESP8266WiFi.h>                    // Wi-Fi機能を利用するために必要
 #define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
 #define SSID "ESP_SoftAP"                   // 無線LANアクセスポイントのSSID
 #define TIMEOUT 20000                       // タイムアウト 20秒
@@ -11,8 +11,8 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
-    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
-    Serial.println("ESP32 eg.01D LED HTTP");// 「Example 01D」をシリアル出力表示
+    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
+    Serial.println("Example 01D LED HTTP"); // 「Example 01D」をシリアル出力表示
     WiFi.softAP(SSID);                      // ソフトウェアAPの起動
     WiFi.softAPConfig(
         IPAddress(192,168,1,2),             /* 固定IPアドレス */
@@ -35,7 +35,7 @@ void loop(){                                // 繰り返し実行する関数
     int headF=0;                            // HTTPヘッダ用フラグ(0:初期状態)
     
     client = server.available();            // 接続されたクライアントを生成
-    if(!client) return;                     // 非接続の時にloop()の先頭に戻る
+    if(client==0) return;                   // 非接続の時にloop()の先頭に戻る
     Serial.println("Connected");            // 接続されたことをシリアル出力表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
