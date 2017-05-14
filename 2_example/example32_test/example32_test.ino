@@ -25,7 +25,7 @@
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
+#define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
 #define PIN_SW 0                            // GPIO 0(25番ピン)にスイッチを接続
 #define AmbientChannelId 725                // チャネルID(整数)
 #define AmbientWriteKey "ad3e53b54fe16764"  // ライトキー(16桁の16進数)
@@ -40,6 +40,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println("Example Ambient SW");   // 「Example 02」をシリアル出力表示
 
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
+    delay(10);                              // ESP32に必要な待ち時間
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理

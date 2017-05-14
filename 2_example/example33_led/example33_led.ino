@@ -4,7 +4,7 @@ Example 33(=32+1): ESP32でLEDを点滅させる
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#define PIN_LED 2                           // GPIO 2(24番ピン)をLEDを接続
+#define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 WiFiServer server(23);                      // Wi-Fiサーバ(ポート23=TELNET)定義
@@ -14,6 +14,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.01 LED");      // 「ESP32 eg.01」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
+    delay(10);                              // ESP32に必要な待ち時間
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理

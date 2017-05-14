@@ -5,7 +5,7 @@ Example 37(=32+5): ESP32でLCDへ表示する
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#define PIN_LED 2                           // GPIO 2(24番ピン)をLEDへ接続
+#define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define PORT 1024                           // 受信ポート番号
@@ -17,6 +17,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.05 LCD");      // 「ESP32 eg.05」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
+    delay(10);                              // ESP32に必要な待ち時間
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
