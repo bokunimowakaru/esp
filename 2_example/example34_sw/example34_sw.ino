@@ -13,6 +13,7 @@ Example 34(=32+2): スイッチ状態を送信する
 #define PORT 1024                           // 送信のポート番号
 
 void setup(){                               // 起動時に一度だけ実行する関数
+    pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     pinMode(PIN_SW,INPUT_PULLUP);           // スイッチを接続したポートを入力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.02 SW");       // 「ESP32 eg.02」をシリアル出力表示
