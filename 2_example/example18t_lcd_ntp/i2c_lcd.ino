@@ -4,7 +4,7 @@
 
 I2C接続の小型液晶に文字を表示する[機能拡張版]
 
-                               Copyright (c) 2014-2016 Wataru KUNINO
+                               Copyright (c) 2014-2017 Wataru KUNINO
                                http://www.geocities.jp/bokunimowakaru/
 *********************************************************************/
 
@@ -179,4 +179,8 @@ void lcdSetup(byte x, byte y) {
 	Wire.beginTransmission(I2C_lcd);
 	Wire.write(0x00);Wire.write(0x0C);Wire.endTransmission();
 	lcdPrint("Hello!  I2C LCD by Wataru Kunino");
+}
+
+void lcdSetup() {
+	lcdSetup(8,2);
 }
