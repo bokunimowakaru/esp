@@ -49,19 +49,19 @@ void html(WiFiClient &client, int led, int hall, uint32_t ip){
     client.println("<tr><td align=\"center\">T1</td><td align=\"center\">GPIO0</td><td align=\"center\">(BOOT)</td></tr>");
     client.println("<tr><td align=\"center\">T2</td><td align=\"center\">GPIO2</td><td align=\"center\">(LED)</td></tr>");
     client.print("<tr><td align=\"center\">T3</td><td>GPIO15(MTDO)</td><td align=\"center\">");
-    i=2; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
-    client.print("<tr><td align=\"center\">T4</td><td>GPIO13(MTCK)</td><td align=\"center\">");
     i=3; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
-    client.print("<tr><td align=\"center\">T5</td><td>GPIO12(MTD1)</td><td align=\"center\">");
+    client.print("<tr><td align=\"center\">T4</td><td>GPIO13(MTCK)</td><td align=\"center\">");
     i=4; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
-    client.print("<tr><td align=\"center\">T6</td><td>GPIO14(MTMS)</td><td align=\"center\">");
+    client.print("<tr><td align=\"center\">T5</td><td>GPIO12(MTD1)</td><td align=\"center\">");
     i=5; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
-    client.print("<tr><td align=\"center\">T7</td><td>GPIO27</td><td align=\"center\">");
+    client.print("<tr><td align=\"center\">T6</td><td>GPIO14(MTMS)</td><td align=\"center\">");
     i=6; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
-    client.print("<tr><td align=\"center\">T8</td><td>GPIO33(32K_XN)</td><td align=\"center\">");
+    client.print("<tr><td align=\"center\">T7</td><td>GPIO27</td><td align=\"center\">");
     i=7; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
-    client.print("<tr><td align=\"center\">T9</td><td>GPIO32(32K_XP)</td><td align=\"center\">");
+    client.print("<tr><td align=\"center\">T8</td><td>GPIO33(32K_XN)</td><td align=\"center\">");
     i=8; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
+    client.print("<tr><td align=\"center\">T9</td><td>GPIO32(32K_XP)</td><td align=\"center\">");
+    i=9; client.print(touch_prev[i]); if(touchB[i]) client.print("(ON"); else client.print("(OFF"); client.println(")</td></tr>");
     client.println("</table></center>");
     client.println("</p>");
     
