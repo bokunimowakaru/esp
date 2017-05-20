@@ -11,7 +11,7 @@ Example 31 DEMO (HTTP版)
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
 #define PIN_SW 0                            // GPIO 0(25番ピン)にスイッチを接続
-#define LCD_EN 1                            // 液晶の接続有=1,無=0
+#define LCD_EN 0                            // 液晶の接続有=1,無=0
 #define WIFI_AP_MODE 1                      // Wi-Fi APモード ※「0」でSTAモード
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
