@@ -11,6 +11,7 @@ Example 9: 湿度センサ HDC1000
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 29*60*1000000               // スリープ時間 29分(uint32_t)
 #define DEVICE "humid_1,"                   // デバイス名(5文字+"_"+番号+",")
+void sleep();
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用

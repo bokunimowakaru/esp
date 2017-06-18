@@ -20,6 +20,7 @@ extern "C" {
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
+void sleep();
 
 Ambient ambient;
 WiFiClient client;

@@ -15,6 +15,7 @@ Example 10c: 気圧センサ LPS25H [Ambient対応版]
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 29*60*1000000               // スリープ時間 29分(uint32_t)
 #define DEVICE "press_1,"                   // デバイス名(5文字+"_"+番号+",")
+void sleep();
 Ambient ambient;
 WiFiClient client;
 

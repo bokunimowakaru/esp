@@ -16,6 +16,7 @@ Example 12: 加速度センサ ADXL345
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 29*60*1000000               // スリープ時間 29分(uint32_t)
 #define DEVICE "accem_1,"                   // デバイス名(5文字+"_"+番号+",")
+void sleep();
 
 float acm[3];                               // センサ用の浮動小数点数型変数
 

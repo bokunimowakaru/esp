@@ -16,6 +16,7 @@ extern "C" {
 #define SLEEP_P 290*1000000                 // スリープ時間 290秒(約5分)
 #define DEVICE "temp._1,"                   // デバイス名(5文字+"_"+番号+",")
 #define TEMP_OFFSET -50.0                   // LM61CIZの場合は-60.0に変更する
+void sleep();
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用

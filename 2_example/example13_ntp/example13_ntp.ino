@@ -14,6 +14,7 @@ Example 13: NTPクライアント
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
+void sleep();
 
 byte packetBuffer[NTP_PACKET_SIZE];         // 送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義

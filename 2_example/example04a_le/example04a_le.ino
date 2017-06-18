@@ -14,6 +14,7 @@ extern "C" {
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000                  // スリープ時間 50秒(uint32_t)
+void sleep();
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用

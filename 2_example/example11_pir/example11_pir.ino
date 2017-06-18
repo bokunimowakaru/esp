@@ -16,6 +16,7 @@ extern "C" {
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 3550*1000000                // スリープ時間 3550秒(約60分)
 #define DEVICE "pir_s_1,"                   // デバイス名(5文字+"_"+番号+",")
+void sleep();
 
 int pir;                                    // 人感センサ値
 

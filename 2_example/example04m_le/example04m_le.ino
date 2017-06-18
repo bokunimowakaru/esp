@@ -16,6 +16,7 @@ extern "C" {
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 59*1000000                  // スリープ時間 59秒(uint32_t)
 #define SLEEP_N 30                          // 最長スリープ時間 SLEEP_P×SLEEP_N
+void sleep();
 
 int adc;                                    // 整数型変数adcを定義
 extern int WAKE_COUNT;

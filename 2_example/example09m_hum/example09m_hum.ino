@@ -20,6 +20,7 @@ http://ambidata.io/
 #define SLEEP_N 36                          // 最長スリープ時間 SLEEP_P×SLEEP_N
 #define DEADZONE 1                          // 前回値との相違に対する閾値(%)
 #define DEVICE "humid_3,"                   // デバイス名(5文字+"_"+番号+",")
+void sleep();
 
 Ambient ambient;
 WiFiClient client;

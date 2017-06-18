@@ -36,6 +36,7 @@ Example 15: 監視カメラ for SeeedStudio Grove Serial Camera Kit [FTP送信�
 #define SLEEP_P 59*60*1000000               // スリープ時間 59分(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
+void sleep();
 
 File file;
 SoftwareSerial softwareSerial(12,14);       // IO12(4)をRX,IO14(3)をTXに設定
