@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 39(=32+7): 温度センサ MCP9700 or LM61CIZ
+Example 39(=32+7): 温度センサ LM61CIZ (※MCP9700では動作しません)
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
@@ -14,11 +14,13 @@ Example 39(=32+7): 温度センサ MCP9700 or LM61CIZ
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 290*1000000                 // スリープ時間 290秒(約5分)
 #define DEVICE "temp._1,"                   // デバイス名(5文字+"_"+番号+",")
-#define TEMP_OFFSET -50.0                   // LM61CIZの場合は-60.0に変更する
+#define TEMP_OFFSET -60.0                   // LM61CIZ専用
 void sleep();
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
+    analogSetAttenuation(ADC_0db);          // アナログ入力のアッテネータ設定
+    pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.07 TEMP");     // 「Example 07」をシリアル出力表示
@@ -43,7 +45,7 @@ void loop() {
     delay(100);                             // 起動待ち時間
     temp=(float)analogRead(PIN_AIN);        // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    temp *= 3000. / 4095. / 10.;            // 温度(相対値)へ変換
+    temp *= 1100. / 4095. /10.;             // 温度(相対値)へ変換
     temp += TEMP_OFFSET;                    // オフセットにより絶対値へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信

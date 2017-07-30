@@ -17,6 +17,8 @@ void sleep();
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
+    analogSetAttenuation(ADC_0db);          // アナログ入力のアッテネータ設定
+    pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.06 LUM");      // 「Example 06」をシリアル出力表示
@@ -39,9 +41,9 @@ void loop() {
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     delay(10);                              // 起動待ち時間
-    lux=(float)analogRead(PIN_AIN);        // AD変換器から値を取得
+    lux=(float)analogRead(PIN_AIN);         // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    lux *= 3000. / 4095. / 33. * 100.;      // 照度(lux)へ変換
+    lux *= 1100. / 4095. * 100. / 33.;      // 照度(lux)へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     udp.println(lux,0);                     // 照度値を送信

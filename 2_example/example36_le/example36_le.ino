@@ -15,8 +15,9 @@ Example 36(=32+4): 乾電池駆動に向けた低消費電力動作のサンプ�
 #define DEVICE "adcnv_1,"                   // デバイス名(5文字+"_"+番号+",")
 
 void setup(){                               // 起動時に一度だけ実行する関数
+    analogSetAttenuation(ADC_0db);          // アナログ入力のアッテネータ設定
+    pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
-    pinMode(PIN_AIN,INPUT);
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.04 LE");       // 「ESP32 eg.04」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
