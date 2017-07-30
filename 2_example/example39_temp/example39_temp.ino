@@ -43,7 +43,7 @@ void loop() {
     delay(100);                             // 起動待ち時間
     temp=(float)analogRead(PIN_AIN);        // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    temp *= 1000. / 1023. / 10.;            // 温度(相対値)へ変換
+    temp *= 3000. / 4095. / 10.;            // 温度(相対値)へ変換
     temp += TEMP_OFFSET;                    // オフセットにより絶対値へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信

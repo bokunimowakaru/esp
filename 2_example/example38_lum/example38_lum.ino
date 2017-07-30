@@ -41,7 +41,7 @@ void loop() {
     delay(10);                              // 起動待ち時間
     lux=(float)analogRead(PIN_AIN);        // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    lux *= 1000. / 1023. / 33. * 100.;      // 照度(lux)へ変換
+    lux *= 3000. / 4095. / 33. * 100.;      // 照度(lux)へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     udp.println(lux,0);                     // 照度値を送信
