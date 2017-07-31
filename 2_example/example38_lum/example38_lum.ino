@@ -13,11 +13,10 @@ Example 38(=32+6): 照度センサ NJL7502L
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000                  // スリープ時間 50秒(uint32_t)
 #define DEVICE "illum_1,"                   // デバイス名(5文字+"_"+番号+",")
-void sleep();
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
-    analogSetAttenuation(ADC_0db);          // アナログ入力のアッテネータ設定
+    analogSetAttenuation(ADC_11db);         // アナログ入力のアッテネータ設定
     pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
@@ -40,16 +39,28 @@ void loop() {
     float lux;                              // 照度値用の変数
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
-    delay(10);                              // 起動待ち時間
-    lux=(float)analogRead(PIN_AIN);         // AD変換器から値を取得
+    delay(100);                             // 起動待ち時間
+    lux=mvAnalogIn(PIN_AIN);
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    lux *= 1100. / 4095. * 100. / 33.;      // 照度(lux)へ変換
+    lux *= 3200. / 4095. / 33. * 100.;      // 照度(lux)へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     udp.println(lux,0);                     // 照度値を送信
     Serial.println(lux,0);                  // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     sleep();
+}
+
+float mvAnalogIn(uint8_t PIN){              // オートレンジ・ADC入力(出力 mV)
+    float in;                               // ADC入力値
+    int att;                                // 減衰量 adc_attenuation_t型
+    int mv[4]={1100,1400,1900,3200};        // 基準電圧 mV
+    for(att=3;att>=0;att--){                // 減衰量を減らしてゆく
+        analogSetPinAttenuation(PIN,(adc_attenuation_t)att);    // 減衰量設定
+        in=(float)analogRead(PIN_AIN)*(float)mv[att]/4095.;     // 電圧値入力
+        if( att>0 ) if( (int)in > (mv[att-1]/9*8) ) break;      // 超過判定
+    }
+    return in;
 }
 
 void sleep(){

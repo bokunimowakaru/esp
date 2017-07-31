@@ -15,7 +15,6 @@ Example 36(=32+4): 乾電池駆動に向けた低消費電力動作のサンプ�
 #define DEVICE "adcnv_1,"                   // デバイス名(5文字+"_"+番号+",")
 
 void setup(){                               // 起動時に一度だけ実行する関数
-    analogSetAttenuation(ADC_0db);          // アナログ入力のアッテネータ設定
     pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
@@ -37,7 +36,7 @@ void loop() {
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     delay(5);                               // 起動待ち時間
-    adc=analogRead(PIN_AIN);                // AD変換器から値を取得
+    adc=(int)mvAnalogIn(PIN_AIN);           // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
@@ -46,4 +45,16 @@ void loop() {
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(200);                             // 送信待ち時間
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
+}
+
+float mvAnalogIn(uint8_t PIN){              // オートレンジ・ADC入力(出力 mV)
+    float in;                               // ADC入力値
+    int att;                                // 減衰量 adc_attenuation_t型
+    int mv[4]={1100,1400,1900,3200};        // 基準電圧 mV
+    for(att=3;att>=0;att--){                // 減衰量を減らしてゆく
+        analogSetPinAttenuation(PIN,(adc_attenuation_t)att);    // 減衰量設定
+        in=(float)analogRead(PIN_AIN)*(float)mv[att]/4095.;     // 電圧値入力
+        if( att>0 ) if( (int)in > (mv[att-1]/9*8) ) break;      // 超過判定
+    }
+    return in;
 }

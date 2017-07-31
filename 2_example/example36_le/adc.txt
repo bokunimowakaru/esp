@@ -1,0 +1,40 @@
+éQçlï∂å£
+
+https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-adc.h
+
+27 #include "esp32-hal.h" 
+28 
+29 typedef enum { 
+30     ADC_0db, 
+31     ADC_2_5db, 
+32     ADC_6db, 
+33     ADC_11db 
+34 } adc_attenuation_t; 
+35 
+36 /* 
+37  * Get ADC value for pin 
+38  * */ 
+39 uint16_t analogRead(uint8_t pin); 
+Å`Å`
+82 /* 
+83  * Set the attenuation for all channels 
+84  * Default is 11db 
+85  * */ 
+86 void analogSetAttenuation(adc_attenuation_t attenuation); 
+87 
+88 /* 
+89  * Set the attenuation for particular pin 
+90  * Default is 11db 
+91  * */ 
+92 void analogSetPinAttenuation(uint8_t pin, adc_attenuation_t attenuation); 
+
+----------------------------------------------------------------------------
+
+https://github.com/espressif/arduino-esp32/issues/87
+Analog Attenuation API?  #87 
+
+That seems to give a max input voltage of:
+ 0db = 1.1v
+ 2.5db = 1.4v
+ 6db = 1.9v
+ 11db = 3.2v
