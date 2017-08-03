@@ -1,6 +1,6 @@
-/*
 参考文献：
-https://github.com/espressif/esp-idf/blob/master/components/esp32/include/esp_deep_sleep.h
+
+--------------------------------------------------------------------------------
 
 esp_deep_sleep_enable_timer_wakeup(uint64_t time_in_us);
     Enable wakeup by timer
@@ -34,8 +34,25 @@ esp_deep_sleep(uint64_t time_in_us);
     Enter deep-sleep mode
     esp_deep_sleep DOES NOT shut down WiFi, BT, and higher level protocol connections gracefully. 
     @param time_in_us   deep-sleep time, unit: microsecond
-*/
 
+arduino esp32 より
+--------------------------------------------------------------------------------
+サンプル追加
+
+commit 1be6a5c361d051f9136a825020005a3e05588ba7
+Author: Pranav Cherukupalli <cherukupallip@gmail.com>
+Date:   Thu Jun 29 13:01:39 2017 +0530
+
+    ESP32: Add DeepSleep examples (#473)
+
+    *Added a Timer wakeup example
+    *Added a Touch wakeup example
+    *Added an external source wakeup example
+
+https://github.com/espressif/esp-idf/blob/master/components/esp32/include/esp_deep_sleep.h
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 /*
 	従来方法：
@@ -49,3 +66,4 @@ esp_deep_sleep(uint64_t time_in_us);
     esp_deep_sleep_start();                 // スリープモードへ移行する
     while(1) delay(100);                    // 終了(永久ループ)
 */
+

@@ -1,6 +1,7 @@
-�Q�l����
+参考文献
 
-https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-adc.h
+--------------------------------------------------------------------------------
+arduino esp32 の adc部
 
 27 #include "esp32-hal.h" 
 28 
@@ -15,7 +16,8 @@ https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-adc
 37  * Get ADC value for pin 
 38  * */ 
 39 uint16_t analogRead(uint8_t pin); 
-�`�`
+～～
+～～
 82 /* 
 83  * Set the attenuation for all channels 
 84  * Default is 11db 
@@ -28,9 +30,11 @@ https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-adc
 91  * */ 
 92 void analogSetPinAttenuation(uint8_t pin, adc_attenuation_t attenuation); 
 
-----------------------------------------------------------------------------
+https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-adc.h
 
-https://github.com/espressif/arduino-esp32/issues/87
+--------------------------------------------------------------------------------
+減衰器の最大入力電圧
+
 Analog Attenuation API?  #87 
 
 That seems to give a max input voltage of:
@@ -38,3 +42,5 @@ That seems to give a max input voltage of:
  2.5db = 1.4v
  6db = 1.9v
  11db = 3.2v
+
+https://github.com/espressif/arduino-esp32/issues/87
