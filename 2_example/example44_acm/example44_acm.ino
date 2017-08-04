@@ -30,6 +30,7 @@ void setup(){                               // 起動時に一度だけ実行す
     int waiting=0;                          // アクセスポイント接続待ち用
     int start,i;
     
+    pinMode(PIN_INT,INPUT_PULLUP);          // センサを接続したポートを入力に
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     start=adxlSetup(0);                     // 加速度センサの初期化と結果取得
     for(i=0;i<3;i++) acm[i]=getAcm(i);      // 3軸の加速度を取得し変数acmへ代入
