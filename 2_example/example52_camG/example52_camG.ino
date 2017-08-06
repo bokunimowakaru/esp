@@ -75,6 +75,7 @@ void loop(){
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
+    delay(1);                               // クライアント側の応答待ち時間
     if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
     Serial.println(s);                      // 受信した命令をシリアル出力表示
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示

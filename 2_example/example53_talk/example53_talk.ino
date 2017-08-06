@@ -1,63 +1,70 @@
 /*******************************************************************************
-Example 48 (=32+16): キャンドルLEDの製作
+Example 21: AquosTalkを使った音声出力器(HTTP版)
+
+    AquosTalk接続用
+    TXD0(35番ピン U0TXD)、AquosTalk側はRXD端子(2番ピン)
+
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
+#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define TIMEOUT 20000                       // タイムアウト 20秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
+#define PORT 1024                           // 受信ポート番号
+
+WiFiUDP udp;                                // UDP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
-int led=0;                                  // 現在のLEDの輝度(0は消灯)
-int target=0;                               // LED設定値(0は消灯)
 
 void setup(){                               // 起動時に一度だけ実行する関数
-    pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
-    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
-    Serial.println("ESP32 eg.16 LED HTTP"); // 「Example 16」をシリアル出力表示
+    Serial.begin(9600);                     // AquesTalkとの通信ポート
+    Serial.print("\r$");                    // ブレークコマンドを出力する
+    delay(100);                             // 待ち時間処理
+    Serial.print("$?kon'nnichi/wa.\r");     // 音声「こんにちわ」を出力する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    morse(PIN_LED,50,"HELLO");              // 「HELLO」をモールス信号出力
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
-        Serial.print('.');                  // 進捗表示
-        digitalWrite(PIN_LED,!digitalRead(PIN_LED));    // LEDの点滅
         delay(500);                         // 待ち時間処理
     }
-    morseIp0(PIN_LED,50,WiFi.localIP());    // IPアドレス終値をモールス信号出力
-    ledSetup();                             // LED用セットアップ
     server.begin();                         // サーバを起動する
-    Serial.println("\nStarted");            // 起動したことをシリアル出力表示
-    Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
+    udp.begin(PORT);                        // UDP通信御開始
+    Serial.print("<NUM VAL=");              // 数字読み上げ用タグ出力
+    Serial.print(WiFi.localIP());           // IPアドレスを読み上げる
+    Serial.print(">.\r");                   // タグの終了を出力する
 }
 
 void loop(){                                // 繰り返し実行する関数
     WiFiClient client;                      // Wi-Fiクライアントの定義
-    char c;                                 // 文字変数を定義
+    char c;                                 // 文字変数cを定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    int len=0;                              // 文字列の長さカウント用の変数
+    char talk[65]="";                       // 音声出力用の文字列変数を定義
+    int len=0;                              // 文字列長を示す整数型変数を定義
     int t=0;                                // 待ち受け時間のカウント用の変数
     int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
     int postL=64;                           // POSTデータ長
-    
-    client = server.available();            // 接続されたクライアントを生成
-    if(!client){
-        if(target>1 && target<=10){         // 1よりも大きく10以下のとき
-            led=ledCtrl(led,23+random(0,target*100),20);
-        }                                   // LEDの輝度を乱数値23～1023に設定
-        return;                             // 非接続の時にloop()の先頭に戻る
+
+    client = server.available();            // 接続されたTCPクライアントを生成
+    if(!client){                            // TCPクライアントが無かった場合
+        len = udp.parsePacket();            // UDP受信パケット長を変数lenに代入
+        if(len==0)return;                   // TCPとUDPが未受信時にloop()先頭へ
+        memset(s, 0, 49);                   // 文字列変数sの初期化(49バイト)
+        udp.read(s, 48);                    // UDP受信データを文字列変数sへ代入
+        Serial.print(s);                    // AquesTalkへ出力する
+        Serial.print("\r");                 // 改行コード（CR）を出力する
+        return;                             // loop()の先頭に戻る
     }
-    Serial.println("Connected");            // 接続されたことをシリアル出力表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
             t=0;                            // 待ち時間変数をリセット
             c=client.read();                // データを文字変数cに代入
             if(c=='\n'){                    // 改行を検出した時
                 if(postF==0){               // ヘッダ処理
-                    if(len>8 && strncmp(s,"GET /?L=",8)==0){
-                        target=atoi(&s[8]); // 変数targetにデータ値を代入
+                    if(len>11 && strncmp(s,"GET /?TEXT=",11)==0){
+                        strncpy(talk,&s[11],64);     // 受信文字列をtalkへコピー
                         break;              // 解析処理の終了
                     }else if (len>5 && strncmp(s,"GET /",5)==0){
+                        strcpy(talk,"de'-ta-o'nyu-ryo_kushiteku'dasai.");
                         break;              // 解析処理の終了
                     }else if(len>6 && strncmp(s,"POST /",6)==0){
                         postF=1;            // POSTのBODY待ち状態へ
@@ -77,8 +84,8 @@ void loop(){                                // 繰り返し実行する関数
             }
             if(postF>=2){                   // POSTのBODY処理
                 if(postL<=0){               // 受信完了時
-                    if(len>2 && strncmp(s,"L=",2)==0){
-                        target=atoi(&s[2]); // 変数targetに数字を代入
+                    if(len>5 && strncmp(s,"TEXT=",5)==0){
+                        strncpy(talk,&s[5],64);      // 受信文字列をtalkへコピー
                     }
                     break;                  // 解析処理の終了
                 }
@@ -89,13 +96,14 @@ void loop(){                                // 繰り返し実行する関数
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
     delay(1);                               // クライアント側の応答待ち時間
+    if(talk[0]){                            // 文字列が代入されていた場合、
+        trUri2txt(talk);                    // URLエンコードの変換処理
+        Serial.print(talk);                 // 受信文字データを音声出力
+        Serial.print("\r");                 // 改行コード（CR）を出力する
+    }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        html(client,target,WiFi.localIP()); // HTMLコンテンツを出力する
-        if(target==0) led=ledCtrl(led,0,4); // ゆっくりと消灯
-        if(target==1) led=ledCtrl(led,1023,4);  // ゆっくりと点灯
-        if(target<=0 && target>=-10) led=ledCtrl(led,-100*target,4);// 輝度変更
-    }                                       // 負のときは-100を掛けて出力
+        html(client,talk,WiFi.localIP());   // HTMLコンテンツを出力する
+    }
     client.flush();                         // ESP32用 ERR_CONNECTION_RESET対策
     client.stop();                          // クライアントの切断
-    Serial.println("Disconnected");         // シリアル出力表示
 }

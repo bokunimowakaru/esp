@@ -132,6 +132,7 @@ void loop(){                                // 繰り返し実行する関数
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
+    delay(1);                               // クライアント側の応答待ち時間
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         t=0;
         if(target==0) t=0;

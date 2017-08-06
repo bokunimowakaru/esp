@@ -130,6 +130,7 @@ void loop(){
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
+    delay(1);                               // クライアント側の応答待ち時間
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         if(D_LEN==0)strcpy(s,"データ未受信");
         ir_data2txt(s,96,D,D_LEN);
