@@ -28,7 +28,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_IR_IN, INPUT);              // IRセンサの入力ポートの設定
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     ir_send_init();                         // IR出力用LEDの設定(IO 14ポート)
-    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.19 ir_rc");    // 「Example 19」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続

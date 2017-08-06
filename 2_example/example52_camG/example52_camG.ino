@@ -1,22 +1,27 @@
 /*******************************************************************************
-Example 20: 監視カメラ for SeeedStudio Grove Serial Camera Kit 
+Example 52 (=32+20): 監視カメラ for SeeedStudio Grove Serial Camera Kit 
 
-                                            Copyright (c) 2016 Wataru KUNINO
+    カメラ接続用
+    GPIO16(27番ピン) U2RXD カメラ側はTXD端子(黄色)
+    GPIO17(28番ピン) U2TXD カメラ側はRXD端子(白色)
+
+    GPIO 2(24番ピン)にPch-FETを接続
+
+※今後、esp-idfや上記ライブラリを基にしたものが公式サポートされると思います。
+
+                                           Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
-#include <SoftwareSerial.h>
-#include <FS.h>
-#include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
+#include <SPIFFS.h>
+//#include <FS.h>
+#include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-extern "C" {
-#include "user_interface.h"                 // ESP8266用の拡張IFライブラリ
-}
-#define PIN_CAM 13                          // IO 13(5番ピン)にPch-FETを接続する
+#define PIN_CAM 2                           // GPIO 2(24番ピン)にPch-FETを接続
 #define TIMEOUT 20000                       // タイムアウト 20秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 
-SoftwareSerial softwareSerial(12,14);       // IO12(4)をRX,IO14(3)をTXに設定
+HardwareSerial hardwareSerial2(2);          // カメラ接続用シリアルポートESP32用
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 int size=0;                                 // 画像データの大きさ(バイト)
 int update=60;                              // ブラウザのページ更新間隔(秒)
@@ -25,13 +30,12 @@ void setup(){
     lcdSetup(8,2);                          // 液晶の初期化(8桁×2行)
     pinMode(PIN_CAM,OUTPUT);                // FETを接続したポートを出力に
     digitalWrite(PIN_CAM,0);                // FETをLOW(ON)にする
-    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("Example 20 cam");       // 「Example 20」をシリアル出力表示
-    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     delay(100);                             // カメラの起動待ち
-    softwareSerial.begin(115200);           // カメラとのシリアル通信を開始する
+    hardwareSerial2.begin(115200);          // カメラとのシリアル通信を開始する
     CamInitialize();                        // カメラの初期化コマンド
     CamSizeCmd(1);                          // 撮影サイズをQVGAに設定
     delay(4000);                            // 完了待ち(開始直後の撮影防止対策)
@@ -52,7 +56,7 @@ void loop(){
     int i,j;
     
     client = server.available();            // 接続されたクライアントを生成
-    if(client==0)return;                    // loop()の先頭に戻る
+    if(!client)return;                      // loop()の先頭に戻る
     Serial.println("Connected");            // シリアル出力表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
@@ -76,6 +80,7 @@ void loop(){
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
     if(strncmp(s,"GET / ",6)==0){           // コンテンツ取得命令時
         html(client,size,update,WiFi.localIP()); // コンテンツ表示
+        client.flush();                     // ESP32用 ERR_CONNECTION_RESET対策
         client.stop();                      // クライアントの切断
         return;                             // 処理の終了・loop()の先頭へ
     }
@@ -86,6 +91,8 @@ void loop(){
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
         size=CamGetData(client);
+        client.println();                   // コンテンツの終了
+        client.flush();                     // ESP32用 ERR_CONNECTION_RESET対策
         client.stop();                      // クライアントの切断
         Serial.print(size);                 // ファイルサイズをシリアル出力表示
         Serial.println(" Bytes");           // シリアル出力表示
@@ -101,6 +108,7 @@ void loop(){
     }
     for(i=6;i<strlen(s);i++) if(s[i]==' '||s[i]=='+') s[i]='\0';
     htmlMesg(client,&s[6],WiFi.localIP());  // メッセージ表示
+    client.flush();                         // ESP32用 ERR_CONNECTION_RESET対策
     client.stop();                          // クライアント切断
     Serial.println("Sent HTML");            // シリアル出力表示
 }
