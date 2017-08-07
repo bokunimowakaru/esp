@@ -1,7 +1,8 @@
 new
 rem IchigoJam用 テレビ出力表示プログラム
-rem CC by Wataru KUNINO
-rem http://www.geocities.jp/bokunimowakaru/q/15/
+rem CC by IchigoJam-FAN Group (Facebook)
+rem https://www.facebook.com/groups/ichigojam/permalink/581632705309820/
+
 1 cls:?"TvOutput":?"forESP15"
 2 gosub 950
 100 'SETUP
@@ -20,4 +21,3 @@ rem http://www.geocities.jp/bokunimowakaru/q/15/
 960 let[0],#80,#8A,#85,#8F:lc0,5:forY=0to15:forX=0to7
 970 C=peek(vpeek(X,Y/8)*8+Y%8):?chr$([C>>6&3],[C>>4&3],[C>>2&3],[C&3]);
 980 next:next:return
-rem https://www.facebook.com/groups/ichigojam/permalink/581632705309820/

@@ -1,0 +1,23 @@
+new
+rem IchigoJam用 テレビ出力表示プログラム
+rem CC by IchigoJam-FAN Group (Facebook)
+rem https://www.facebook.com/groups/ichigojam/permalink/581632705309820/
+
+1 cls:?"TvOutput":?"forESP15"
+2 gosub 950
+100 'SETUP
+110 X=0:Y=0
+120 poke #900,0,0,0,0,0,0,0,0
+130 poke #920,0,0,0,0,0,0,0,0
+200 'LOOP
+210 I=inkey()
+220 ifI=10andX+Ygosub950:goto100
+225 ifI=13andX+Ygosub950:goto100
+230 ifI<=32orI=39orY>1goto200
+240 poke #900+X+Y*32,I
+250 X=X+1:ifX>7letX,0:Y=Y+1
+260 goto200
+950 'TV
+960 let[0],#80,#8A,#85,#8F:lc0,5:forY=0to15:forX=0to7
+970 C=peek(vpeek(X,Y/8)*8+Y%8):?chr$([C>>6&3],[C>>4&3],[C>>2&3],[C&3]);
+980 next:next:return
