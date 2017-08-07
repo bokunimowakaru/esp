@@ -1,6 +1,6 @@
 new
 rem IchigoJam用 テレビ出力表示プログラム
-rem CC by IchigoJam-FAN Group (Facebook)
+rem CC by Wataru Kunino @ IchigoJam-FAN Group (Facebook)
 rem https://www.facebook.com/groups/ichigojam/permalink/581632705309820/
 
 1 cls:?"TvOutput":?"forESP15"
