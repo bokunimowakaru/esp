@@ -1,8 +1,8 @@
 /*******************************************************************************
-Example 22: IchigoJam をつかった情報表示器
+Example 54 (=32+22): IchigoJam をつかった情報表示器
 
 IchigoJam Firmware 1.2以上を推奨
-                                            Copyright (c) 2016 Wataru KUNINO
+                                           Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

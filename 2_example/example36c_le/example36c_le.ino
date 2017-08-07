@@ -14,7 +14,6 @@ Example 36(=32+4): 乾電池駆動の低消費電力動作のサンプル [Ambie
 #define AmbientChannelId 100                // チャネル名(整数)
 #define AmbientWriteKey "0123456789abcdef"  // ライトキー(16桁の16進数)
 #define DATA_NUM 2                          // 起動時間のデータ番号
-#define PIN_EN 13                           // IO 13(5番ピン)をセンサ用の電源に
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 9*60*1000000                // スリープ時間 9分(uint32_t)
