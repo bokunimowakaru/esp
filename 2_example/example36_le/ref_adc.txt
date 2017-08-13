@@ -44,8 +44,7 @@ That seems to give a max input voltage of:
  11db = 3.2v
 
 https://github.com/espressif/arduino-esp32/issues/87
---------------------------------------------------------------------------------
-下記が正しい
+--------------------------------------------------------------------------------下記が正式のもの
 
 •0dB attenuaton (ADC_ATTEN_0db) gives full-scale voltage 1.1V
 •2.5dB attenuation (ADC_ATTEN_2_5db) gives full-scale voltage 1.5V
@@ -55,10 +54,11 @@ https://github.com/espressif/arduino-esp32/issues/87
 http://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/adc.html
 
 --------------------------------------------------------------------------------
-
 1.466873575=1.1*10^(2.5/20)
 2.194788546=1.1*10^(6/20)
 3.902947282=1.1*10^(11/20)
+
+--------------------------------------------------------------------------------動作確認 入力電圧・ADC ATT=(adc_attenuation_t)0,1,2,3
 
 .609
 467.979
@@ -138,6 +138,7 @@ http://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/adc.html
 0.000
 4.835
 
+--------------------------------------------------------------------------------
 float mvAnalogIn(uint8_t PIN){
     int in0,in3;
     float ad0,ad3;
