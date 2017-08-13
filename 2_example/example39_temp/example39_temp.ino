@@ -18,7 +18,6 @@ Example 39(=32+7): 温度センサ LM61CIZ (※MCP9700では動作しません)
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
-    analogSetAttenuation(ADC_0db);          // アナログ入力のアッテネータ設定
     pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
@@ -42,9 +41,9 @@ void loop() {
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     delay(100);                             // 起動待ち時間
-    temp=(float)analogRead(PIN_AIN);        // AD変換器から値を取得
+    temp=(float)mvAnalogIn(PIN_AIN);        // AD変換器から値を取得
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    temp *= 1100. / 4095. /10.;             // 温度(相対値)へ変換
+    temp /= 10.;                            // 温度(相対値)へ変換
     temp += TEMP_OFFSET;                    // オフセットにより絶対値へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
@@ -52,6 +51,42 @@ void loop() {
     Serial.println(temp,1);                 // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     sleep();
+}
+
+float mvAnalogIn(uint8_t PIN){
+    int in0,in3;
+    float ad0,ad3;
+    
+    analogSetPinAttenuation(PIN,ADC_11db);
+    in3=analogRead(PIN);
+    
+    if( in3 > 2599 ){
+        ad3 = -1.457583e-7 * (float)in3 * (float)in3
+            + 1.510116e-3 * (float)in3
+            - 0.573300;
+    }else{
+        ad3 = 8.378998e-4 * (float)in3 + 1.891456e-1;
+    }
+    Serial.print("ADC (ATT=3;11dB) = ");
+    Serial.print(ad3,3);
+    Serial.print(" [V], ");
+    Serial.println(in3);
+    if( in3 < 200 ){
+        analogSetPinAttenuation(PIN,ADC_0db);
+        in0=analogRead(PIN);
+        ad0 = 2.442116e-4 * (float)in0 + 1.075584e-1;
+        Serial.print("ADC (ATT=0; 0dB) = ");
+        Serial.print(ad0,3);
+        Serial.print(" [V], "); 
+        Serial.println(in0);
+        if( in3 >= 100 ){
+            ad3 = ad3 * ((float)in3 - 100.) / 100.
+                + ad0 * (200. - (float)in3) / 100.;
+        }else{
+            ad3 = ad0;
+        }
+    }
+    return ad3 * 1000.;
 }
 
 void sleep(){
