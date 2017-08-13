@@ -1,5 +1,9 @@
 /*******************************************************************************
 Example 38(=32+6): 照度センサ NJL7502L
+
+負荷抵抗1kΩの場合、ESP32内蔵ADCの特性上、0.1V(300 lx)以下の検出が出来ません。
+より感度を高めるには負荷抵抗を大きくして下さい。
+
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
@@ -41,7 +45,7 @@ void loop() {
     delay(100);                             // 起動待ち時間
     lux=mvAnalogIn(PIN_AIN);
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    lux *= 3200. / 4095. / 33. * 100.;      // 照度(lux)へ変換
+    lux *= 100. / 33.;                      // 照度(lux)へ変換
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     udp.println(lux,0);                     // 照度値を送信
@@ -64,10 +68,18 @@ float mvAnalogIn(uint8_t PIN){
     }else{
         ad3 = 8.378998e-4 * (float)in3 + 1.891456e-1;
     }
+    Serial.print("ADC (ATT=3;11dB) = ");
+    Serial.print(ad3,3);
+    Serial.print(" [V], ");
+    Serial.println(in3);
     if( in3 < 200 ){
         analogSetPinAttenuation(PIN,ADC_0db);
         in0=analogRead(PIN);
         ad0 = 2.442116e-4 * (float)in0 + 1.075584e-1;
+        Serial.print("ADC (ATT=0; 0dB) = ");
+        Serial.print(ad0,3);
+        Serial.print(" [V], "); 
+        Serial.println(in0);
         if( in3 >= 100 ){
             ad3 = ad3 * ((float)in3 - 100.) / 100.
                 + ad0 * (200. - (float)in3) / 100.;
