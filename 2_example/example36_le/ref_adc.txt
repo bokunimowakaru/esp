@@ -33,7 +33,7 @@ arduino esp32 の adc部
 https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-adc.h
 
 --------------------------------------------------------------------------------
-減衰器の最大入力電圧(この値が近い)
+減衰器の最大入力電圧
 
 Analog Attenuation API?  #87 
 
@@ -45,7 +45,7 @@ That seems to give a max input voltage of:
 
 https://github.com/espressif/arduino-esp32/issues/87
 --------------------------------------------------------------------------------
-下記は合わない
+下記が正しい
 
 •0dB attenuaton (ADC_ATTEN_0db) gives full-scale voltage 1.1V
 •2.5dB attenuation (ADC_ATTEN_2_5db) gives full-scale voltage 1.5V
@@ -53,3 +53,115 @@ https://github.com/espressif/arduino-esp32/issues/87
 •11dB attenuation (ADC_ATTEN_11db) gives full-scale voltage 3.9V (see note below)
 
 http://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/adc.html
+
+--------------------------------------------------------------------------------
+
+1.466873575=1.1*10^(2.5/20)
+2.194788546=1.1*10^(6/20)
+3.902947282=1.1*10^(11/20)
+
+.609
+467.979
+551.028
+544.527
+554.164
+
+.504
+354.558
+417.023
+437.413
+434.090
+
+.448
+289.747
+362.885
+375.796
+379.560
+
+.407
+247.810
+308.747
+326.716
+333.089
+
+.356
+186.810
+248.713
+272.980
+271.844
+
+.311
+140.108
+199.399
+223.543
+223.492
+
+.27
+92.452
+154.374
+173.389
+159.023
+
+.232
+45.749
+105.060
+134.699
+136.996
+
+.202
+15.250
+73.435
+103.174
+103.150
+
+.182
+0.000
+60.034
+74.514
+81.661
+
+.152
+0.000
+8.576
+45.855
+47.814
+
+.119
+0.000
+0.000
+12.897
+12.894
+
+.109
+0.000
+0.000
+0.000
+4.835
+
+float mvAnalogIn(uint8_t PIN){
+    int in0,in3;
+    float ad0,ad3;
+    
+    analogSetPinAttenuation(PIN,ADC_11db);
+    in3=analogRead(PIN);
+    
+    if( in3 > 2599 ){
+        ad3 = -1.457583e-7 * (float)in3 * (float)in3
+            + 1.510116e-3 * (float)in3
+            - 0.573300;
+    }else{
+        ad3 = 8.378998e-4 * (float)in3 + 1.891456e-1;
+    }
+    if( in3 < 200 ){
+        analogSetPinAttenuation(PIN,ADC_0db);
+        in0=analogRead(PIN);
+        ad0 = 2.442116e-4 * (float)in0 + 1.075584e-1;
+        if( in3 >= 100 ){
+            ad3 = ad3 * ((float)in3 - 100.) / 100.
+                + ad0 * (200. - (float)in3) / 100.;
+        }else{
+            ad3 = ad0;
+        }
+    }
+    return ad3 * 1000.;
+}

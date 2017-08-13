@@ -16,7 +16,6 @@ Example 38(=32+6): 照度センサ NJL7502L
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
-    analogSetAttenuation(ADC_11db);         // アナログ入力のアッテネータ設定
     pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
@@ -51,16 +50,32 @@ void loop() {
     sleep();
 }
 
-float mvAnalogIn(uint8_t PIN){              // オートレンジ・ADC入力(出力 mV)
-    float in;                               // ADC入力値
-    int att;                                // 減衰量 adc_attenuation_t型
-    int mv[4]={1100,1400,1900,3200};        // 基準電圧 mV
-    for(att=3;att>=0;att--){                // 減衰量を減らしてゆく
-        analogSetPinAttenuation(PIN,(adc_attenuation_t)att);    // 減衰量設定
-        in=(float)analogRead(PIN_AIN)*(float)mv[att]/4095.;     // 電圧値入力
-        if( att>0 ) if( (int)in > (mv[att-1]/9*8) ) break;      // 超過判定
+float mvAnalogIn(uint8_t PIN){
+    int in0,in3;
+    float ad0,ad3;
+    
+    analogSetPinAttenuation(PIN,ADC_11db);
+    in3=analogRead(PIN);
+    
+    if( in3 > 2599 ){
+        ad3 = -1.457583e-7 * (float)in3 * (float)in3
+            + 1.510116e-3 * (float)in3
+            - 0.573300;
+    }else{
+        ad3 = 8.378998e-4 * (float)in3 + 1.891456e-1;
     }
-    return in;
+    if( in3 < 200 ){
+        analogSetPinAttenuation(PIN,ADC_0db);
+        in0=analogRead(PIN);
+        ad0 = 2.442116e-4 * (float)in0 + 1.075584e-1;
+        if( in3 >= 100 ){
+            ad3 = ad3 * ((float)in3 - 100.) / 100.
+                + ad0 * (200. - (float)in3) / 100.;
+        }else{
+            ad3 = ad0;
+        }
+    }
+    return ad3 * 1000.;
 }
 
 void sleep(){
