@@ -21,6 +21,7 @@ if [ ${HOUR} -ge ${TIME_START} ] && [ ${HOUR} -le ${TIME_END} ]; then
         TALK=${HOUR}"時"${MIN}"分です。"
     fi
     # 再生の実行と、60秒後にaplayプロセスの終了
-    /home/pi/esp/tools/aquestalkpi/AquesTalkPi ${TALK}|aplay
-	(sleep 60; kill `pidof aplay` &> /dev/null) &
+    echo ${TALK}
+    /home/pi/esp/tools/aquestalkpi/AquesTalkPi "${TALK}"|aplay
+	(sleep 60; kill `pidof aplay`) &> /dev/null &
 fi
