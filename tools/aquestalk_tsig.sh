@@ -22,6 +22,6 @@ if [ ${HOUR} -ge ${TIME_START} ] && [ ${HOUR} -le ${TIME_END} ]; then
     fi
     # 再生の実行と、60秒後にaplayプロセスの終了
     echo ${TALK}
-    /home/pi/esp/tools/aquestalkpi/AquesTalkPi "${TALK}"|aplay
-	(sleep 60; kill `pidof aplay`) &> /dev/null &
+    /home/pi/esp/tools/aquestalkpi/AquesTalkPi "${TALK}"|aplay &
+    (sleep 60; kill `pidof aplay`) &> /dev/null &
 fi
