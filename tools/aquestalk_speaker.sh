@@ -37,9 +37,9 @@ echo "Listening HTTP port 80..."                        # ポート番号表示
 while true                                              # 永遠に
 do                                                      # 繰り返し
     echo -e $HTML\
-	|sed -e "s/\"TALK\"/\"${TALK}\"/g"\
-	|sudo netcat -lw0 -v 80\
-	|while read TCP
+    |sed -e "s/\"TALK\"/\"${TALK}\"/g"\
+    |sudo netcat -lw0 -v 80\
+    |while read TCP
     do
         # DATE=`date "+%Y/%m/%d %R"`                    # 時刻を取得
         # echo -E $DATE, $TCP                           # 取得日時とデータを表示

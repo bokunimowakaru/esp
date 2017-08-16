@@ -7,7 +7,7 @@
 #       ./aquestalk_setup.sh
 
 TIME_START=6                                # 時報の開始時刻(6:00～)
-TIME_END=22                                 # 時報の終了時刻(～21:59)
+TIME_END=23                                 # 時報の終了時刻(～23:59)
 HOUR=`date "+%_H"`                          # 現在の時刻(時)
 MIN=`date "+%_M"`                           # 現在の時刻(分)
 if [ ${HOUR} -ge ${TIME_START} ] && [ ${HOUR} -le ${TIME_END} ]; then
@@ -20,5 +20,7 @@ if [ ${HOUR} -ge ${TIME_START} ] && [ ${HOUR} -le ${TIME_END} ]; then
         # 毎時0分以外の時は「時」と「分」を再生
         TALK=${HOUR}"時"${MIN}"分です。"
     fi
+    # 再生の実行と、60秒後にaplayプロセスの終了
     /home/pi/esp/tools/aquestalkpi/AquesTalkPi ${TALK}|aplay
+	(sleep 60; kill `pidof aplay` &> /dev/null) &
 fi
