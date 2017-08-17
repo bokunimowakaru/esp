@@ -11,6 +11,9 @@
 #
 # nkf (Network Kanji Filter) のインストール方法
 #       sudo apt-get install nkf
+#
+# 再生方法
+#       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
 
 amixer cset numid=1 200
 IP=`hostname -I|cut -d" " -f1`
@@ -54,6 +57,12 @@ do                                                      # 繰り返し
             kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
             sleep 0.5
             aquestalkpi/AquesTalkPi "${TALK}"|aplay &   # 音声再生
+        elif [ "$HTTP" = "GET /?VOL" ]; then
+            VOL=`echo -E $TCP\
+            |cut -d"=" -f2\
+            |cut -d" " -f1`
+            echo -E "VOL="${VOL}
+            amixer cset numid=1 ${VOL}
         fi
     done
 done                                                    # 繰り返しここまで
