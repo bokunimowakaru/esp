@@ -15,7 +15,7 @@
 # 再生方法
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
 
-amixer cset numid=1 200
+amixer cset numid=1 200  > /dev/null
 IP=`hostname -I|cut -d" " -f1`
 TALK="日本語を話します。"
 
@@ -44,25 +44,28 @@ do                                                      # 繰り返し
     |sudo netcat -lw0 -v 80\
     |while read TCP
     do
-        # DATE=`date "+%Y/%m/%d %R"`                    # 時刻を取得
-        # echo -E $DATE, $TCP                           # 取得日時とデータを表示
+        DATE=`date "+%Y/%m/%d %R"`                      # 時刻を取得
         HTTP=`echo -E $TCP|cut -d"=" -f1`               # HTTPコマンドを抽出
         if [ "$HTTP" = "GET /?TEXT" ]; then
+            echo -E $DATE, $TCP                         # 取得日時とデータを表示
             TALK=`echo -E $TCP\
             |cut -d"=" -f2\
             |cut -d" " -f1\
             |sed -e "s/+/ /g"\
             |nkf --url-input`                           # 入力文字を抽出
-            echo -E "TEXT="${TALK}
+            # echo -E "TEXT="${TALK}
             kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
             sleep 0.5
             aquestalkpi/AquesTalkPi "${TALK}"|aplay &   # 音声再生
         elif [ "$HTTP" = "GET /?VOL" ]; then
+            echo -E $DATE, $TCP                         # 取得日時とデータを表示
             VOL=`echo -E $TCP\
             |cut -d"=" -f2\
             |cut -d" " -f1`
-            echo -E "VOL="${VOL}
+            # echo -E "VOL="${VOL}
             amixer cset numid=1 ${VOL}
+        elif [ "$HTTP" = "GET /" ]; then
+            echo -E $DATE, $TCP                         # 取得日時とデータを表示
         fi
     done
 done                                                    # 繰り返しここまで
