@@ -21,6 +21,8 @@ TALK="日本語を話します。"
 
 HTML="\
 HTTP/1.0 200 OK\n\
+Content-Type: text/html\n\
+Connection: close\n\
 \n\
 <html><head>\n\
 <title>Test Page</title>\n\
@@ -43,7 +45,7 @@ while true                                              # 永遠に
 do                                                      # 繰り返し
     echo -e $HTML\
     |sed -e "s/\"TALK\"/\"${TALK}\"/g"\
-    |sudo netcat -lw0 -v 80\
+    |sudo netcat -lw1 -v 80\
     |while read TCP
     do
         DATE=`date "+%Y/%m/%d %R"`                      # 時刻を取得
