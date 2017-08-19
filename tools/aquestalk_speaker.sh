@@ -56,7 +56,8 @@ do                                                      # 繰り返し
             |cut -d"=" -f2\
             |cut -d" " -f1\
             |sed -e "s/+/ /g"\
-            |nkf --url-input`                           # 入力文字を抽出
+            |nkf --url-input\
+            |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
             # echo -E "TEXT="${TALK}
             kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
             sleep 0.5
@@ -65,7 +66,8 @@ do                                                      # 繰り返し
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
             VOL=`echo -E $TCP\
             |cut -d"=" -f2\
-            |cut -d" " -f1`
+            |cut -d" " -f1\
+            |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
             # echo -E "VOL="${VOL}
             amixer cset numid=1 ${VOL}
         elif [ "$HTTP" = "GET /" ]; then
