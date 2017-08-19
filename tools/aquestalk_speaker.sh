@@ -35,6 +35,8 @@ HTTP/1.0 200 OK\n\
 </html>\n\
 \n\
 "
+
+aquestalkpi/AquesTalkPi '"起動しました。IPアドレスは'${IP}'です。"' |aplay &
 # echo -e $HTML|sed -e "s/\"TALK\"/\"${TALK}\"/g"       # HTML表示
 echo "Listening HTTP port 80..."                        # ポート番号表示
 while true                                              # 永遠に
