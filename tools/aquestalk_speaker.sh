@@ -15,12 +15,20 @@
 # 再生方法
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
 
-amixer cset numid=1 200  > /dev/null
-IP=`hostname -I|cut -d" " -f1`
-TALK="日本語を話します。"
+IP=""                                                   # 本機のIPアドレス
+TALK="日本語を話します。"                               # Web表示用
+while [ ${#IP} -lt 11 ] || [ ${#IP} -gt 13 ]
+do
+    IP=`hostname -I|cut -d" " -f1`
+    sleep 3
+done
+echo -E "IP="${IP}
+amixer cset numid=1 200  > /dev/null　　　　　　　　　　# 音量設定
 
 HTML="\
 HTTP/1.0 200 OK\n\
+Content-Type: text/html\n\
+Connection: close\n\
 \n\
 <html><head>\n\
 <title>Test Page</title>\n\
@@ -43,7 +51,7 @@ while true                                              # 永遠に
 do                                                      # 繰り返し
     echo -e $HTML\
     |sed -e "s/\"TALK\"/\"${TALK}\"/g"\
-    |sudo netcat -lw0 -v 80\
+    |sudo netcat -lw1 -v 80\
     |while read TCP
     do
         DATE=`date "+%Y/%m/%d %R"`                      # 時刻を取得
@@ -54,7 +62,8 @@ do                                                      # 繰り返し
             |cut -d"=" -f2\
             |cut -d" " -f1\
             |sed -e "s/+/ /g"\
-            |nkf --url-input`                           # 入力文字を抽出
+            |nkf --url-input\
+            |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
             # echo -E "TEXT="${TALK}
             kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
             sleep 0.5
@@ -63,7 +72,8 @@ do                                                      # 繰り返し
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
             VOL=`echo -E $TCP\
             |cut -d"=" -f2\
-            |cut -d" " -f1`
+            |cut -d" " -f1\
+            |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
             # echo -E "VOL="${VOL}
             amixer cset numid=1 ${VOL}
         elif [ "$HTTP" = "GET /" ]; then
