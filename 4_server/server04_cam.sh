@@ -19,7 +19,7 @@ echo "Listening UDP port "$PORT"..."                # ポート番号表示
 mkdir photo >& /dev/null                            # 写真保存用フォルダ作成
 while true; do                                      # 永遠に繰り返し
     UDP=`nc -luw0 $PORT|tr -d [:cntrl:]|\
-    tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\=\>\?\[\\\]\^\{\|\}\~/"`
+    tr -d "\!\"\$\%\&\'\(\)\*\+\;\<\=\>\?\[\\\]\^\{\|\}\~/"`
                                                     # UDPパケットを取得
     DATE=`date "+%Y/%m/%d %R"`                      # 日時を取得
     DEV=${UDP#,*}                                   # デバイス名を取得(前方)
