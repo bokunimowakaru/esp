@@ -15,9 +15,15 @@
 # 再生方法
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
 
-amixer cset numid=1 200  > /dev/null
-IP=`hostname -I|cut -d" " -f1`
-TALK="日本語を話します。"
+IP=""                                                   # 本機のIPアドレス
+TALK="日本語を話します。"                               # Web表示用
+while [ ${#IP} -lt 11 ] || [ ${#IP} -gt 13 ]
+do
+    IP=`hostname -I|cut -d" " -f1`
+    sleep 3
+done
+echo -E "IP="${IP}
+amixer cset numid=1 200  > /dev/null　　　　　　　　　　# 音量設定
 
 HTML="\
 HTTP/1.0 200 OK\n\
