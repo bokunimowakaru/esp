@@ -14,17 +14,19 @@
 #
 # 再生方法
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
+#       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"&VOL=30
+#                                               ※簡易実装につきTEXTよりVOLが後
 
 IP=""                                                   # 本機のIPアドレス
 TALK="日本語を話します。"                               # Web表示用
+VOL=100                                                 # 音量(初期値)
 while [ ${#IP} -lt 11 ] || [ ${#IP} -gt 13 ]
 do
     IP=`hostname -I|cut -d" " -f1`
     sleep 3
 done
 echo -E "IP="${IP}
-amixer cset numid=1 200  > /dev/null　　　　　　　　　　# 音量設定
-VOL=100
+amixer cset numid=1 200 &> /dev/null                    # 音量設定
 
 HTML="\
 HTTP/1.0 200 OK\n\
@@ -62,29 +64,30 @@ do                                                      # 繰り返し
             TALK=`echo -E $TCP\
             |cut -d"=" -f2\
             |cut -d" " -f1\
+            |cut -d"&" -f1\
             |sed -e "s/+/ /g"\
             |nkf --url-input\
             |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
             # echo -E "TEXT="${TALK}
+            HTTP2=`echo -E $TCP|cut -d"&" -f2|cut -d"=" -f1`
+            if [ "$HTTP2" = "VOL" ]; then
+                VOL=`echo -E $TCP\
+                |cut -d"=" -f3\
+                |cut -d" " -f1\
+                |cut -d"&" -f1\
+                |tr -dc [0-9]`
+                if [ $VOL -lt 0 ]; then
+                    VOL=0
+                elif [ $VOL -gt 100 ]; then
+                    VOL=100
+                fi
+                echo -E "VOL="${VOL}
+            fi
             kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
             sleep 0.5
             aplay ../3_misc/sound/se_maoudamashii_voice_bird02.wav &
             sleep 0.5
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
-        elif [ "$HTTP" = "GET /?VOL" ]; then
-            echo -E $DATE, $TCP                         # 取得日時とデータを表示
-            VOL=`echo -E $TCP\
-            |cut -d"=" -f2\
-            |cut -d" " -f1\
-            |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
-            if [ $VOL -lt 0 ]; then
-                $VOL=0
-            fi
-            if [ $VOL -gt 100 ]; then
-                $VOL=100
-            fi
-            echo -E "VOL="${VOL}
-            # amixer cset numid=1 ${VOL}
         elif [ "$HTTP" = "GET /" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
         fi
