@@ -24,6 +24,7 @@ do
 done
 echo -E "IP="${IP}
 amixer cset numid=1 200  > /dev/null　　　　　　　　　　# 音量設定
+VOL=100
 
 HTML="\
 HTTP/1.0 200 OK\n\
@@ -67,15 +68,23 @@ do                                                      # 繰り返し
             # echo -E "TEXT="${TALK}
             kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
             sleep 0.5
-            aquestalkpi/AquesTalkPi "${TALK}"|aplay &   # 音声再生
+            aplay ../3_misc/sound/se_maoudamashii_voice_bird02.wav &
+            sleep 0.5
+            aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
         elif [ "$HTTP" = "GET /?VOL" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
             VOL=`echo -E $TCP\
             |cut -d"=" -f2\
             |cut -d" " -f1\
             |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
-            # echo -E "VOL="${VOL}
-            amixer cset numid=1 ${VOL}
+            if [ $VOL -lt 0 ]; then
+                $VOL=0
+            fi
+            if [ $VOL -gt 100 ]; then
+                $VOL=100
+            fi
+            echo -E "VOL="${VOL}
+            # amixer cset numid=1 ${VOL}
         elif [ "$HTTP" = "GET /" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
         fi
