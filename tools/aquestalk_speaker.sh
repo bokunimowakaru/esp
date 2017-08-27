@@ -85,10 +85,12 @@ do                                                      # 繰り返し
                 fi
                 echo -E "VOL="${VOL}
             fi
+            # kill `pidof aplay` &> /dev/null
+            sleep 0.5
             aplay ../3_misc/sound/se_maoudamashii_chime10.wav &
             sleep 0.5
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
-            (sleep 10; kill `pidof aplay`) &> /dev/null &
+            # (sleep 10; kill `pidof aplay`) &> /dev/null &
         elif [ "$HTTP" = "GET /" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
         fi
