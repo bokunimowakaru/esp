@@ -90,6 +90,7 @@ do                                                      # 繰り返し
                 sleep 0.5
             else
                 aplay ../3_misc/sound/se_maoudamashii_voice_bird02.wav &
+                sleep 0.1
             fi
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
         elif [ "$HTTP" = "GET /" ]; then
