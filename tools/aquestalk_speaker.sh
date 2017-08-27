@@ -46,8 +46,10 @@ Connection: close\n\
 </html>\n\
 \n\
 "
-aplay ../3_misc/sound/se_maoudamashii_voice_bird02.wav &
+aplay ../3_misc/sound/se_maoudamashii_chime10.wav &
+sleep 0.5
 aquestalkpi/AquesTalkPi '"起動しました。IPアドレスは'${IP}'です。"' |aplay &
+(sleep 10; kill `pidof aplay`) &> /dev/null &
 # echo -e $HTML|sed -e "s/\"TALK\"/\"${TALK}\"/g"       # HTML表示
 echo "Listening HTTP port 80..."                        # ポート番号表示
 while true                                              # 永遠に
@@ -83,16 +85,10 @@ do                                                      # 繰り返し
                 fi
                 echo -E "VOL="${VOL}
             fi
-            kill `pidof aplay` &> /dev/null             # 再生中の音声を終了
+            aplay ../3_misc/sound/se_maoudamashii_chime10.wav &
             sleep 0.5
-            if [ $VOL -gt 60 ]; then
-                aplay ../3_misc/sound/se_maoudamashii_chime10.wav &
-                sleep 0.5
-            else
-                aplay ../3_misc/sound/se_maoudamashii_voice_bird02.wav &
-                sleep 0.1
-            fi
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
+            (sleep 10; kill `pidof aplay`) &> /dev/null &
         elif [ "$HTTP" = "GET /" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
         fi

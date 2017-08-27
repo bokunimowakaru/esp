@@ -11,8 +11,6 @@ TIME_END=23                                 # 時報の終了時刻(～23:59)
 HOUR=`date "+%_H"`                          # 現在の時刻(時)
 MIN=`date "+%_M"`                           # 現在の時刻(分)
 if [ ${HOUR} -ge ${TIME_START} ] && [ ${HOUR} -le ${TIME_END} ]; then
-    kill `pidof aplay` &> /dev/null         # 再生中の音声を終了
-    sleep 0.5
     if [ ${MIN} -eq 0 ]; then
         # 毎時0分のときは「分」を省略して再生
         TALK=${HOUR}"時です。"
@@ -20,10 +18,10 @@ if [ ${HOUR} -ge ${TIME_START} ] && [ ${HOUR} -le ${TIME_END} ]; then
         # 毎時0分以外の時は「時」と「分」を再生
         TALK=${HOUR}"時"${MIN}"分です。"
     fi
-    # 再生の実行と、60秒後にaplayプロセスの終了
+    # 再生の実行と、5秒後にaplayプロセスの終了
     echo ${TALK}
     aplay /home/pi/esp/3_misc/sound/se_maoudamashii_voice_bird02.wav &
-    sleep 0.1
+    sleep 0.2
     /home/pi/esp/tools/aquestalkpi/AquesTalkPi "${TALK}"|aplay &
-    (sleep 10; kill `pidof aplay`) &> /dev/null &
+    (sleep 5; kill `pidof aplay`) &> /dev/null &
 fi
