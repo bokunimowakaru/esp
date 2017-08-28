@@ -16,17 +16,24 @@
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"&VOL=30
 #                                               ※簡易実装につきTEXTよりVOLが後
+#
+# 実行を中断して再開した場合などに、エラーが表示され再生が出来ないことがあります。
+# (古い while 処理が残っている場合)
+# ブラウザのリロードボタンなどで、再実行してください。
 
 IP=""                                                   # 本機のIPアドレス
 TALK="日本語を話します。"                               # Web表示用
-VOL=100                                                 # 音量(初期値)
+VOL=100                                                 # 音量(AquesTalk)
+MIX=190                                                 # 音量(ミキサ)
+MIX_VOL_ID=1                                            # 音量設定用のID
+
 while [ ${#IP} -lt 11 ] || [ ${#IP} -gt 13 ]
 do
     IP=`hostname -I|cut -d" " -f1`
     sleep 3
 done
 echo -E "IP="${IP}
-amixer cset numid=1 200 &> /dev/null                    # 音量設定
+amixer cset numid=${MIX_VOL_ID} ${MIX} &> /dev/null     # 音量(ミキサ)設定
 
 HTML="\
 HTTP/1.0 200 OK\n\
@@ -78,12 +85,10 @@ do                                                      # 繰り返し
                 |cut -d" " -f1\
                 |cut -d"&" -f1\
                 |tr -dc [0-9]`
-                if [ $VOL -lt 0 ]; then
-                    VOL=0
-                elif [ $VOL -gt 100 ]; then
+                if [ $VOL -gt 100 ]; then
                     VOL=100
                 fi
-                echo -E "VOL="${VOL}
+                echo -E "VOL(Talk)="${VOL}
             fi
             # kill `pidof aplay` &> /dev/null
             sleep 0.5
@@ -91,6 +96,18 @@ do                                                      # 繰り返し
             sleep 0.5
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
             # (sleep 10; kill `pidof aplay`) &> /dev/null &
+        elif [ "$HTTP" = "GET /?MIX" ]; then
+            echo -E $DATE, $TCP                         # 取得日時とデータを表示
+            MIX=`echo -E $TCP\
+            |cut -d"=" -f2\
+            |cut -d" " -f1\
+            |cut -d"&" -f1\
+            |tr -dc [0-9]`
+            if [ $MIX -gt 255 ]; then
+                VOL=255
+            fi
+            echo -E "VOL(Mixer)="${MIX}
+            amixer cset numid=${MIX_VOL_ID} ${MIX} &> /dev/null     # 音量設定
         elif [ "$HTTP" = "GET /" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
         fi
