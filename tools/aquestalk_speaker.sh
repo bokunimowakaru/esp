@@ -12,6 +12,12 @@
 # nkf (Network Kanji Filter) のインストール方法
 #       sudo apt-get install nkf
 #
+# 実行方法
+#       ./aquestalk_speaker.sh &
+#       または
+#       nohup nice -18 /home/pi/esp/tools/aquestalk_speaker.sh 2>> /home/pi/err.log > /dev/null &
+#                                               ※音が割れる場合はnicce -10～-20を追加する
+#
 # 再生方法
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"
 #       curl -s -m3 127.0.0.1/?TEXT="こんにちわ"&VOL=30
@@ -90,7 +96,7 @@ do                                                      # 繰り返し
                 fi
                 echo -E "VOL(Talk)="${VOL}
             fi
-            # kill `pidof aplay` &> /dev/null
+            kill `pidof aplay` &> /dev/null
             sleep 0.5
             aplay ../3_misc/sound/se_maoudamashii_chime10.wav &
             sleep 0.5
