@@ -53,9 +53,9 @@ void setup(){
     temp =bme280_getTemp();                 // 温度値を取得
     hum  =bme280_getHum();                  // 湿度値を取得
     press=bme280_getPress();                // 気圧値を取得
-    bme280_print(temp,hum,press);           // 取得したセンサ値をシリアル出力
     bme280_stop();                          // 温湿度・気圧センサの動作停止
     Serial.println(" Done."); 
+    bme280_print(temp,hum,press);           // 取得したセンサ値をシリアル出力
 
     Serial.print("initializing CCS811. ");  // CO2センサの初期化(約1秒を要する)
     ccs811_setup(temp,hum);        // 温度と湿度値をCO2センサへ設定
