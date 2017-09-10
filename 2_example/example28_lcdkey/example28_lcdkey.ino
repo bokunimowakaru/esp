@@ -81,8 +81,10 @@ void loop(){                                // 繰り返し実行する関数
                     disp_p=-1; strcpy(&lcd0[9],"IP_ADDR");
                     sprintf(lcd1,"%d.%d.%d.%d",ip&255,ip>>8&255,ip>>16&255,ip>>24);
                     break;
-                case BUTTON_UP: disp_p--; if(disp_p<0) disp_p=HIST_MAX-1; break;
-                case BUTTON_DOWN: disp_p++;if(disp_p>=HIST_MAX) disp_p=0; break;
+                case BUTTON_UP: if(disp_p<0) disp_p=hist_p;
+                    disp_p--; if(disp_p<0) disp_p=HIST_MAX-1; break;
+                case BUTTON_DOWN: if(disp_p<0) disp_p=hist_p;
+                    disp_p++;if(disp_p>=HIST_MAX) disp_p=0; break;
                 case BUTTON_LEFT: lcd_p=-8; if(lcd_p<0) lcd_p=0; break;
                 case BUTTON_RIGHT:
                     lcd_p=+8; if(strlen(&hist[disp_p][8])<=lcd_p)lcd_p=-8;break;
