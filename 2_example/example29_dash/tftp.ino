@@ -18,7 +18,7 @@ TFTPクライアント
 #define TFTP_PORT_C 69                      // TFTP接続用ポート番号(既定)
 #define TFTP_PORT_T 1234                    // TFTP転送用ポート番号(任意)
 #define TFTP_TIMEOUT 10                     // TFTP待ち受け時間(ms)
-#define TFTP_FILE "/srv/tftp/tftpc_1.ini"   // TFTP受信ファイル名
+#define TFTP_FILE "/srv/tftp/adash_1.mac"   // TFTP受信ファイル名
 WiFiUDP tftp;                               // TFTP通信用のインスタンスを定義
 
 void tftpStart(){
