@@ -13,7 +13,7 @@ void getHtml(char *html,int size) {
     int i;
     uint32_t ip = WiFi.localIP();
     
-    sprintf(s_ip,"%i.%i.%i.%i",
+    sprintf(s_ip,"%d.%d.%d.%d",
         ip & 255,
         ip>>8 & 255,
         ip>>16 & 255,

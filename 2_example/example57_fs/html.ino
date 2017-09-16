@@ -45,7 +45,7 @@ void html(WiFiClient &client, uint32_t ip){
     
     // Dir dir = SPIFFS.openDir("/");
     
-    sprintf(s_ip,"%i.%i.%i.%i",
+    sprintf(s_ip,"%d.%d.%d.%d",
         ip & 255,
         ip>>8 & 255,
         ip>>16 & 255,

@@ -7,7 +7,7 @@ HTMLコンテンツ LEDの輝度制御
 void html(WiFiClient &client, int target, uint32_t ip){
     char s[65],s_ip[16];
     
-    sprintf(s_ip,"%i.%i.%i.%i",
+    sprintf(s_ip,"%d.%d.%d.%d",
         ip & 255,
         ip>>8 & 255,
         ip>>16 & 255,

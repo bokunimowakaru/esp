@@ -91,7 +91,7 @@ void morseIp(int output, int time, uint32_t ip){
     byte i,j;
     char s[17];
     
-    sprintf(s,"%i.%i.%i.%i",
+    sprintf(s,"%d.%d.%d.%d",
         ip & 255,
         ip>>8 & 255,
         ip>>16 & 255,

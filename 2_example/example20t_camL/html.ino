@@ -9,7 +9,7 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
     char s[65],s_ip[16];
     int i;
     
-    sprintf(s_ip,"%i.%i.%i.%i",
+    sprintf(s_ip,"%d.%d.%d.%d",
         ip & 255,
         ip>>8 & 255,
         ip>>16 & 255,
@@ -84,7 +84,7 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
 void htmlMesg(WiFiClient &client, char *txt, uint32_t ip){
     char s_ip[16];
     
-    sprintf(s_ip,"%i.%i.%i.%i",
+    sprintf(s_ip,"%d.%d.%d.%d",
         ip & 255,
         ip>>8 & 255,
         ip>>16 & 255,
