@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 18: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付き)
+Example 28: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付き)
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
@@ -34,7 +34,7 @@ int disp_p=-1;                              // 表示データ位置
 
 void setup(){                               // 起動時に一度だけ実行する関数
     lcd.begin(16, 2);                       // 液晶の初期化(16桁×2行)
-    lcd.print("Example 18t LCD");           // 「Example 18」をLCDに表示する
+    lcd.print("Example 28 LCD");            // 「Example 28」をLCDに表示する
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左上へ
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
