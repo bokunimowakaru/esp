@@ -23,7 +23,8 @@ byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義
 WiFiUDP udpRx;                              // UDP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
-LiquidCrystal lcd(14,15,4,5,12,13);  
+LiquidCrystal lcd(14,15,4,5,12,13);         // ESPduino用 LCD開始
+// LiquidCrystal lcd(0,2,4,14,12,13);       // WEMOS D1用 LCD開始
 unsigned long TIME=0;                       // 1970年からmillis()＝0までの秒数
 char lcd0[17]="00:00:00 LCD MON";           // LCD表示用(1行目)文字列変数 16字
 char lcd1[65]="";                           // LCD表示用(2行目)文字列変数 64字

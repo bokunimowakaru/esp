@@ -28,9 +28,11 @@ Arduino 標準ライブラリにLiquidCrystalにDF ROBOT社Keypad用関数を
 LCD部
 	Arduino UNO   13 12 11 10  9  8 | 7  6  5  4  3  2  1  0
 	DOIT ESPduino NC  1  3 16 15 14 |13 12  5  4  2  0 TX RX
+	WEMOS D1      14 12 13 15  2  0 |13 12 14  4  5  6  1  3
 
 	Arduino用	LiquidCrystal lcd( 8, 9, 4, 5, 6, 7);  
 	ESPduino用	LiquidCrystal lcd(14,15, 4, 5,12,13);  
+	WEMOS D1用	LiquidCrystal lcd( 0, 2, 4,14,12,13);  
 
 	lcd.begin(16, 2);
 	lcd.clear();
