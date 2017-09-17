@@ -67,9 +67,9 @@ extern "C" {
 #define DEVICE "adash_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define MAC_LIST_N_MAX 8                    // MACリストの最大保持数
 
-byte MAC_LIST[MAC_LIST_N_MAX][6];			// MACリスト
+byte MAC_LIST[MAC_LIST_N_MAX][6];           // MACリスト
 int MAC_LIST_N=0;
-int channel;								// 無線LAN物理チャンネル
+int channel;                                // 無線LAN物理チャンネル
 
 void connect(){
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
@@ -79,8 +79,8 @@ void connect(){
         Serial.print(".");
     }
     Serial.print(WiFi.localIP());           // 本機のIPアドレスをシリアル出力
-	Serial.print(' ');
-	Serial.println(WiFi.macAddress());      // 本機のMACアドレスをシリアル出力
+    Serial.print(' ');
+    Serial.println(WiFi.macAddress());      // 本機のMACアドレスをシリアル出力
 }
 
 void setup(){                               // 起動時に一度だけ実行する関数
@@ -101,16 +101,17 @@ void setup(){                               // 起動時に一度だけ実行す
             ini_save(data);                 // INIファイルをSPIFSSへ書込み
         }
     }while(len_tftp);
+    channel=wifi_get_channel();             // 物理チャンネルを取得
     WiFi.disconnect();                      // WiFiアクセスポイントを切断する
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
 }
 
 void initialize(char *data){
-	char key[10]="ACCEPT";	
+    char key[10]="ACCEPT";  
     for(int i=0;i<MAC_LIST_N_MAX; i++){
-		sprintf(key+6,"%d",i+1);
-		get_parsed_mac(MAC_LIST[i],data,key);
-	}
+        sprintf(key+6,"%d",i+1);
+        get_parsed_mac(MAC_LIST[i],data,key);
+    }
 }
 
 void loop(){
@@ -120,21 +121,21 @@ void loop(){
     
     if(promiscuous_get_mac(mac)==0) return;
     for(i=0;i<MAC_LIST_N_MAX;i++){
-		if(memcmp(MAC_LIST[i],mac,6)==0)break;
-	}
-	if(i==MAC_LIST_N_MAX) return;
-	promiscuous_stop();
+        if(memcmp(MAC_LIST[i],mac,6)==0)break;
+    }
+    if(i==MAC_LIST_N_MAX) return;
+    promiscuous_stop();
 
     connect();                              // Wi-Fiアクセスポイントへ接続
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     for(i=0;i<6;i++){
-		udp.print(',');
-		if(mac[i]<0x10) udp.print(0);
-		udp.print(mac[i],HEX);
-	}
-	udp.println();
+        udp.print(',');
+        if(mac[i]<0x10) udp.print(0);
+        udp.print(mac[i],HEX);
+    }
+    udp.println();
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(200);                             // 送信待ち時間
     digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
