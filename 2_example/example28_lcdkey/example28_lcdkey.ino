@@ -1,7 +1,13 @@
 /*******************************************************************************
-Example 28: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付き)
+Example 28: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付き・棒グラフ機能)
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
+/*
+    SELECTボタン：IPアドレス表示、※長押しで棒グラフ表示モードへ切り換え
+    UP/DOWNボタン：過去のデータの履歴表示(時刻に「!」が表示される)
+    　　　　　　　　履歴表示を解除するにはSELECTボタンを押す
+    LEFT/RIGHTボタン：表示しきれない文字のスクロール表示
+*/
 
 #include <ESP8266WiFi.h>                    // Wi-Fi機能を利用するために必要
 extern "C" {
@@ -29,13 +35,22 @@ unsigned long TIME=0;                       // 1970年からmillis()＝0まで�
 char lcd0[17]="00:00:00 LCD MON";           // LCD表示用(1行目)文字列変数 16字
 char lcd1[65]="";                           // LCD表示用(2行目)文字列変数 64字
 int lcd_p=0;                                // LCD表示位置
-char hist[HIST_MAX][65];                    // 過去データ デバイス7+Null+56字
-int hist_p=0;                               // 過去データ位置
-int disp_p=-1;                              // 表示データ位置
+int hist_p=0;                               // 過去データ位置(インデックス)
+int disp_p=-1;                              // 履歴表示位置,負は非表示
+int disp_mode=0;                            // 表示モード(0:通常,1:棒グラフ)
+
+struct HistData{                            // 履歴保持用 50 byte 17+32+1
+    char lcd0[17];                          // LCD表示用(1行目)文字列変数 16字
+    char lcd1[32];                          // LCD表示用(2行目)文字列変数 31字
+    byte len1;                              // LCD表示用(2行目)文字列長
+}hist[HIST_MAX];
 
 void setup(){                               // 起動時に一度だけ実行する関数
+    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     lcd.begin(16, 2);                       // 液晶の初期化(16桁×2行)
+    lcd_bar_init(); lcd.clear();            // 棒グラフ表示用スケッチの初期化
     lcd.print("Example 28 LCD");            // 「Example 28」をLCDに表示する
+    Serial.println("Example 28 LCD");
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左上へ
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
@@ -52,7 +67,7 @@ void setup(){                               // 起動時に一度だけ実行す
     delay(1000);                            // 表示内容の確認待ち時間
     TIME=getNtp();                          // NTP時刻を取得
     TIME-=millis()/1000;                    // カウント済み内部タイマー事前考慮
-    memset(hist,0,HIST_MAX*65);             // 過去データの初期化
+    memset(hist,0,HIST_MAX*50);             // 過去データの初期化
 }
 
 void loop(){                                // 繰り返し実行する関数
@@ -78,45 +93,54 @@ void loop(){                                // 繰り返し実行する関数
             time2txt(date,TIME+time/1000);  // 以下、表示用コンテンツ作成
             strcpy(lcd0,&date[11]); lcd0[8]=' '; lcd0[16]='\0';
             buttons=lcd.readButtons(); switch( buttons ){
-                case BUTTON_SELECT:
-                    disp_p=-1; strcpy(&lcd0[9],"IP_ADDR");
-                    sprintf(lcd1,"%d.%d.%d.%d",ip&255,ip>>8&255,ip>>16&255,ip>>24);
-                    break;
-                case BUTTON_UP: if(disp_p<0) disp_p=hist_p;
+                case BUTTON_SELECT: if(disp_p > 0) disp_p=0; disp_p--;
+                    if(disp_p==-1)lcd_p=0; strcpy(&lcd0[9],"IP_ADDR"); sprintf
+                        (lcd1,"%d.%d.%d.%d",ip&255,ip>>8&255,ip>>16&255,ip>>24);
+                    if(disp_p<=-9){ disp_mode=!disp_mode; disp_p=-4;
+                        snprintf(&lcd0[9],8,"MODE=%d ",disp_mode);
+                        if(disp_mode==0) strcpy(lcd1,"Raw Data ");
+                        else strcpy(lcd1,"Bar Graph "); } break;
+                case BUTTON_UP: lcd_p=0; if(disp_p<0) disp_p=hist_p;
                     disp_p--; if(disp_p<0) disp_p=HIST_MAX-1; break;
-                case BUTTON_DOWN: if(disp_p<0) disp_p=hist_p;
+                case BUTTON_DOWN: lcd_p=0; if(disp_p<0) disp_p=hist_p;
                     disp_p++;if(disp_p>=HIST_MAX) disp_p=0; break;
-                case BUTTON_LEFT: lcd_p=-8; if(lcd_p<0) lcd_p=0; break;
-                case BUTTON_RIGHT:
-                    lcd_p=+8; if(strlen(&hist[disp_p][8])<=lcd_p)lcd_p=-8;break;
+                case BUTTON_LEFT: lcd_p-=1; if(lcd_p<0) lcd_p=0; break;
+                case BUTTON_RIGHT: if(hist[disp_p].len1>lcd_p+7)lcd_p+=1;
+                    break;
                 default: break;
             }
-            if(disp_p >=0){
-                strncpy(&lcd0[9],hist[disp_p],8);
-                strncpy(lcd1,&hist[disp_p][8],56);
+            if(disp_p >=0 && !hist[disp_p].lcd1[0]){ disp_p=-1; lcd_p=0; }
+            if(disp_p >=0){                 // 履歴表示中
+                lcd.setCursor(0,0); lcd.print(hist[disp_p].lcd0);
+                lcd.setCursor(0,1); lcd.print(hist[disp_p].lcd1+lcd_p);
+                for(int i=hist[disp_p].len1;i<16;i++) lcd.print(' ');
+            }else if(disp_mode==0){         // 現在値表示中(通常モード)
+                if(TIME){ lcd.setCursor(0,0); lcd.print(lcd0); }
+                strncpy(s,lcd1+lcd_p,16); lcd.setCursor(0,1); lcd.print(s);
+                len=strlen(lcd1); if(len>16) lcd_p++; if(len<=lcd_p)lcd_p=0;
+                for(int i=len;i<16;i++) lcd.print(' ');
+            }else if(disp_mode==1){         // 現在値表示中(棒グラフモード)
+                if(TIME) lcd_bar_print(&lcd0[9],lcd1,lcd0);
+                else lcd_bar_print(&lcd0[9],lcd1,"00:00");
+                lcd.setCursor(0,1); lcd.print(&lcd0[9]); lcd.print(' ');
+                strncpy(s,lcd1+lcd_p,8); lcd.setCursor(8,1); lcd.print(s);
+                len=strlen(lcd1); for(int i=len-lcd_p;i<8;i++) lcd.print(' ');
+                if(len>8) lcd_p++; if(len<=lcd_p)lcd_p=0;
             }
-            if(TIME){ lcd.clear(); lcd.setCursor(0,0); lcd.print(lcd0); }
-            if(strlen(lcd1)>16){
-                memset(s, 0, 65);           // 文字列変数sの初期化(65バイト)
-                if(lcd_p<0) strncat(s,lcd1,64);
-                else strncat(s,&lcd1[lcd_p],64);
-                lcd.setCursor(0,1); lcd.print(s); lcd_p++;
-                if((int)strlen(lcd1)<=lcd_p)lcd_p=-8;
-            }else{ lcd.setCursor(0,1); lcd.print(lcd1); }
             delay(1);
         }
         len = udpRx.parsePacket();          // UDP受信パケット長を変数lenに代入
-        if(len==0)return;                   // TCPとUDPが未受信時にloop()先頭へ
+        if(len <= 8)return;                 // UDPが未受信時にloop()先頭へ
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udpRx.read(s, 64);                  // UDP受信データを文字列変数sへ代入
-        for(int i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';
-        strncpy(&lcd0[9],s,8); lcd0[16]=0; lcd.setCursor(0,0); lcd.print(lcd0);
-        strncpy(lcd1,&s[8],56);
-        strcpy(hist[hist_p],&lcd0[9]); strncpy(&hist[hist_p][8],lcd1,56);
+        if(len>64)len=64;                   // 受信データ長
+        for(int i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';   // 特殊文字
+        strncpy(&lcd0[9],s,8); lcd0[16]=0;  // LCD表示用(1行目)に機器名を代入
+        strcpy(hist[hist_p].lcd0,lcd0);     // 履歴保持
+        hist[hist_p].lcd0[8]='!'; hist[hist_p].lcd0[16]='\0';
+        strncpy(lcd1,&s[8],56); strncpy(hist[hist_p].lcd1,lcd1,32); lcd_p=0;
+        hist[hist_p].len1=strlen(hist[hist_p].lcd1);
         hist_p++; if(hist_p>=HIST_MAX) hist_p=0;
-        if(disp_p>=0) disp_p=hist_p;
-        if(strlen(lcd1)>16) lcd_p=-8;
-        else{ lcd.setCursor(0,1); lcd.print(lcd1); }
         if(strncmp(s,"timer_",6)==0 && strlen(s)>=27){
             TIME=atoi(&s[16]); TIME*=24;    TIME+=atoi(&s[19]); TIME*=60;
             TIME+=atoi(&s[22]); TIME*=60;   TIME+=atoi(&s[25]); 
@@ -174,10 +198,9 @@ void loop(){                                // 繰り返し実行する関数
         }else delay(1);
     }
     if(len){
-        strncpy(hist[hist_p],&lcd0[9],8);
-        strncpy(&hist[hist_p][8],lcd1,16);
+        strcpy(hist[hist_p].lcd0,lcd0); 
+        strncpy(hist[hist_p].lcd1,lcd1,32);
         hist_p++; if(hist_p>=HIST_MAX) hist_p=0;
-        if(disp_p>=0) disp_p=hist_p;
     }
     delay(1);                               // クライアント側の応答待ち時間
     if(client.connected()){                 // 当該クライアントの接続状態を確認
@@ -203,17 +226,10 @@ unsigned long getNtp(){
     udp.read(packetBuffer,NTP_PACKET_SIZE); // 受信パケットを変数packetBufferへ
     highWord=word(packetBuffer[40],packetBuffer[41]);   // 時刻情報の上位2バイト
     lowWord =word(packetBuffer[42],packetBuffer[43]);   // 時刻情報の下位2バイト
-    
-    Serial.print("UTC time = ");
     time = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
     time -= 2208988800UL;                   // 1970年と1900年の差分を減算
     time2txt(s,time);                       // 時刻をテキスト文字に変換
-    Serial.println(s);                      // テキスト文字を表示
-
-    Serial.print("JST time = ");            // 日本時刻
     time += 32400UL;                        // +9時間を加算
     time2txt(s,time);                       // 時刻をテキスト文字に変換
-    Serial.println(s);                      // テキスト文字を表示
-    
     return time;
 }

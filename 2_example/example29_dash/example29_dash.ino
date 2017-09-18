@@ -78,9 +78,13 @@ void connect(){
         digitalWrite(PIN_EN,!digitalRead(PIN_EN));      // LEDの点滅
         Serial.print(".");
     }
+    channel=wifi_get_channel();             // 物理チャンネルを取得
     Serial.print(WiFi.localIP());           // 本機のIPアドレスをシリアル出力
     Serial.print(' ');
-    Serial.println(WiFi.macAddress());      // 本機のMACアドレスをシリアル出力
+    Serial.print(WiFi.macAddress());        // 本機のMACアドレスをシリアル出力
+    Serial.print(' ');
+    Serial.print(channel);                  // 物理チャンネルの表示
+    Serial.println("ch");
 }
 
 void setup(){                               // 起動時に一度だけ実行する関数
@@ -101,7 +105,6 @@ void setup(){                               // 起動時に一度だけ実行す
             ini_save(data);                 // INIファイルをSPIFSSへ書込み
         }
     }while(len_tftp);
-    channel=wifi_get_channel();             // 物理チャンネルを取得
     WiFi.disconnect();                      // WiFiアクセスポイントを切断する
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
 }
