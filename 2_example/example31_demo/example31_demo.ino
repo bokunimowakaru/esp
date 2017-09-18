@@ -51,7 +51,7 @@ void setup(){                               // 起動時に一度だけ実行す
         Serial.println();                   // 改行をシリアル出力
         IP = WiFi.localIP();
     #else // WIFI_AP_MODE==1
-        WiFi.mode(WIFI_AP);                 // 無線LANを[]モードに設定
+        WiFi.mode(WIFI_AP);                 // 無線LANを[AP]モードに設定
         WiFi.softAP(SSID_AP);               // ソフトウェアAPの起動
         WiFi.softAPConfig(
             IPAddress(192,168,1,2),         /* 固定IPアドレス */

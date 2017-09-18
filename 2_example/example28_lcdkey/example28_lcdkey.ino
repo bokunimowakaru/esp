@@ -10,6 +10,7 @@ Example 28: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付
 */
 
 #include <ESP8266WiFi.h>                    // Wi-Fi機能を利用するために必要
+#include <DNSServer.h>
 extern "C" {
 #include "user_interface.h"                 // ESP8266用の拡張IFライブラリ
 }
@@ -17,13 +18,17 @@ extern "C" {
 #include "LiquidCrystalDFR.h"
 
 #define TIMEOUT 3000                        // タイムアウト 3秒
+#define WIFI_AP_MODE 1                      // Wi-Fi APモード ※「0」でSTAモード
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
+#define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
+#define PASS_AP "password"                  // パスワード
 #define PORT 1024                           // 受信ポート番号
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 #define HIST_MAX 16                         // 過去データ保持件数(1以上)
+#define WAIT_MS 10000                       // 起動待ち時間(最大)
 
 byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義
@@ -38,6 +43,7 @@ int lcd_p=0;                                // LCD表示位置
 int hist_p=0;                               // 過去データ位置(インデックス)
 int disp_p=-1;                              // 履歴表示位置,負は非表示
 int disp_mode=0;                            // 表示モード(0:通常,1:棒グラフ)
+uint32_t ip;                                // IPアドレス保持用
 
 struct HistData{                            // 履歴保持用 50 byte 17+32+1
     char lcd0[17];                          // LCD表示用(1行目)文字列変数 16字
@@ -51,22 +57,57 @@ void setup(){                               // 起動時に一度だけ実行す
     lcd_bar_init(); lcd.clear();            // 棒グラフ表示用スケッチの初期化
     lcd.print("Example 28 LCD");            // 「Example 28」をLCDに表示する
     Serial.println("Example 28 LCD");
-    lcd.setCursor(0,1);                     // カーソル位置を液晶の左上へ
+    unsigned long start_ms=millis();        // 初期化開始時のタイマー値を保存
     wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
-    WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
+    WiFi.mode(WIFI_STA);                    // 無線LANを【STA】モードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
+    lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
         lcd.print(".");                     // 接続進捗を表示
+        if(millis()-start_ms>WAIT_MS){      // 待ち時間後の処理
+            lcd.clear();
+            lcd.print("No Internet AP");    // 接続が出来なかったときの表示
+            WiFi.disconnect();              // WiFiアクセスポイントを切断する
+            break;
+        }
     }
-    server.begin();                         // サーバを起動する
-    udp.begin(NTP_PORT);                    // NTP待ち受け開始
-    udpRx.begin(PORT);                      // UDP待ち受け開始
-    lcd.setCursor(0,1);                     // カーソル位置を液晶の左上へ
-    lcd.print(WiFi.localIP());              // IPアドレスを液晶の2行目に表示
+    Serial.print("Wi-Fi STA :");            // STAモード
+    if(WiFi.status() == WL_CONNECTED){      // 接続に成功した時
+        lcd.clear();
+        lcd.print("Wi-Fi STAation  ");      // STAモードであることを表示
+        lcd.setCursor(0,1);                 // カーソル位置を液晶の左下へ
+        lcd.print(WiFi.localIP());          // IPアドレスを液晶の2行目に表示
+        ip=WiFi.localIP();                  // IPアドレスを保持
+        Serial.println(SSID);               // SSIDを表示
+        Serial.println(WiFi.localIP());     // IPアドレスをシリアル表示
+        Serial.println(WiFi.subnetMask());  // ネットマスクをシリアル表示
+        Serial.println(WiFi.gatewayIP());   // ゲートウェイをシリアル表示
+        udp.begin(NTP_PORT);                // NTP待ち受け開始(STA側)
+        TIME=getNtp();                      // NTP時刻を取得
+        TIME-=millis()/1000;                // カウント済み内部タイマー事前考慮
+    }else{
+        lcd.clear();                        // APモード
+        lcd.print("Wi-Fi SoftwareAP");      // APモードであることを表示
+        Serial.println("OFF");              // STA接続に失敗したことを出力
+        WiFi.mode(WIFI_AP);                 // 無線LANを【AP】モードに設定
+        WiFi.softAP(SSID_AP,PASS_AP);       // ソフトウェアAPの起動
+        WiFi.softAPConfig(
+            IPAddress(192,168,0,1),         // AP側の固定IPアドレス
+            IPAddress(192,168,0,1),         // 本機のゲートウェイアドレス
+            IPAddress(255,255,255,0)        // ネットマスク
+        );
+        lcd.setCursor(0,1);                 // カーソル位置を液晶の左下へ
+        lcd.print(WiFi.softAPIP());         // AP側IPアドレスを液晶の1行目に表示
+        ip=WiFi.softAPIP();                 // IPアドレスを保持
+        Serial.print("Wi-Fi Soft AP :");    // Soft APモードの情報表示
+        Serial.println(SSID_AP);
+        Serial.println(WiFi.softAPIP());    // AP側IPアドレスをシリアル表示
+        Serial.println(WiFi.softAPmacAddress());// AP側MACアドレスをシリアル表示
+    }
     delay(1000);                            // 表示内容の確認待ち時間
-    TIME=getNtp();                          // NTP時刻を取得
-    TIME-=millis()/1000;                    // カウント済み内部タイマー事前考慮
+    server.begin();                         // Wi-Fiサーバを起動する
+    udpRx.begin(PORT);                      // UDP待ち受け開始(STA側+AP側)
     memset(hist,0,HIST_MAX*50);             // 過去データの初期化
 }
 
@@ -81,7 +122,6 @@ void loop(){                                // 繰り返し実行する関数
     int postF=0;                            // POSTフラグ(0:未 1:POST 2:BODY)
     int postL=64;                           // POSTデータ長
     unsigned long time=millis();            // ミリ秒の取得
-    uint32_t ip = WiFi.localIP();
 
     client = server.available();            // 接続されたTCPクライアントを生成
     if(!client){                            // TCPクライアントが無かった場合
@@ -93,13 +133,13 @@ void loop(){                                // 繰り返し実行する関数
             time2txt(date,TIME+time/1000);  // 以下、表示用コンテンツ作成
             strcpy(lcd0,&date[11]); lcd0[8]=' '; lcd0[16]='\0';
             buttons=lcd.readButtons(); switch( buttons ){
-                case BUTTON_SELECT: if(disp_p > 0) disp_p=0; disp_p--;
-                    if(disp_p==-1)lcd_p=0; strcpy(&lcd0[9],"IP_ADDR"); sprintf
-                        (lcd1,"%d.%d.%d.%d",ip&255,ip>>8&255,ip>>16&255,ip>>24);
+                case BUTTON_SELECT: if(disp_p>0) disp_p=-1;
+                    if(disp_p==-1){lcd_p=0; strcpy(&lcd0[9],"IP_ADDR"); sprintf(
+                        lcd1,"%d.%d.%d.%d",ip&255,ip>>8&255,ip>>16&255,ip>>24);}
                     if(disp_p<=-9){ disp_mode=!disp_mode; disp_p=-4;
                         snprintf(&lcd0[9],8,"MODE=%d ",disp_mode);
                         if(disp_mode==0) strcpy(lcd1,"Raw Data ");
-                        else strcpy(lcd1,"Bar Graph "); } break;
+                        else strcpy(lcd1,"Bar Grph"); } disp_p--; break;
                 case BUTTON_UP: lcd_p=0; if(disp_p<0) disp_p=hist_p;
                     disp_p--; if(disp_p<0) disp_p=HIST_MAX-1; break;
                 case BUTTON_DOWN: lcd_p=0; if(disp_p<0) disp_p=hist_p;
@@ -107,7 +147,7 @@ void loop(){                                // 繰り返し実行する関数
                 case BUTTON_LEFT: lcd_p-=1; if(lcd_p<0) lcd_p=0; break;
                 case BUTTON_RIGHT: if(hist[disp_p].len1>lcd_p+7)lcd_p+=1;
                     break;
-                default: break;
+                default: if(disp_p<0) disp_p=-1; break;
             }
             if(disp_p >=0 && !hist[disp_p].lcd1[0]){ disp_p=-1; lcd_p=0; }
             if(disp_p >=0){                 // 履歴表示中
@@ -115,7 +155,7 @@ void loop(){                                // 繰り返し実行する関数
                 lcd.setCursor(0,1); lcd.print(hist[disp_p].lcd1+lcd_p);
                 for(int i=hist[disp_p].len1;i<16;i++) lcd.print(' ');
             }else if(disp_mode==0){         // 現在値表示中(通常モード)
-                if(TIME){ lcd.setCursor(0,0); lcd.print(lcd0); }
+                lcd.setCursor(0,0); lcd.print(lcd0);
                 strncpy(s,lcd1+lcd_p,16); lcd.setCursor(0,1); lcd.print(s);
                 len=strlen(lcd1); if(len>16) lcd_p++; if(len<=lcd_p)lcd_p=0;
                 for(int i=len;i<16;i++) lcd.print(' ');
@@ -133,7 +173,7 @@ void loop(){                                // 繰り返し実行する関数
         if(len <= 8)return;                 // UDPが未受信時にloop()先頭へ
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udpRx.read(s, 64);                  // UDP受信データを文字列変数sへ代入
-        if(len>64)len=64;                   // 受信データ長
+        if(len>64){len=64; udpRx.flush();}  // 受信データが残っている場合に破棄
         for(int i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';   // 特殊文字
         strncpy(&lcd0[9],s,8); lcd0[16]=0;  // LCD表示用(1行目)に機器名を代入
         strcpy(hist[hist_p].lcd0,lcd0);     // 履歴保持
@@ -148,7 +188,11 @@ void loop(){                                // 繰り返し実行する関数
         }                                   // timer_1,2016,10,11,18,46,36
         return;                             // loop()の先頭に戻る
     }
-    lcd.clear();lcd.print("TCP Connected"); // 接続されたことを表示
+    lcd.clear();lcd.print("TCP from ");     // 接続されたことを表示
+    if(client.localIP()==ip) lcd.print("STAtion");
+    else lcd.print("Soft AP");
+    lcd_cls(1);lcd.print(client.remoteIP());// 接続元IPアドレスをLCD表示
+    Serial.println(client.remoteIP());      // 接続元IPアドレスをシリアル表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
             c=client.read();                // データを文字変数cに代入
@@ -204,7 +248,7 @@ void loop(){                                // 繰り返し実行する関数
     }
     delay(1);                               // クライアント側の応答待ち時間
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        html(client,lcd1,WiFi.localIP());   // HTMLコンテンツを出力する
+        html(client,lcd1,client.localIP()); // HTMLコンテンツを出力する
     }
     client.stop();                          // クライアントの切断
 }

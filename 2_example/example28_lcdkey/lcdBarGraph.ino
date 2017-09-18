@@ -297,7 +297,7 @@ void lcd_bar_print_level2(const byte lev1, const byte lev2, const byte hour12h, 
 		else							lcd.write( (byte)0x02 );
 	}
 	if(lev2>10) lcd.print("F"); else{
-		if( hour12h>10 )lcd.write(4); else lcd.write(3);
+		if( hour12h>=10 )lcd.write(4); else lcd.write(3);
 	}
 	s[0]='0'+(hour12h%10);
 	s[2]='0'+(min/10);
@@ -319,7 +319,7 @@ void lcd_bar_print_level1(const byte lev1, const int val, const byte hour12h, co
 	lcd.print("    ");
 	
 	lcd.setCursor(11,0);
-	if( hour12h>10 )lcd.write(4); else lcd.write(3);
+	if( hour12h>=10 )lcd.write(4); else lcd.write(3);
 	s[0]='0'+(hour12h%10);
 	s[2]='0'+(min/10);
 	s[3]='0'+(min%10);
@@ -333,7 +333,7 @@ void lcd_bar_print_level0(const char *csv, const byte hour12h, const byte min){
 	lcd_cls(0);
 	strncpy(s2,csv,11); lcd.print(s2);
 	lcd.setCursor(11,0);
-	if( hour12h>10 )lcd.write(4); else lcd.write(3);
+	if( hour12h>=10 )lcd.write(4); else lcd.write(3);
 	s[0]='0'+(hour12h%10);
 	s[2]='0'+(min/10);
 	s[3]='0'+(min%10);
