@@ -90,6 +90,7 @@ void loop() {
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udp.read(s, 64);                    // UDP受信データを文字列変数sへ代入
         if(s[7]!=',')return;                // 8番目の文字が「,」で無ければ戻る
+        for(i=0;i<7;i++) if(!isalnum(s[i])) s[i]='_';
         s[7]='\0';                          // 8番目の文字を文字列の終端に設定
         sprintf(filename,"/%s.txt",s);
         file = SPIFFS.open(filename,"a");   // 追記保存のためにファイルを開く
