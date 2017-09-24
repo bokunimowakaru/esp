@@ -147,7 +147,7 @@ void loop(){                                // 繰り返し実行する関数
 
     client = server.available();            // 接続されたTCPクライアントを生成
     if(!client){                            // TCPクライアントが無かった場合
-        if(time%300 < 1){                   // 300msに一回
+        if(time%250 < 1){                   // 250msに一回
 		    if(time%86400000ul==0){         // 24時間に1回
 		        TIME=getNtp();              // NTP時刻を取得
 		        TIME-=millis()/1000;
