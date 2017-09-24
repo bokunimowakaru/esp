@@ -1,13 +1,13 @@
 /*********************************************************************
-DF ROBOT LCD Keypad Shield —p ‰t»•ƒL[ƒpƒbƒhƒhƒ‰ƒCƒo
+DF ROBOT LCD Keypad Shield ç”¨ æ¶²æ™¶ï¼†ã‚­ãƒ¼ãƒ‘ãƒƒãƒ‰ãƒ‰ãƒ©ã‚¤ãƒ
 
-Arduino •W€ƒ‰ƒCƒuƒ‰ƒŠ‚ÉLiquidCrystal‚ÉDF ROBOTĞKeypad—pŠÖ”‚ğ
-’Ç‰Á‚µ‚Ü‚µ‚½B
+Arduino æ¨™æº–ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«LiquidCrystalã«DF ROBOTç¤¾Keypadç”¨é–¢æ•°ã‚’
+è¿½åŠ ã—ã¾ã—ãŸã€‚
 
-ŠÖ˜A	http://www.geocities.jp/bokunimowakaru/diy/arduino/lcds.html
+é–¢é€£	http://www.geocities.jp/bokunimowakaru/diy/arduino/lcds.html
 
-–{ƒ\[ƒXƒŠƒXƒg‚¨‚æ‚Ñƒ\ƒtƒgƒEƒFƒA‚ÍGPL V2‚ÉŠî‚Ã‚­ƒ‰ƒCƒZƒ“ƒX‚ğ—L‚µ‚Ü‚·B
-—˜—pA•ÒWAÄ”z•z“™‚ª©—R‚És‚¦‚Ü‚·‚ªA’˜ìŒ •\¦‚Ì‰ü•Ï‚Í‹Ö~‚µ‚Ü‚·B
+æœ¬ã‚½ãƒ¼ã‚¹ãƒªã‚¹ãƒˆãŠã‚ˆã³ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯GPL V2ã«åŸºã¥ããƒ©ã‚¤ã‚»ãƒ³ã‚¹ã‚’æœ‰ã—ã¾ã™ã€‚
+åˆ©ç”¨ã€ç·¨é›†ã€å†é…å¸ƒç­‰ãŒè‡ªç”±ã«è¡Œãˆã¾ã™ãŒã€è‘—ä½œæ¨©è¡¨ç¤ºã®æ”¹å¤‰ã¯ç¦æ­¢ã—ã¾ã™ã€‚
 
                                Copyright (c) 2012-2013 Wataru KUNINO
                                http://www.geocities.jp/bokunimowakaru/
@@ -104,7 +104,8 @@ public:
   virtual size_t write(uint8_t);
   void command(uint8_t);
   uint8_t readButtons();	// Wataru
-  
+  void printKana(char*);
+
   using Print::write;
 private:
   void send(uint8_t, uint8_t);

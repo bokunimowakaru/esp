@@ -1,13 +1,13 @@
 /*********************************************************************
-DF ROBOT LCD Keypad Shield —p ‰t»•ƒL[ƒpƒbƒhƒhƒ‰ƒCƒo
+DF ROBOT LCD Keypad Shield ç”¨ æ¶²æ™¶ï¼†ã‚­ãƒ¼ãƒ‘ãƒƒãƒ‰ãƒ‰ãƒ©ã‚¤ãƒ
 
-Arduino •W€ƒ‰ƒCƒuƒ‰ƒŠ‚ÌLiquidCrystal‚ÉDF ROBOTĞKeypad—pŠÖ”‚ğ
-’Ç‰Á‚µ‚Ü‚µ‚½B
+Arduino æ¨™æº–ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®LiquidCrystalã«DF ROBOTç¤¾Keypadç”¨é–¢æ•°ã‚’
+è¿½åŠ ã—ã¾ã—ãŸã€‚
 
-ŠÖ˜A	http://www.geocities.jp/bokunimowakaru/diy/arduino/lcds.html
+é–¢é€£	http://www.geocities.jp/bokunimowakaru/diy/arduino/lcds.html
 
-–{ƒ\[ƒXƒŠƒXƒg‚¨‚æ‚Ñƒ\ƒtƒgƒEƒFƒA‚ÍGPL V2‚ÉŠî‚Ã‚­ƒ‰ƒCƒZƒ“ƒX‚ğ—L‚µ‚Ü‚·B
-—˜—pA•ÒWAÄ”z•z“™‚ª©—R‚És‚¦‚Ü‚·‚ªA’˜ìŒ •\¦‚Ì‰ü•Ï‚Í‹Ö~‚µ‚Ü‚·B
+æœ¬ã‚½ãƒ¼ã‚¹ãƒªã‚¹ãƒˆãŠã‚ˆã³ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯GPL V2ã«åŸºã¥ããƒ©ã‚¤ã‚»ãƒ³ã‚¹ã‚’æœ‰ã—ã¾ã™ã€‚
+åˆ©ç”¨ã€ç·¨é›†ã€å†é…å¸ƒç­‰ãŒè‡ªç”±ã«è¡Œãˆã¾ã™ãŒã€è‘—ä½œæ¨©è¡¨ç¤ºã®æ”¹å¤‰ã¯ç¦æ­¢ã—ã¾ã™ã€‚
 
                                Copyright (c) 2012-2013 Wataru KUNINO
                                http://www.geocities.jp/bokunimowakaru/
@@ -20,7 +20,7 @@ Arduino •W€ƒ‰ƒCƒuƒ‰ƒŠ‚ÌLiquidCrystal‚ÉDF ROBOTĞKeypad—pŠÖ”‚ğ
 #include <inttypes.h>
 #include "Arduino.h"
 extern "C" {
-#include "user_interface.h"                 // ESP8266—p‚ÌŠg’£IFƒ‰ƒCƒuƒ‰ƒŠ
+#include "user_interface.h"                 // ESP8266ç”¨ã®æ‹¡å¼µIFãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 }
 
 // When the display powers up, it is configured as follows:
@@ -346,4 +346,25 @@ uint8_t LiquidCrystal::readButtons(void) {
   if (adc_key_in < 555)  return BUTTON_LEFT;
   if (adc_key_in < 790)  return BUTTON_SELECT;
   return 0x1F;  // when all others fail, return this...
+}
+
+void LiquidCrystal::printKana(char *s){
+	byte i=0;
+	byte j=0;
+	char str[65];
+	strncpy(str,s,64);
+	
+	while(str[i]!='\0'){
+		if((byte)str[i]==0xEF){
+			if((byte)str[i+1]==0xBE) str[i+2] += 0x40;
+			i+=2;
+		}
+		if(isprint(str[i])){
+			str[j]=str[i];
+			j++;
+		}
+		i++;
+	}
+	str[j]='\0';
+	print(str);
 }
