@@ -37,7 +37,7 @@ extern "C" {
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 #define HIST_MAX 16                         // 過去データ保持件数(1以上)
-#define WAIT_MS 10000                       // 起動待ち時間(最大)
+#define WAIT_MS 20000                       // 起動待ち時間(最大)
 
 byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義

@@ -7,6 +7,7 @@ HTMLコンテンツ 液晶
 void html(WiFiClient &client, char *date, char *lcd, uint32_t ip){
     char s[65],s_ip[16];
     Dir dir = SPIFFS.openDir("/");
+    unsigned long bytes=0;
     
     sprintf(s_ip,"%d.%d.%d.%d",
         ip & 255,
@@ -68,9 +69,13 @@ void html(WiFiClient &client, char *date, char *lcd, uint32_t ip){
     	client.println("</a></td>");
     	client.print("<td align=\"right\">");
 	    File f = dir.openFile("r");
-	    client.print(f.size());
-    	client.println(" Bytes</td></tr>");
+	    client.print(f.size()/1024);
+	    bytes += (unsigned long)(f.size());
+    	client.println(" KBytes</td></tr>");
 	} // https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md
+	client.print("<tr><td align=\"right\"> Total</td>");
+	client.print("<td align=\"right\">");
+	client.print(bytes/1024); client.println(" KBytes</td></tr>");
     client.println("</table></center><br>");
     sprintf(s,"<form method=\"GET\" action=\"http://%s/\">",s_ip);
     client.println(s);
