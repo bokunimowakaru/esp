@@ -95,14 +95,14 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 29 ADASH");     // 「ESP32 eg.29」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
-    if(ini_init(data)) initialize(data);    // SPIFSSからINIファイルの読み込み
+    if(ini_init(data)) initialize(data);    // SPIFFSからINIファイルの読み込み
     connect();                              // Wi-Fiアクセスポイントへ接続
     tftpStart();                            // TFTPの開始
     do{
         len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
         if(len_tftp>0){
             initialize(data);               // INIファイル内の内容を変数へ代入
-            ini_save(data);                 // INIファイルをSPIFSSへ書込み
+            ini_save(data);                 // INIファイルをSPIFFSへ書込み
         }
     }while(len_tftp);
     WiFi.disconnect();                      // WiFiアクセスポイントを切断する

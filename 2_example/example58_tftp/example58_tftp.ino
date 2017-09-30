@@ -6,10 +6,6 @@ Example 58(=32+26): センサデバイス用 TFTPクライアント 設定
 TFTPサーバ上から設定ファイルをダウンロードし、モジュール内の設定を変更します。
 本サンプルではADCの入力ピンとディープスリープ時間を設定することが出来ます。
 
-※(暫定的に)下記ライブラリを使用しました。
-    https://github.com/copercini/arduino-esp32-SPIFFS
-　今後、esp-idfや上記ライブラリを基にしたものが公式サポートされると思います。
-
 Raspberry PiへのTFTPサーバのインストール方法
     $ sudo apt-get install tftpd-hpa
     
@@ -34,6 +30,10 @@ TFTPサーバの起動と停止
     ADC_PIN=32
     SLEEP_SEC=50
 
+その他
+・開発時に下記ライブラリを使用しました(現在はESP32ライブラリに含まれています。)
+　https://github.com/copercini/arduino-esp32-SPIFFS
+
 【注意事項】
 ・TFTPクライアント(ESP側)やTFTPサーバ(PCやRaspberry Pi側)起動すると、各機器が
 　セキュリティの脅威にさらされた状態となります。
@@ -43,6 +43,7 @@ TFTPサーバの起動と停止
 ・TFTPクライアントは少なくともローカルネット内のみで動作させるようにして下さい。
 ・TFTPが不必要なときは、極力、停止させてください。
 *******************************************************************************/
+
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
@@ -64,7 +65,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println("ESP32 eg.26 TFTP");     // 「ESP32 eg.26」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    if(ini_init(data)) initialize(data);    // SPIFSSからINIファイルの読み込み
+    if(ini_init(data)) initialize(data);    // SPIFFSからINIファイルの読み込み
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
         digitalWrite(PIN_EN,!digitalRead(PIN_EN));      // LEDの点滅
@@ -76,7 +77,7 @@ void setup(){                               // 起動時に一度だけ実行す
         len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
         if(len_tftp>0){
             initialize(data);               // INIファイル内の内容を変数へ代入
-            ini_save(data);                 // INIファイルをSPIFSSへ書込み
+            ini_save(data);                 // INIファイルをSPIFFSへ書込み
         }
     }while(len_tftp);
     pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定

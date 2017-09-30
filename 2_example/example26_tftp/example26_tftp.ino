@@ -62,7 +62,7 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.println("Example 26 TFTP");      // 「ESP32 eg.26」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    if(ini_init(data)) initialize(data);    // SPIFSSからINIファイルの読み込み
+    if(ini_init(data)) initialize(data);    // SPIFFSからINIファイルの読み込み
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
         digitalWrite(PIN_EN,!digitalRead(PIN_EN));      // LEDの点滅
@@ -74,7 +74,7 @@ void setup(){                               // 起動時に一度だけ実行す
         len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
         if(len_tftp>0){
             initialize(data);               // INIファイル内の内容を変数へ代入
-            ini_save(data);                 // INIファイルをSPIFSSへ書込み
+            ini_save(data);                 // INIファイルをSPIFFSへ書込み
         }
     }while(len_tftp);
 }

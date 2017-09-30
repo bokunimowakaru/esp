@@ -25,7 +25,7 @@ Example 47 (=32+15): 監視カメラ for SeeedStudio Grove Serial Camera Kit
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 59*60*1000000               // スリープ時間 59分(uint32_t)
+#define SLEEP_P 1*60*1000000                // スリープ時間 1分(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
 
@@ -46,9 +46,10 @@ void setup(){
     lcdPrint("ESP32 eg15 Cam");             // 「Example 15」を液晶に表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    while(!SPIFFS.begin()) delay(100);      // ファイルシステムの開始
-//  Dir dir = SPIFFS.openDir("/");          // ファイルシステムの確認
-//  if(dir.next()==0) SPIFFS.format();      // ディレクトリが無い時に初期化
+    if(!SPIFFS.begin()){					// ファイルシステムSPIFFSの開始
+		Serial.println("Formating SPIFFS.");
+		SPIFFS.format(); SPIFFS.begin();	// エラー時にSPIFFSを初期化
+	}
     delay(100);                             // カメラの起動待ち
     hardwareSerial2.begin(115200);          // カメラとのシリアル通信を開始する
     lcdPrint("Cam Init");                   // 「Cam Init」を液晶に表示
@@ -119,13 +120,6 @@ void loop(){
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
-        /*  以下(計4行)、処理速度が遅かった
-        for(t=0;t<size;t++){                // ファイルサイズ分の繰り返し処理
-            if(!file.available()) break;    // ファイルが無ければ転送終了
-            if(!client.connected()) break;  // 切断されていた場合は転送終了
-            client.write((byte)file.read());// ファイルの転送
-        }
-        以下(計9行)のように修正し、高速化を行った */
         t=0; while(file.available()){       // ファイルがあれば繰り返し処理実行
             s[t]=file.read(); t++;          // ファイルの読み込み
             if(t >= 64){                    // 64バイトに達した時に転送処理

@@ -1,9 +1,8 @@
 /*******************************************************************************
 INIファイル解析
 
-※本サンプル作成の段階では、(暫定的に)下記ライブラリを使用しました。
-    https://github.com/copercini/arduino-esp32-SPIFFS
-　(今後、esp-idfや上記ライブラリを基にしたものが公式サポートされると思います。)
+・開発時に下記ライブラリを使用しました(現在はESP32ライブラリに含まれています。)
+　https://github.com/copercini/arduino-esp32-SPIFFS
 
                                                Copyright (c) 2017 Wataru KUNINO
 *******************************************************************************/
@@ -14,7 +13,10 @@ INIファイル解析
 
 int ini_init(char *data){
 	Serial.print("Checking SPIFFS. ");
-    while(!SPIFFS.begin()) delay(1000);		// ファイルシステムの開始
+    if(!SPIFFS.begin()){					// ファイルシステムの開始
+		Serial.println("ERROR: Please format SPIFFS.");
+		return 0;
+	}
 	Serial.println("Done ini_init.");
 	return ini_load(data);
 }

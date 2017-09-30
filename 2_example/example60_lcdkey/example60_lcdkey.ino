@@ -41,6 +41,7 @@ Example 60(32+28): LCDへ表示する
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
+#define DEVICE_CAM "cam_a"                  // カメラ(実習4/example15)名前5文字
 #define HIST_MAX 16                         // 過去データ保持件数(1以上)
 #define WAIT_MS 20000                       // 起動待ち時間(最大)
 
@@ -182,18 +183,18 @@ void loop(){                                // 繰り返し実行する関数
             if(disp_p >=0){                 // 履歴表示中
                 lcd.setCursor(0,0); lcd.print(hist[disp_p].lcd0);
                 lcd.setCursor(0,1); lcd.print(hist[disp_p].lcd1+lcd_p);
-                for(int i=hist[disp_p].len1;i<16;i++) lcd.print(' ');
+                for(i=hist[disp_p].len1;i<16;i++) lcd.print(' ');
             }else if(disp_mode==0){         // 現在値表示中(通常モード)
                 lcd.setCursor(0,0); lcd.print(lcd0);
                 strncpy(s,lcd1+lcd_p,16); lcd.setCursor(0,1); lcd.print(s);
                 len=strlen(lcd1); if(len>16) lcd_p++; if(len<=lcd_p)lcd_p=0;
-                for(int i=len;i<16;i++) lcd.print(' ');
+                for(i=len;i<16;i++) lcd.print(' ');
             }else if(disp_mode==1){         // 現在値表示中(棒グラフモード)
                 if(TIME) lcd_bar_print(&lcd0[9],lcd1,lcd0);
                 else lcd_bar_print(&lcd0[9],lcd1,"00:00");
                 lcd.setCursor(0,1); lcd.print(&lcd0[9]); lcd.print(' ');
                 strncpy(s,lcd1+lcd_p,8); lcd.setCursor(8,1); lcd.print(s);
-                len=strlen(lcd1); for(int i=len-lcd_p;i<8;i++) lcd.print(' ');
+                len=strlen(lcd1); for(i=len-lcd_p;i<8;i++) lcd.print(' ');
                 if(len>8) lcd_p++; if(len<=lcd_p)lcd_p=0;
             }
             delay(1);
@@ -217,6 +218,11 @@ void loop(){                                // 繰り返し実行する関数
         }                                   // timer_1,2016,10,11,18,46,36
         if(!LOG_FILE_OUTPUT) return;
         if(s[5]!='_' || s[7]!=',')return;   // 6文字目「_」8文字目「,」を確認
+        if(strncmp(s,DEVICE_CAM,5)==0){     // カメラからの取得指示のとき
+            char *cp=strchr(&s[8],',');     // cam_a_1,size, http://192.168...
+            if(cp && strncmp(cp+2,"http://",7)==0) httpGet(cp+9,atoi(&s[8]));
+            return;                         // loop()の先頭に戻る
+        }
         for(i=0;i<7;i++) if(!isalnum(s[i])) s[i]='_';
         s[7]='\0';s[len]='\0';              // 8番目の文字を文字列の終端に設定
         sprintf(filename,"/%s.txt",s);
@@ -280,31 +286,34 @@ void loop(){                                // 繰り返し実行する関数
                         strcpy(&lcd0[9],"GetFile"); strcpy(lcd1,&s[5]);
                         Serial.print(date); Serial.print(", GetFile: ");
                         Serial.println(&s[5]);
-                        delay(1);
-                        client.println("HTTP/1.1 200 OK");
-                        client.println("Content-Type: text/plain");
-                        client.println("Connection: close");
-                        client.println();
                         file = SPIFFS.open(&s[4],"r");      // 読取ファイル開く
-                        i=0;                                // 変数iに0を代入
                         if(file==0){                        // 開けなかった時
                             Serial.print(date); Serial.print(", no data: ");
-                            Serial.println(&s[4]);
-                            client.println("no data");      // ファイル無し表示
-                        }else{  // 以下でt,sを再使用        // ファイル開けた時
-                            t=0; while(file.available()){   // データ残確認
-                                s[t]=file.read(); t++;      // ファイルの読込み
-                                if(t >= 64){                // 転送処理
-                                    if(!client.connected()) break;
-                                    client.write((byte*)s,64);
-                                    t=0; delay(1);
-                                }
+                            Serial.println(&s[4]);          // ファイル無し表示
+                            client.println("HTTP/1.1 404 Not Found");
+                            client.println("Connection: close");
+                            client.println();
+                            client.println("<HTML>404 Not Found</HTML>");
+                            break;
+                        } // delay(1);
+                        client.println("HTTP/1.1 200 OK");
+                        client.print("Content-Type: ");
+                        if(strstr(&s[5],".jpg")) client.println("image/jpeg");
+                        else client.println("text/plain");
+                        client.println("Connection: close");
+                        client.println();
+                        t=0; while(file.available()){   // データ残確認
+                            s[t]=file.read(); t++;      // ファイルの読込み
+                            if(t >= 64){                // 転送処理
+                                if(!client.connected()) break;
+                                client.write((byte*)s,64);
+                                t=0; delay(1);
                             }
-                            if(t>0&&client.connected())client.write((byte*)s,t);
-                            file.close();                   // ファイルを閉じる
                         }
-                        client.flush();                     // ESP32用
-                        client.stop();                      // クライアント切断
+                        if(t>0&&client.connected())client.write((byte*)s,t);
+                        client.flush();     // ESP32用 ERR_CONNECTION_RESET対策
+                        file.close();       // ファイルを閉じる
+                        client.stop();      // クライアント切断
                         return;
                     }else if(len>6 && strncmp(s,"POST /",6)==0){
                         postF=1;            // POSTのBODY待ち状態へ
