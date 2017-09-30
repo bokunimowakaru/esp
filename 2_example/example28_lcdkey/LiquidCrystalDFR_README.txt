@@ -26,20 +26,33 @@ Arduino 標準ライブラリにLiquidCrystalにDF ROBOT社Keypad用関数を
 
 /*
 LCD部
-	Arduino UNO   13 12 11 10  9  8 | 7  6  5  4  3  2  1  0
-	DOIT ESPduino NC  1  3 16 15 14 |13 12  5  4  2  0 TX RX
-	WEMOS D1      14 12 13 15  2  0 |13 12 14  4  5  6  1  3
+	Arduino UNO   13 12 11 10  9  8 | 7  6  5  4  3  2  1  0 |AIN
+	DOIT ESPduino NC  1  3 16 15 14 |13 12  5  4  2  0 TX RX |AIN
+	WEMOS D1      14 12 13 15  2  0 |13 12 14  4  5  6  1  3 |AIN
+	DOIT ESP 32   18 19 23  5 13 12 |14 27 16 17 25 26 TX RX |XXX
+	WEMOS D1 R32  18 19 23  5 13 12 |14 27 16 17 25 26 TX RX |XXX
 
 	Arduino用	LiquidCrystal lcd( 8, 9, 4, 5, 6, 7);  
 	ESPduino用	LiquidCrystal lcd(14,15, 4, 5,12,13);  
 	WEMOS D1用	LiquidCrystal lcd( 0, 2, 4,14,12,13);  
+	ESP32用		LiquidCrystal lcd(12,13,17,16,27,14);  
 
 	lcd.begin(16, 2);
 	lcd.clear();
 	lcd.setCursor(0,0);
 	lcd.print("Hello!");
 
+	※ESP32の場合はADCポートが複数あるので、Arduino A0端子が
+	　どこに設定されるか分からない。
+	　このため、純正のLiquidCrystalをそのまま使用するのが良い。
+	※DOIT ESPduino 32や WEMOS D1 R3でLCD Keypadを使用する場合は、
+	　D12（Arduino D8ピンの位置）を10kΩ程度の抵抗でプルダウンすること。
+
 KEY部
+
+	Arduino UNO   A0 A1 A2 A3 A4 A5
+	ESP8266       AIN -  -  -  -  -
+	ESP32         (2)(4)35 34 36(39)
 
 	Arduino		int adc_key_in = analogRead(0);
 	ESPduino	int adc_key_in = system_adc_read();
@@ -49,6 +62,10 @@ KEY部
 
 	uint8_t buttons = lcd.readButtons();
 	
+	ESP32の場合は、D32～D35,D39がアナログポートとして使用できる。
+	しかし、DOIT ESPduino 32や WEMOS D1 R3でLCD Keypadを使用する場合は、
+	Arduino A0ピンをA2～A3,A5のいずれかに接続する必要がある。
+
 */
 
 /******************************************************************************/
