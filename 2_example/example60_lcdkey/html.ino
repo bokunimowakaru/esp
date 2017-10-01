@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ 液晶
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                           Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 
 unsigned long HTML_DIR_BYTES;
@@ -33,7 +33,7 @@ void listDir(WiFiClient &client, char *s_ip, fs::FS &fs, const char * dirname, u
                 client.print(s_ip);
                 client.print(file.name());
                 client.print("\">");
-                client.print(file.name());
+                client.print(file.name()+1);
                 client.println("</a></td>");
                 client.print("<td align=\"right\">");
                 bytes=(unsigned long)(file.size());
