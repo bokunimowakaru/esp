@@ -205,6 +205,14 @@ void loop(){                                // 繰り返し実行する関数
         udpRx.read(s, 64);                  // UDP受信データを文字列変数sへ代入
         if(len>64){len=64; udpRx.flush();}  // 受信データが残っている場合に破棄
         for(i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';   // 特殊文字除去
+        if(s[5]!='_' || s[7]!=',')return;   // 6文字目「_」8文字目「,」を確認
+        if(strncmp(s,DEVICE_CAM,5)==0){     // カメラからの取得指示のとき
+            lcd.clear(); lcd.print("WiFi Cam "); lcd.print(DEVICE_CAM);
+            lcd.print('_'); lcd.print(s[6]); lcd.setCursor(0,1);
+            char *cp=strchr(&s[8],',');     // cam_a_1,size, http://192.168...
+            if(cp && strncmp(cp+2,"http://",7)==0) httpGet(cp+9,atoi(&s[8]));
+            return;                         // loop()の先頭に戻る
+        }
         strncpy(&lcd0[9],s,8); lcd0[16]=0;  // LCD表示用(1行目)に機器名を代入
         strcpy(hist[hist_p].lcd0,lcd0);     // 履歴保持
         hist[hist_p].lcd0[8]='!'; hist[hist_p].lcd0[16]='\0';
@@ -217,12 +225,6 @@ void loop(){                                // 繰り返し実行する関数
             TIME-=millis()/1000;            // 012345678901234567890123456
         }                                   // timer_1,2016,10,11,18,46,36
         if(!LOG_FILE_OUTPUT) return;
-        if(s[5]!='_' || s[7]!=',')return;   // 6文字目「_」8文字目「,」を確認
-        if(strncmp(s,DEVICE_CAM,5)==0){     // カメラからの取得指示のとき
-            char *cp=strchr(&s[8],',');     // cam_a_1,size, http://192.168...
-            if(cp && strncmp(cp+2,"http://",7)==0) httpGet(cp+9,atoi(&s[8]));
-            return;                         // loop()の先頭に戻る
-        }
         for(i=0;i<7;i++) if(!isalnum(s[i])) s[i]='_';
         s[7]='\0';s[len]='\0';              // 8番目の文字を文字列の終端に設定
         sprintf(filename,"/%s.txt",s);

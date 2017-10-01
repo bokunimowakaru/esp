@@ -32,7 +32,7 @@ int httpGet(char *url,int max_size){
     Serial.println(s);
     Serial.print("Max Size  : ");
     Serial.println(max_size);
-    Serial.println("Recieving contents...");
+    Serial.println("Recieving contents");
     i=0; while( !client.connect(to,80) ){   // 外部サイトへ接続を実行する
         i++; if(i>=3){                      // 失敗時のリトライ処理
             Serial.println("ERROR: Failed to connect");
@@ -74,6 +74,10 @@ int httpGet(char *url,int max_size){
                     file.write((const uint8_t *)s, i+1);
                     size += i;
                 } else file.write(c);
+                if(size%512==0){
+                    Serial.print('.');
+                    lcd.print('.');
+                }
                 if(size >= max_size) break;
                 continue; 
             }
@@ -91,6 +95,7 @@ int httpGet(char *url,int max_size){
     if(i) file.write((const uint8_t *)s, i); 
     file.close();                           // ファイルを閉じる
     client.stop();                          // クライアントの切断
+    Serial.println();
     Serial.print(size);                     // 保存したファイルサイズを表示
     Serial.println("Bytes, Done");
     return size;
