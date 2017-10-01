@@ -16,7 +16,6 @@ Example 47 (=32+15): 監視カメラ for SeeedStudio Grove Serial Camera Kit
 *******************************************************************************/
 
 #include <SPIFFS.h>
-//#include <FS.h>
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_CAM 2                           // GPIO 2(24番ピン)にPch-FETを接続
@@ -46,10 +45,10 @@ void setup(){
     lcdPrint("ESP32 eg15 Cam");             // 「Example 15」を液晶に表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    if(!SPIFFS.begin()){					// ファイルシステムSPIFFSの開始
-		Serial.println("Formating SPIFFS.");
-		SPIFFS.format(); SPIFFS.begin();	// エラー時にSPIFFSを初期化
-	}
+    if(!SPIFFS.begin()){                    // ファイルシステムSPIFFSの開始
+        Serial.println("Formating SPIFFS.");
+        SPIFFS.format(); SPIFFS.begin();    // エラー時にSPIFFSを初期化
+    }
     delay(100);                             // カメラの起動待ち
     hardwareSerial2.begin(115200);          // カメラとのシリアル通信を開始する
     lcdPrint("Cam Init");                   // 「Cam Init」を液晶に表示
@@ -84,7 +83,7 @@ void loop(){
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    int len=0;                              // 文字列等の長さカウント用の変数
+    int i,len=0;                            // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     
     if(millis() > TIME) sleep();            // 終了時刻になったらsleep()を実行
@@ -111,6 +110,7 @@ void loop(){
         }
         delay(1); t++;                      // 変数tの値を1だけ増加させる
     }
+    delay(1);                               // クライアントの準備待ち時間
     if(!client.connected()) return;         // 切断されていた場合はloopの先頭へ
     Serial.println(s);                      // 受信した命令をシリアル出力表示
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
@@ -120,17 +120,22 @@ void loop(){
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
-        t=0; while(file.available()){       // ファイルがあれば繰り返し処理実行
-            s[t]=file.read(); t++;          // ファイルの読み込み
-            if(t >= 64){                    // 64バイトに達した時に転送処理
-                if(!client.connected()) break;              // 接続状態確認
-                client.write( (byte *)s, 64);               // 64バイト送信
-                t=0; delay(1);                              // 送信完了待ち
+        len=0; t=0;                         // 変数lenとtを再利用
+        while( t<3 ){                       // エラー3回以内で繰り返し処理実行
+            if(!file.available()){          // ファイルの有無を確認
+                t++; delay(100);            // ファイル無し時に100msの待ち時間
+                continue;                   // whileループに戻ってリトライ
+            }
+            i=file.read((byte *)s,64);      // ファイル64バイトを読み取り
+            if(i>0){
+                client.write((byte *)s,i);  // ファイルの書き込み
+                len+=i; t=0;                // ファイル長lenを加算
+                if(len>=size) break;        // ファイルサイズに達したら終了
             }
         }
-        if(t>0 && client.connected()) client.write((byte *)s,t);
         file.close();                       // ファイルを閉じる
     }
+    client.flush();                         // ESP32用 ERR_CONNECTION_RESET対策
     client.stop();                          // クライアントの切断
     Serial.print(size);                     // ファイルサイズをシリアル出力表示
     Serial.println(" Bytes");               // シリアル出力表示

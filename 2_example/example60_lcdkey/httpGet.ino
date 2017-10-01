@@ -33,9 +33,13 @@ int httpGet(char *url,int max_size){
     Serial.print("Max Size  : ");
     Serial.println(max_size);
     Serial.println("Recieving contents...");
-    if (!client.connect(to,80)){            // 外部サイトへ接続を実行する
-        Serial.println("ERROR: Failed to connect");
-        return 0;
+    i=0; while( !client.connect(to,80) ){   // 外部サイトへ接続を実行する
+        i++; if(i>=3){                      // 失敗時のリトライ処理
+            Serial.println("ERROR: Failed to connect");
+            return 0;
+        }
+        Serial.println("WARN: Retrying");
+        delay(10);                          // 10msのリトライ待ち時間
     }
     file = SPIFFS.open(s,"w");              // 保存のためにファイルを開く
     if(file==0){
@@ -62,11 +66,11 @@ int httpGet(char *url,int max_size){
             if(headF==2){
                 // 複数バイトread命令を使用する
                 // int WiFiClient::read(uint8_t *buf, size_t size)
-                s[0]=c; size++;				// 既に取得した1バイト目を代入
-                i=client.read((uint8_t *)s+1,63);	// 63バイトを取得
+                s[0]=c; size++;             // 既に取得した1バイト目を代入
+                i=client.read((uint8_t *)s+1,63);   // 63バイトを取得
                 // 戻り値はrecvが代入されている
                 // int res = recv(fd(), buf, size, MSG_DONTWAIT);
-                if(i>0){							// 受信データがある時
+                if(i>0){                            // 受信データがある時
                     file.write((const uint8_t *)s, i+1);
                     size += i;
                 } else file.write(c);
