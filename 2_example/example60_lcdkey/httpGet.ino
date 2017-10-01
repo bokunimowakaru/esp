@@ -32,6 +32,7 @@ int httpGet(char *url,int max_size){
     Serial.println(s);
     Serial.print("Max Size  : ");
     Serial.println(max_size);
+    Serial.println("Recieving contents...");
     if (!client.connect(to,80)){            // 外部サイトへ接続を実行する
         Serial.println("ERROR: Failed to connect");
         return 0;
@@ -50,19 +51,27 @@ int httpGet(char *url,int max_size){
     client.print(to);                       // 相手先ホスト名
     client.println();                       // ホスト名の指定を終了
     client.println("Connection: close");    // セッションの都度切断を指定
-    i=0;
+    
+    // 以下の処理はデータの受信完了まで終了しないので、その間に届いたデータを
+    // 損失してしまう場合があります。
+    // Wi-Fiカメラの初期版では、送信完了まで20秒くらいかかります。
     while(t<TIMEOUT){             
         if(client.available()){             // クライアントからのデータを確認
             t=0;
             c=client.read();                // TCPデータの読み取り
             if(headF==2){
-				s[i]=c; size++; i++;
-                if(i>=64){
-					file.write((const uint8_t *)s, 64); 
-					i=0;
-				}
+                // 複数バイトread命令を使用する
+                // int WiFiClient::read(uint8_t *buf, size_t size)
+                s[0]=c; size++;				// 既に取得した1バイト目を代入
+                i=client.read((uint8_t *)s+1,63);	// 63バイトを取得
+                // 戻り値はrecvが代入されている
+                // int res = recv(fd(), buf, size, MSG_DONTWAIT);
+                if(i>0){							// 受信データがある時
+                    file.write((const uint8_t *)s, i+1);
+                    size += i;
+                } else file.write(c);
                 if(size >= max_size) break;
-                continue;                   // while ループを継続
+                continue; 
             }
             if(headF==1){                   // 前回が行端の時
                 if(c=='\n') headF=2;        // 今回も行端ならヘッダ終了
