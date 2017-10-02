@@ -23,7 +23,6 @@ Example 60(32+28): LCDへ表示する
     　D14（Arduino A0ピンの位置）とD16(Arduino A2ピンの位置)をショートして下さい
 */
 
-
 #include <SPIFFS.h>
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
@@ -31,7 +30,7 @@ Example 60(32+28): LCDへ表示する
 #include "readButtons.h"                    // Keypad 用 ドライバ
 
 #define PIN_KEY 35                          // GPIO 2 にkeypadを接続
-#define TIMEOUT 3000                        // タイムアウト 3秒
+#define TIMEOUT 6000                        // タイムアウト 6秒
 #define WIFI_AP_MODE 1                      // Wi-Fi APモード ※「0」でSTAモード
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
@@ -59,7 +58,9 @@ int disp_p=-1;                              // 履歴表示位置,負は非表�
 int disp_mode=0;                            // 表示モード(0:通常,1:棒グラフ)
 IPAddress ip;                               // IPアドレス保持用
 char date[20];                              // 日時保持用
-int LOG_FILE_OUTPUT=1;                      // ファイル出力の有効(1)／無効(0)
+int LOG_FILE_OUTPUT=1;                      // ファイル書込みの有効(1)／無効(0)
+int JPEG_FILE_OUTPUT=1;                     // 画像の書き込みの有効(1)／無効(0)
+int JPEG_FILE_VIEWER=0;                     // 画像表示の有効(1)／無効(0)
 
 struct HistData{                            // 履歴保持用 50 byte 17+32+1
     char lcd0[17];                          // LCD表示用(1行目)文字列変数 16字
@@ -207,10 +208,12 @@ void loop(){                                // 繰り返し実行する関数
         for(i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';   // 特殊文字除去
         if(s[5]!='_' || s[7]!=',')return;   // 6文字目「_」8文字目「,」を確認
         if(strncmp(s,DEVICE_CAM,5)==0){     // カメラからの取得指示のとき
+            if(!JPEG_FILE_OUTPUT) return;   // JPEG書き込みがOFFの時は終了
             lcd.clear(); lcd.print("WiFi Cam "); lcd.print(DEVICE_CAM);
             lcd.print('_'); lcd.print(s[6]); lcd.setCursor(0,1);
             char *cp=strchr(&s[8],',');     // cam_a_1,size, http://192.168...
-            if(cp && strncmp(cp+2,"http://",7)==0) httpGet(cp+9,atoi(&s[8]));
+            if(cp && strncmp(cp+2,"http://",7)==0){httpGet(cp+9,atoi(&s[8]));
+            JPEG_FILE_VIEWER=1;}
             return;                         // loop()の先頭に戻る
         }
         strncpy(&lcd0[9],s,8); lcd0[16]=0;  // LCD表示用(1行目)に機器名を代入
@@ -270,6 +273,18 @@ void loop(){                                // 繰り返し実行する関数
                         LOG_FILE_OUTPUT=0;
                         len=strlen(lcd1);
                         break;                      // 解析処理の終了
+                    }else if(len>11 && strncmp(s,"GET /?JPEG_ON",13)==0){
+                        strcpy(&lcd0[9],"Jpeg ON");
+                        strcpy(lcd1,"START Jpeg");
+                        JPEG_FILE_OUTPUT=1;
+                        len=strlen(lcd1);
+                        break;                      // 解析処理の終了
+                    }else if(len>10 && strncmp(s,"GET /?JPEG_OFF",14)==0){
+                        strcpy(&lcd0[9],"JpegOFF");
+                        strcpy(lcd1,"STOP Jpeg");
+                        JPEG_FILE_OUTPUT=0;
+                        len=strlen(lcd1);
+                        break;        
                     }else if(len>12 && strncmp(s,"GET /?FORMAT",12)==0){
                         SPIFFS.format();            // ファイル全消去
                         strcpy(&lcd0[9],"FORMAT ");

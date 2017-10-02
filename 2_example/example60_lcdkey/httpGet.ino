@@ -10,10 +10,11 @@ HTMLコンテンツ取得
 int httpGet(char *url,int max_size){
     File file;
     WiFiClient client;                      // Wi-Fiクライアントの定義
-    int i,t=0,size=0;                       // 変数i,t=待ち時間,size=保存容量
-    char c,to[33],s[65];                    // 文字変数、to=アクセス先,s=汎用
+    int i,j,t=0,size=0;                     // 変数i,j,t=待ち時間,size=保存容量
+    char c,to[33],s[257];                   // 文字変数、to=アクセス先,s=汎用
     char *cp;
     int headF=0;                            // ヘッダフラグ(0:HEAD 1:EOL 2:DATA)
+    unsigned long time;                     // 時間測定用
 
     if(!isgraph(url[0])) return 0;          // URLが無い時は処理を行わない
     cp=strchr(url,'/');                     // URL内の区切りを検索
@@ -59,7 +60,8 @@ int httpGet(char *url,int max_size){
     // 以下の処理はデータの受信完了まで終了しないので、その間に届いたデータを
     // 損失してしまう場合があります。
     // Wi-Fiカメラの初期版では、送信完了まで20秒くらいかかります。
-    while(t<TIMEOUT){             
+    time=millis(); j=0;
+    while(t<TIMEOUT){
         if(client.available()){             // クライアントからのデータを確認
             t=0;
             c=client.read();                // TCPデータの読み取り
@@ -67,16 +69,17 @@ int httpGet(char *url,int max_size){
                 // 複数バイトread命令を使用する
                 // int WiFiClient::read(uint8_t *buf, size_t size)
                 s[0]=c; size++;             // 既に取得した1バイト目を代入
-                i=client.read((uint8_t *)s+1,63);   // 63バイトを取得
+                i=client.read((uint8_t *)s+1,255);  // 255バイトを取得
                 // 戻り値はrecvが代入されている
                 // int res = recv(fd(), buf, size, MSG_DONTWAIT);
                 if(i>0){                            // 受信データがある時
                     file.write((const uint8_t *)s, i+1);
                     size += i;
                 } else file.write(c);
-                if(size%512==0){
+                if( size > j ){
                     Serial.print('.');
                     lcd.print('.');
+                    j += 512;
                 }
                 if(size >= max_size) break;
                 continue; 
@@ -97,6 +100,8 @@ int httpGet(char *url,int max_size){
     client.stop();                          // クライアントの切断
     Serial.println();
     Serial.print(size);                     // 保存したファイルサイズを表示
-    Serial.println("Bytes, Done");
+    Serial.print("Bytes, ");
+    Serial.print(millis()-time);
+    Serial.println("ms, Done");
     return size;
 }
