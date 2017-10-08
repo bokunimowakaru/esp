@@ -19,6 +19,7 @@ extern "C" {
 #define AmbientWriteKey "0123456789abcdef"  // ライトキー(16桁の16進数)
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
+#define SLEEP_P 20*60*1000000               // スリープ時間 20分(uint32_t)
 #define SLEEP_N 36                          // 最長スリープ時間 SLEEP_P×SLEEP_N
 #define DEADZONE 0.3                        // 前回値との相違に対する閾値(℃)
 #define DEVICE "humid_3,"                   // デバイス名(5文字+"_"+番号+",")
@@ -107,11 +108,12 @@ void sleep(){
 	WAKE_COUNT	1	2	3	4	5	6	7...
 	累積時間	0	20	40	60	90	150	210...
 	測定間隔	20	20	20	30	60	60
-*/
-	uint32_t SLEEP_P;                       // スリープ時間 (uint32_t)
+	
+	uint32_t SLEEP_P;
 	if(WAKE_COUNT <= 3)		SLEEP_P = 20*60*1000000;
 	else if(WAKE_COUNT==4) 	SLEEP_P = 30*60*1000000;
 	else 					SLEEP_P = 60*60*1000000;
+*/
     digitalWrite(PIN_LED,LOW);              // LEDの消灯
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理
