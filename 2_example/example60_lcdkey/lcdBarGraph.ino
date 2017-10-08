@@ -21,145 +21,145 @@
 
 // デバイスリスト
 
-#define LIST_DEVICE_MAX 17
+#define lcd_bar_DEV_ATTR_MAX 17
 // #define DEBUG
-int LIST_DEVICE_MAX_var=0;
+int lcd_bar_DEV_ATTR_MAX_var=0;
 
-struct ListOfDevice{
+struct lcd_bar_DevAttr{
 	char dev[6];		// デバイス名 5文字
 	byte num_a;			// 測定データ数 0～255
 	byte num[2];		// 表示用のデータ番号
 	int min[2];			// グラフ最小値
 	int max[2];			// グラフ最大値
-}listOfDevice[LIST_DEVICE_MAX];
+}lcd_bar_devAttr[lcd_bar_DEV_ATTR_MAX];
 
-byte lcd_bar_listOfDevice_max(){
-	return LIST_DEVICE_MAX_var;
+byte lcd_bar_lcd_bar_devAttr_max(){
+	return lcd_bar_DEV_ATTR_MAX_var;
 }
 
-byte lcd_bar_listOfDevice_init(){
-	strncpy(listOfDevice[0].dev,"deeps",6);
-	listOfDevice[0].num_a=		2;
-	listOfDevice[0].num[0]=		1;
-	listOfDevice[0].num[1]=		2;
-	listOfDevice[0].min[0]=		0;
-	listOfDevice[0].max[0]=	 1023;
-	listOfDevice[0].min[1]=		0;
-	listOfDevice[0].max[1]=	   10;
-	strncpy(listOfDevice[1].dev,"illum",6);
-	listOfDevice[1].num_a=		1;
-	listOfDevice[1].num[0]=		1;
-	listOfDevice[1].num[1]=		0;
-	listOfDevice[1].min[0]=		0;
-	listOfDevice[1].max[0]=	  200;
-	strncpy(listOfDevice[2].dev,"temp.",6);
-	listOfDevice[2].num_a=		1;
-	listOfDevice[2].num[0]=		1;
-	listOfDevice[2].num[1]=		0;
-	listOfDevice[2].min[0]=		0;
-	listOfDevice[2].max[0]=	   30;
-	strncpy(listOfDevice[3].dev,"rd_sw",6);
-	listOfDevice[3].num_a=		2;
-	listOfDevice[3].num[0]=		1;
-	listOfDevice[3].num[1]=		2;
-	listOfDevice[3].min[0]=		0;
-	listOfDevice[3].max[0]=	    1;
-	listOfDevice[3].min[1]=		0;
-	listOfDevice[3].max[1]=	    1;
-	strncpy(listOfDevice[4].dev,"humid",6);
-	listOfDevice[4].num_a=		2;
-	listOfDevice[4].num[0]=		1;
-	listOfDevice[4].num[1]=		2;
-	listOfDevice[4].min[0]=		0;
-	listOfDevice[4].max[0]=	   30;
-	listOfDevice[4].min[1]=		0;
-	listOfDevice[4].max[1]=	  100;
-	strncpy(listOfDevice[5].dev,"press",6);
-	listOfDevice[5].num_a=		2;
-	listOfDevice[5].num[0]=		1;
-	listOfDevice[5].num[1]=		2;
-	listOfDevice[5].min[0]=		0;
-	listOfDevice[5].max[0]=	   30;
-	listOfDevice[5].min[1]=	 1000;
-	listOfDevice[5].max[1]=	 1026;
-	strncpy(listOfDevice[6].dev,"accem",6);
-	listOfDevice[6].num_a=		3;
-	listOfDevice[6].num[0]=	    1;
-	listOfDevice[6].num[1]=     2;
-	listOfDevice[6].min[0]=	   -5;
-	listOfDevice[6].max[0]=	    5;
-	listOfDevice[6].min[1]=	   -5;
-	listOfDevice[6].max[1]=	    5;
-	strncpy(listOfDevice[7].dev,"tftpc",6);
-	listOfDevice[7].num_a=		1;
-	listOfDevice[7].num[0]=		1;
-	listOfDevice[7].num[1]=		0;
-	listOfDevice[7].min[0]=		0;
-	listOfDevice[7].max[0]=	 1023;
-	strncpy(listOfDevice[8].dev,"e_co2",6);
-	listOfDevice[8].num_a=		4;
-	listOfDevice[8].num[0]=		1;
-	listOfDevice[8].num[1]=		4;
-	listOfDevice[8].min[0]=		0;
-	listOfDevice[8].max[0]=	   30;
-	listOfDevice[8].min[1]=	  400;
-	listOfDevice[8].max[1]=	 2400;
-	strncpy(listOfDevice[9].dev,"adcnv",6);
-	listOfDevice[9].num_a=		1;
-	listOfDevice[9].num[0]=		1;
-	listOfDevice[9].num[1]=		0;
-	listOfDevice[9].min[0]=		0;
-	listOfDevice[9].max[0]=	 3300;
-	strncpy(listOfDevice[10].dev,"meter",6);
-	listOfDevice[10].num_a=		1;
-	listOfDevice[10].num[0]=	1;
-	listOfDevice[10].num[1]=	0;
-	listOfDevice[10].min[0]=	0;
-	listOfDevice[10].max[0]= 1000;
-	strncpy(listOfDevice[11].dev,"actap",6);
-	listOfDevice[11].num_a=		3;
-	listOfDevice[11].num[0]=	1;
-	listOfDevice[11].num[1]=	0;
-	listOfDevice[11].min[0]=	0;
-	listOfDevice[11].max[0]=  200;
-	strncpy(listOfDevice[12].dev,"xb_ct",6);
-	listOfDevice[12].num_a=		1;
-	listOfDevice[12].num[0]=	1;
-	listOfDevice[12].num[1]=	0;
-	listOfDevice[12].min[0]=	0;
-	listOfDevice[12].max[0]= 1000;
-	strncpy(listOfDevice[13].dev,"xbhum",6);
-	listOfDevice[13].num_a=		2;
-	listOfDevice[13].num[0]=	1;
-	listOfDevice[13].num[1]=	2;
-	listOfDevice[13].min[0]=	0;
-	listOfDevice[13].max[0]=   30;
-	listOfDevice[13].min[1]=	0;
-	listOfDevice[13].max[1]=  100;
-	strncpy(listOfDevice[14].dev,"xbgas",6);
-	listOfDevice[14].num_a=		2;
-	listOfDevice[14].num[0]=	1;
-	listOfDevice[14].num[1]=	2;
-	listOfDevice[14].min[0]=  200;
-	listOfDevice[14].max[0]= 2200;
-	listOfDevice[14].min[1]=  200;
-	listOfDevice[14].max[1]= 2200;
-	strncpy(listOfDevice[15].dev,"xbprs",6);
-	listOfDevice[15].num_a=		2;
-	listOfDevice[15].num[0]=	1;
-	listOfDevice[15].num[1]=	2;
-	listOfDevice[15].min[0]=	0;
-	listOfDevice[15].max[0]=   30;
-	listOfDevice[15].min[1]=	0;
-	listOfDevice[15].max[1]= 1026;
+byte lcd_bar_lcd_bar_devAttr_init(){
+	strncpy(lcd_bar_devAttr[0].dev,"deeps",6);
+	lcd_bar_devAttr[0].num_a=		2;
+	lcd_bar_devAttr[0].num[0]=		1;
+	lcd_bar_devAttr[0].num[1]=		2;
+	lcd_bar_devAttr[0].min[0]=		0;
+	lcd_bar_devAttr[0].max[0]=	 1023;
+	lcd_bar_devAttr[0].min[1]=		0;
+	lcd_bar_devAttr[0].max[1]=	   10;
+	strncpy(lcd_bar_devAttr[1].dev,"illum",6);
+	lcd_bar_devAttr[1].num_a=		1;
+	lcd_bar_devAttr[1].num[0]=		1;
+	lcd_bar_devAttr[1].num[1]=		0;
+	lcd_bar_devAttr[1].min[0]=		0;
+	lcd_bar_devAttr[1].max[0]=	  200;
+	strncpy(lcd_bar_devAttr[2].dev,"temp.",6);
+	lcd_bar_devAttr[2].num_a=		1;
+	lcd_bar_devAttr[2].num[0]=		1;
+	lcd_bar_devAttr[2].num[1]=		0;
+	lcd_bar_devAttr[2].min[0]=		0;
+	lcd_bar_devAttr[2].max[0]=	   30;
+	strncpy(lcd_bar_devAttr[3].dev,"rd_sw",6);
+	lcd_bar_devAttr[3].num_a=		2;
+	lcd_bar_devAttr[3].num[0]=		1;
+	lcd_bar_devAttr[3].num[1]=		2;
+	lcd_bar_devAttr[3].min[0]=		0;
+	lcd_bar_devAttr[3].max[0]=	    1;
+	lcd_bar_devAttr[3].min[1]=		0;
+	lcd_bar_devAttr[3].max[1]=	    1;
+	strncpy(lcd_bar_devAttr[4].dev,"humid",6);
+	lcd_bar_devAttr[4].num_a=		2;
+	lcd_bar_devAttr[4].num[0]=		1;
+	lcd_bar_devAttr[4].num[1]=		2;
+	lcd_bar_devAttr[4].min[0]=		0;
+	lcd_bar_devAttr[4].max[0]=	   30;
+	lcd_bar_devAttr[4].min[1]=		0;
+	lcd_bar_devAttr[4].max[1]=	  100;
+	strncpy(lcd_bar_devAttr[5].dev,"press",6);
+	lcd_bar_devAttr[5].num_a=		2;
+	lcd_bar_devAttr[5].num[0]=		1;
+	lcd_bar_devAttr[5].num[1]=		2;
+	lcd_bar_devAttr[5].min[0]=		0;
+	lcd_bar_devAttr[5].max[0]=	   30;
+	lcd_bar_devAttr[5].min[1]=	 1000;
+	lcd_bar_devAttr[5].max[1]=	 1026;
+	strncpy(lcd_bar_devAttr[6].dev,"accem",6);
+	lcd_bar_devAttr[6].num_a=		3;
+	lcd_bar_devAttr[6].num[0]=	    1;
+	lcd_bar_devAttr[6].num[1]=     2;
+	lcd_bar_devAttr[6].min[0]=	   -5;
+	lcd_bar_devAttr[6].max[0]=	    5;
+	lcd_bar_devAttr[6].min[1]=	   -5;
+	lcd_bar_devAttr[6].max[1]=	    5;
+	strncpy(lcd_bar_devAttr[7].dev,"tftpc",6);
+	lcd_bar_devAttr[7].num_a=		1;
+	lcd_bar_devAttr[7].num[0]=		1;
+	lcd_bar_devAttr[7].num[1]=		0;
+	lcd_bar_devAttr[7].min[0]=		0;
+	lcd_bar_devAttr[7].max[0]=	 1023;
+	strncpy(lcd_bar_devAttr[8].dev,"e_co2",6);
+	lcd_bar_devAttr[8].num_a=		4;
+	lcd_bar_devAttr[8].num[0]=		1;
+	lcd_bar_devAttr[8].num[1]=		4;
+	lcd_bar_devAttr[8].min[0]=		0;
+	lcd_bar_devAttr[8].max[0]=	   30;
+	lcd_bar_devAttr[8].min[1]=	  400;
+	lcd_bar_devAttr[8].max[1]=	 2400;
+	strncpy(lcd_bar_devAttr[9].dev,"adcnv",6);
+	lcd_bar_devAttr[9].num_a=		1;
+	lcd_bar_devAttr[9].num[0]=		1;
+	lcd_bar_devAttr[9].num[1]=		0;
+	lcd_bar_devAttr[9].min[0]=		0;
+	lcd_bar_devAttr[9].max[0]=	 3300;
+	strncpy(lcd_bar_devAttr[10].dev,"meter",6);
+	lcd_bar_devAttr[10].num_a=		1;
+	lcd_bar_devAttr[10].num[0]=	1;
+	lcd_bar_devAttr[10].num[1]=	0;
+	lcd_bar_devAttr[10].min[0]=	0;
+	lcd_bar_devAttr[10].max[0]= 1000;
+	strncpy(lcd_bar_devAttr[11].dev,"actap",6);
+	lcd_bar_devAttr[11].num_a=		3;
+	lcd_bar_devAttr[11].num[0]=	1;
+	lcd_bar_devAttr[11].num[1]=	0;
+	lcd_bar_devAttr[11].min[0]=	0;
+	lcd_bar_devAttr[11].max[0]=  200;
+	strncpy(lcd_bar_devAttr[12].dev,"xb_ct",6);
+	lcd_bar_devAttr[12].num_a=		1;
+	lcd_bar_devAttr[12].num[0]=	1;
+	lcd_bar_devAttr[12].num[1]=	0;
+	lcd_bar_devAttr[12].min[0]=	0;
+	lcd_bar_devAttr[12].max[0]= 1000;
+	strncpy(lcd_bar_devAttr[13].dev,"xbhum",6);
+	lcd_bar_devAttr[13].num_a=		2;
+	lcd_bar_devAttr[13].num[0]=	1;
+	lcd_bar_devAttr[13].num[1]=	2;
+	lcd_bar_devAttr[13].min[0]=	0;
+	lcd_bar_devAttr[13].max[0]=   30;
+	lcd_bar_devAttr[13].min[1]=	0;
+	lcd_bar_devAttr[13].max[1]=  100;
+	strncpy(lcd_bar_devAttr[14].dev,"xbgas",6);
+	lcd_bar_devAttr[14].num_a=		2;
+	lcd_bar_devAttr[14].num[0]=	1;
+	lcd_bar_devAttr[14].num[1]=	2;
+	lcd_bar_devAttr[14].min[0]=  200;
+	lcd_bar_devAttr[14].max[0]= 2200;
+	lcd_bar_devAttr[14].min[1]=  200;
+	lcd_bar_devAttr[14].max[1]= 2200;
+	strncpy(lcd_bar_devAttr[15].dev,"xbprs",6);
+	lcd_bar_devAttr[15].num_a=		2;
+	lcd_bar_devAttr[15].num[0]=	1;
+	lcd_bar_devAttr[15].num[1]=	2;
+	lcd_bar_devAttr[15].min[0]=	0;
+	lcd_bar_devAttr[15].max[0]=   30;
+	lcd_bar_devAttr[15].min[1]=	0;
+	lcd_bar_devAttr[15].max[1]= 1026;
 	// 終端
-	strncpy(listOfDevice[16].dev,"",6);
-	LIST_DEVICE_MAX_var = sizeof(listOfDevice) / sizeof(listOfDevice[0]);
+	strncpy(lcd_bar_devAttr[16].dev,"",6);
+	lcd_bar_DEV_ATTR_MAX_var = sizeof(lcd_bar_devAttr) / sizeof(lcd_bar_devAttr[0]);
 	#ifdef DEBUG
-		Serial.print("LIST_DEVICE_MAX_var=");
-		Serial.println(LIST_DEVICE_MAX_var);
+		Serial.print("lcd_bar_DEV_ATTR_MAX_var=");
+		Serial.println(lcd_bar_DEV_ATTR_MAX_var);
 	#endif
-	return LIST_DEVICE_MAX_var;
+	return lcd_bar_DEV_ATTR_MAX_var;
 }
 
 uint8_t _lcd_bar_font_lv[5][8]={
@@ -257,7 +257,7 @@ void lcd_bar_init(){
 	for(i=0 ; i < 5 ; i++ ){
 		lcd.createChar(i , &(_lcd_bar_font_lv[i][0]));
 	}
-	lcd_bar_listOfDevice_init();
+	lcd_bar_lcd_bar_devAttr_init();
 }
 
 void lcd_cls( const byte line ){						// 指定した行を消去する関数
@@ -372,10 +372,10 @@ void lcd_bar_print(char *dev, char *csv, char *time){
 	if(min>=60) min %= 60;
 	
 	if(dev[5] == '_' ){
-		index_n=lcd_bar_listOfDevice_max();
+		index_n=lcd_bar_lcd_bar_devAttr_max();
 		for(i=0;i<index_n;i++){
-			if(strncmp(listOfDevice[i].dev,dev,5)==0) break;
-			if(listOfDevice[i].dev[0]==0){ i=-1; break; }
+			if(strncmp(lcd_bar_devAttr[i].dev,dev,5)==0) break;
+			if(lcd_bar_devAttr[i].dev[0]==0){ i=-1; break; }
 		}
 	}else i=-1;
 	if(i==index_n || i<0){
@@ -390,7 +390,7 @@ void lcd_bar_print(char *dev, char *csv, char *time){
 		Serial.print("index=");
 		Serial.print(index);
 		Serial.print(" dev=");
-		Serial.println(listOfDevice[index].dev);
+		Serial.println(lcd_bar_devAttr[index].dev);
 	#endif
 	j=1;			// jは常に1以上
 	for(i=0;i<strlen(csv);){
@@ -400,12 +400,12 @@ void lcd_bar_print(char *dev, char *csv, char *time){
 			Serial.print(val);
 			Serial.print(", ");
 		#endif
-		if(listOfDevice[index].num[0] == j){
-			lev1 = lcd_bar_val2lev(val,listOfDevice[index].min[0],listOfDevice[index].max[0]);
+		if(lcd_bar_devAttr[index].num[0] == j){
+			lev1 = lcd_bar_val2lev(val,lcd_bar_devAttr[index].min[0],lcd_bar_devAttr[index].max[0]);
 			val1 = val;
 		}
-		if(listOfDevice[index].num[1] == j){
-			lev2 = lcd_bar_val2lev(val,listOfDevice[index].min[1],listOfDevice[index].max[1]);
+		if(lcd_bar_devAttr[index].num[1] == j){
+			lev2 = lcd_bar_val2lev(val,lcd_bar_devAttr[index].min[1],lcd_bar_devAttr[index].max[1]);
 		}
 		p2=strchr(p,',');  j++;
 		if( !p2 || *(p2+1)==0 || j>10) break;

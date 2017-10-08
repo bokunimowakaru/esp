@@ -8,7 +8,6 @@ UTF8をASCIIカナ文字へ変換する
                                http://www.geocities.jp/bokunimowakaru/
 *********************************************************************/
 
-
 void utf_del_uni(char *s){
 	byte i=0;
 	byte j=0;

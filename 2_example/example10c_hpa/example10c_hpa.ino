@@ -57,9 +57,9 @@ void loop(){
         Serial.println(press,2);            // シリアル出力表示
         udp.endPacket();                    // UDP送信の終了(実際に送信する)
         /* クラウドへ */
-        dtostrf(temp,5,2,s);                // 温度を文字列に変換
+        dtostrf(temp,-7,2,s);               // 温度を文字列に変換
         ambient.set(1,s);                   // Ambient(データ1)へ温度を送信
-        dtostrf(press,7,2,s);               // 気圧を文字列に変換
+        dtostrf(press,-7,2,s);              // 気圧を文字列に変換
         ambient.set(3,s);                   // Ambient(データ3)へ気圧を送信
         ambient.send();                     // Ambient送信の終了(実際に送信する)
     }

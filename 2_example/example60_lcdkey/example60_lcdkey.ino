@@ -1,21 +1,33 @@
 /*******************************************************************************
-Example 60(32+28): LCDへ表示する
-(HTTP版・時刻表示機能・NTP受信機能付き・棒グラフ機能)
+Example 60 LCDへ表示する
+(HTTP版・時刻表示機能・NTP受信機能・棒グラフ機能・ログ保存機能・Ambient送信機能)
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 /*
-    SELECTボタン：IPアドレス表示、※長押しで棒グラフ表示モードへ切り換え
-    UP/DOWNボタン：過去のデータの履歴表示(時刻に「!」が表示される)
-    　　　　　　　　履歴表示を解除するにはSELECTボタンを押す
-    LEFT/RIGHTボタン：表示しきれない文字のスクロール表示
+
+    ボタン操作　　　|内容
+    ----------------|----------------------------------------------------
+    SELECTボタン　　|IPアドレス表示、※長押しで棒グラフ表示モードへ切り換え
+    UP/DOWNボタン　 |過去のデータの履歴表示(時刻に「!」が表示される)
+    　　　　　　　　|履歴表示を解除するにはSELECTボタン
+    LEFT/RIGHTボタン|表示しきれない文字のスクロール表示
+    
+    保存したデータは、同じ無線LAN内のPCやスマホで本機IPアドレスへアクセスして
+    ダウンロードすることが出来る
+    
+    起動時にアクセスポイントへ接続できなかった場合は、本機が無線アクセスポイント
+    となって動作する。
+    
+    動作モード　　　|内容
+    ----------------|----------------------------------------------------
+    Wi-Fi STAation　|無線LANアクセスポイントへ接続して動作するモード
+    Wi-Fi SoftwareAP|本機が無線アクセスポイントとなって動作するモード
 */
 /*
 ご注意
-    ・リセットもしくは停止するときは、必ずファイル出力をOFFに設定してください
-    ・ログが保存されない場合があります。その場合は、SPIFFSを初期化してください
-    ・途中でログが保存されなくなる場合があります。SPIFFSを初期化してください
-    ・一部のログが保存されなくなる場合があります。
+    ・リセットもしくは電源を切る前に、ファイル出力をOFFに設定してください
+    ・ログが保存されない場合は、SPIFFSを初期化してください
     
 ハードウェアの改造
     ・DOIT ESPduino 32や WEMOS D1 R3でLCD Keypadを使用する場合は
@@ -27,19 +39,23 @@ Example 60(32+28): LCDへ表示する
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
-#include "readButtons.h"                    // Keypad 用 ドライバ
+#include "readButtons.h"                	// Keypad 用 ドライバ
+#include "Ambient.h"                    	// Ambient接続用 ライブラリ
 
-#define PIN_KEY 35                          // GPIO 2 にkeypadを接続
+#define PIN_KEY 35                          // GPIO 35 へLCD keypadの出力を接続
 #define TIMEOUT 6000                        // タイムアウト 6秒
 #define WIFI_AP_MODE 1                      // Wi-Fi APモード ※「0」でSTAモード
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
 #define PASS_AP "password"                  // パスワード
-#define PORT 1024                           // 受信ポート番号
+#define AmbientChannelId 0000               // チャネル名(整数) 0=無効
+#define AmbientWriteKey "0123456789abcdef"  // ライトキー(16桁の16進数)
+#define AmbientINTERVAL 60                  // Ambient 送信間隔60秒
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
+#define PORT 1024                           // センサ機器 UDP受信ポート番号
 #define DEVICE_CAM "cam_a"                  // カメラ(実習4/example15)名前5文字
 #define HIST_MAX 16                         // 過去データ保持件数(1以上)
 #define WAIT_MS 20000                       // 起動待ち時間(最大)
@@ -67,6 +83,15 @@ struct HistData{                            // 履歴保持用 50 byte 17+32+1
     char lcd1[32];                          // LCD表示用(2行目)文字列変数 31字
     byte len1;                              // LCD表示用(2行目)文字列長
 }hist[HIST_MAX];
+
+Ambient ambient;                            // クラウドサーバ Ambient用
+WiFiClient ambClient;                       // Ambient接続用のTCPクライアント
+struct AmbData{                             // 履歴保持用 50 byte 17+32+1
+    char dev[8]="unkwn_0";                  // LCD表示用(1行目)文字列変数 16字
+    int num=0;                              // UDPデータ項目のnum番目を送信
+    float value;                            // Ambientへ送信するデータ
+    boolean flag=false;                     // 送信許可フラグ
+}ambData[8];                                // クラウドへ送信するデータ
 
 void setup(){                               // 起動時に一度だけ実行する関数
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
@@ -116,6 +141,11 @@ void setup(){                               // 起動時に一度だけ実行す
         udp.begin(NTP_PORT);                // NTP待ち受け開始(STA側)
         TIME=getNtp();                      // NTP時刻を取得
         TIME-=millis()/1000;                // カウント済み内部タイマー事前考慮
+        if(AmbientChannelId){               // Ambient 開始
+            ambient.begin(AmbientChannelId, AmbientWriteKey, &ambClient);
+            sensors_initAmbData();
+            Serial.println("Started Ambient Client");
+        }
     }else{
         lcd.clear();                        // APモード
         lcd.print("Wi-Fi SoftwareAP");      // APモードであることを表示
@@ -161,7 +191,10 @@ void loop(){                                // 繰り返し実行する関数
                 TIME=getNtp();              // NTP時刻を取得
                 TIME-=millis()/1000;
             }
-            time2txt(date,TIME+time/1000);  // 以下、表示用コンテンツ作成
+            if(AmbientChannelId && time%(AmbientINTERVAL*1000)==0)
+            	sensors_sendToAmbient();	// Ambientへ送信する
+            // 以下は、表示用コンテンツ部 ここから ---->
+            time2txt(date,TIME+time/1000);
             strcpy(lcd0,&date[11]); lcd0[8]=' '; lcd0[16]='\0';
             buttons=readButtons(PIN_KEY); switch( buttons ){
                 case BUTTON_SELECT: if(disp_p>0) disp_p=-1;
@@ -198,6 +231,7 @@ void loop(){                                // 繰り返し実行する関数
                 len=strlen(lcd1); for(i=len-lcd_p;i<8;i++) lcd.print(' ');
                 if(len>8) lcd_p++; if(len<=lcd_p)lcd_p=0;
             }
+            // ----> ここまで 表示用コンテンツ部
             delay(1);
         }
         len = udpRx.parsePacket();          // UDP受信パケット長を変数lenに代入
@@ -227,9 +261,10 @@ void loop(){                                // 繰り返し実行する関数
             TIME+=atoi(&s[22]); TIME*=60;   TIME+=atoi(&s[25]); 
             TIME-=millis()/1000;            // 012345678901234567890123456
         }                                   // timer_1,2016,10,11,18,46,36
-        if(!LOG_FILE_OUTPUT) return;
         for(i=0;i<7;i++) if(!isalnum(s[i])) s[i]='_';
         s[7]='\0';s[len]='\0';              // 8番目の文字を文字列の終端に設定
+        if(AmbientChannelId) sensors_update(s, &s[8]);
+        if(!LOG_FILE_OUTPUT) return;
         sprintf(filename,"/%s.txt",s);
         file = SPIFFS.open(filename,"a");   // 追記保存のためにファイルを開く
         if(file==0){
