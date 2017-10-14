@@ -13,12 +13,12 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 int chime=0;                                // チャイムOFF
 
 void setup(){                               // 起動時に一度だけ実行する関数
-    pinMode(PIN_BUZZER,OUTPUT);             // LEDを接続したポートを出力に
+    pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.17 BELL HTTP");// 「Example 17」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    ledSetup();
+    chimeBellsSetup(PIN_BUZZER);            // ブザー/LED用するPWM制御部の初期化
     morse(PIN_BUZZER,50,"HELLO");           // 「HELLO」をモールス信号出力
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         Serial.print('.');                  // 進捗表示

@@ -29,13 +29,15 @@ LCD部
 	Arduino UNO   13 12 11 10  9  8 | 7  6  5  4  3  2  1  0 |AIN
 	DOIT ESPduino NC  1  3 16 15 14 |13 12  5  4  2  0 TX RX |AIN
 	WEMOS D1      14 12 13 15  2  0 |13 12 14  4  5  6  1  3 |AIN
-	DOIT ESP 32   18 19 23  5 13 12 |14 27 16 17 25 26 TX RX |XXX
-	WEMOS D1 R32  18 19 23  5 13 12 |14 27 16 17 25 26 TX RX |XXX
+	DOIT ESP 32   18 19 23  5 13 12 |14 27 16 17 25 26 TX RX |
+	WEMOS D1 R32  18 19 23  5 13 12 |14 27 16 17 25 26 TX RX |
+	IoT Express   18 19 23 25 26 17 |16 15 14 13  4 27 TX RX |
 
 	Arduino用	LiquidCrystal lcd( 8, 9, 4, 5, 6, 7);  
 	ESPduino用	LiquidCrystal lcd(14,15, 4, 5,12,13);  
 	WEMOS D1用	LiquidCrystal lcd( 0, 2, 4,14,12,13);  
 	ESP32用		LiquidCrystal lcd(12,13,17,16,27,14);  
+	IoT Exp用	LiquidCrystal lcd(17,26,13,14,15,16);  
 
 	lcd.begin(16, 2);
 	lcd.clear();
@@ -53,6 +55,7 @@ KEY部
 	Arduino UNO   A0 A1 A2 A3 A4 A5
 	ESP8266       AIN -  -  -  -  -
 	ESP32         (2)(4)35 34 36(39)
+	IoT Express   32 33 34 35 36(39)
 
 	Arduino		int adc_key_in = analogRead(0);
 	ESPduino	int adc_key_in = system_adc_read();

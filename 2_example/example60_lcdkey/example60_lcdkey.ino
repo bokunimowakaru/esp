@@ -30,9 +30,13 @@ Example 60 LCDへ表示する
     ・ログが保存されない場合は、SPIFFSを初期化してください
     
 ハードウェアの改造
-    ・DOIT ESPduino 32や WEMOS D1 R3でLCD Keypadを使用する場合は
-    　D12（Arduino D8ピンの位置）を10kΩ程度の抵抗でプルダウンし、
-    　D14（Arduino A0ピンの位置）とD16(Arduino A2ピンの位置)をショートして下さい
+    ・CQ出版社のIoT Expressを使用する場合：
+    　- スケッチ中の「#define CQ_PUB_IOT_EXPRESS」を定義してください（初期状態）
+    　- KeypadのSELECTボタンを使用することが出来ません。
+    ・DOIT ESPduino 32や WEMOS D1 R3でLCD Keypadを使用する場合：
+    　- D12(Arduino D8ピンの位置)を10kΩ程度の抵抗でプルダウンし、
+    　- D14(Arduino A0ピンの位置)とD16(Arduino A2ピンの位置)をショートして下さい
+    　- スケッチ中の「#define CQ_PUB_IOT_EXPRESS」を消してください。
 */
 
 #include <SPIFFS.h>
@@ -41,8 +45,20 @@ Example 60 LCDへ表示する
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 #include "readButtons.h"                	// Keypad 用 ドライバ
 #include "Ambient.h"                    	// Ambient接続用 ライブラリ
+#include "pitches.h"
 
-#define PIN_KEY 35                          // GPIO 35 へLCD keypadの出力を接続
+#define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
+
+#ifdef CQ_PUB_IOT_EXPRESS           // CQ出版 IoT Express 用
+    #define PIN_KEY 32                      // A0(GPIO 32)へLCD keypadを接続
+    #define PIN_KEY_5V_DIV 0                // keypad DIV 0: SELECTをLEFTで代用
+//  #define PIN_KEY_5V_DIV 1                // keypad DIV 1: 代用しない
+#else                               // ESPduino 32 WEMOS D1 32用
+    #define PIN_KEY 35                      // A2(GPIO 35)へLCD keypadを接続
+    #define PIN_KEY_5V_DIV 2                // keypad DIV 2: 市販Arduino互換機用
+#endif
+#define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
+#define PIN_BUZZER 12                       // GPIO 12にスピーカを接続
 #define TIMEOUT 6000                        // タイムアウト 6秒
 #define WIFI_AP_MODE 1                      // Wi-Fi APモード ※「0」でSTAモード
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
@@ -64,7 +80,11 @@ byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義
 WiFiUDP udpRx;                              // UDP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
-LiquidCrystal lcd(12,13,17,16,27,14);       // ESPduino 32 WEMOS D1 32用 LCD開始
+#ifdef CQ_PUB_IOT_EXPRESS 
+    LiquidCrystal lcd(17,26,13,14,15,16);   // CQ出版 IoT Express 用 LCD開始
+#else
+    LiquidCrystal lcd(12,13,17,16,27,14);   // ESPduino 32 WEMOS D1 32用 LCD開始
+#endif
 unsigned long TIME=0;                       // 1970年からmillis()＝0までの秒数
 char lcd0[17]="00:00:00 LCD MON";           // LCD表示用(1行目)文字列変数 16字
 char lcd1[65]="";                           // LCD表示用(2行目)文字列変数 64字
@@ -94,6 +114,8 @@ struct AmbData{                             // 履歴保持用 50 byte 17+32+1
 }ambData[8];                                // クラウドへ送信するデータ
 
 void setup(){                               // 起動時に一度だけ実行する関数
+    pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
+    pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     lcd.begin(16, 2);                       // 液晶の初期化(16桁×2行)
     lcd_bar_init(); lcd.clear();            // 棒グラフ表示用スケッチの初期化
@@ -116,10 +138,13 @@ void setup(){                               // 起動時に一度だけ実行す
     */
     WiFi.mode(WIFI_STA);                    // 無線LANを【STA】モードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
+    chimeBellsSetup(PIN_BUZZER);            // ブザー/LED用するPWM制御部の初期化
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
-        delay(500);                         // 待ち時間処理
         lcd.print(".");                     // 接続進捗を表示
+        digitalWrite(PIN_LED,!digitalRead(PIN_LED));        // LEDの点滅
+        ledcWriteNote(0,NOTE_B,7);delay(50);ledcWrite(0,0); // ブザー音
+        delay(450);                         // 待ち時間処理
         if(millis()-start_ms>WAIT_MS){      // 待ち時間後の処理
             lcd.clear();
             lcd.print("No Internet AP");    // 接続が出来なかったときの表示
@@ -196,7 +221,7 @@ void loop(){                                // 繰り返し実行する関数
             // 以下は、表示用コンテンツ部 ここから ---->
             time2txt(date,TIME+time/1000);
             strcpy(lcd0,&date[11]); lcd0[8]=' '; lcd0[16]='\0';
-            buttons=readButtons(PIN_KEY); switch( buttons ){
+            buttons=readButtons(PIN_KEY,PIN_KEY_5V_DIV); switch( buttons ){
                 case BUTTON_SELECT: if(disp_p>0) disp_p=-1;
                     if(disp_p==-1){lcd_p=0; strcpy(&lcd0[9],"IP_ADDR"); sprintf(
                         lcd1,"%d.%d.%d.%d",ip&255,ip>>8&255,ip>>16&255,ip>>24);}
