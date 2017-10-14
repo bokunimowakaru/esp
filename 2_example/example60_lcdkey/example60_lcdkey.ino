@@ -9,6 +9,7 @@ Example 60 LCDへ表示する
     ボタン操作　　　|内容
     ----------------|----------------------------------------------------
     SELECTボタン　　|IPアドレス表示、※長押しで棒グラフ表示モードへ切り換え
+    　　　　　　　　|CQ出版社のIoT Express では [LEFT]ボタンで代用
     UP/DOWNボタン　 |過去のデータの履歴表示(時刻に「!」が表示される)
     　　　　　　　　|履歴表示を解除するにはSELECTボタン
     LEFT/RIGHTボタン|表示しきれない文字のスクロール表示
@@ -27,7 +28,7 @@ Example 60 LCDへ表示する
 /*
 ご注意
     ・リセットもしくは電源を切る前に、ファイル出力をOFFに設定してください
-    ・ログが保存されない場合は、SPIFFSを初期化してください
+    ・ログが保存されない場合は、SPIFFSまたはSDカードを初期化してください
     
 ハードウェアの改造
     ・CQ出版社のIoT Expressを使用する場合：
@@ -39,7 +40,8 @@ Example 60 LCDへ表示する
     　- スケッチ中の「#define CQ_PUB_IOT_EXPRESS」を消してください。
 */
 
-#include <SPIFFS.h>
+#define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
+
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
@@ -47,13 +49,14 @@ Example 60 LCDへ表示する
 #include "Ambient.h"                    	// Ambient接続用 ライブラリ
 #include "pitches.h"
 
-#define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
-
 #ifdef CQ_PUB_IOT_EXPRESS           // CQ出版 IoT Express 用
+	#include <SD.h>
+    #define SD_CARD_EN                      // SDカードを使用する
     #define PIN_KEY 32                      // A0(GPIO 32)へLCD keypadを接続
     #define PIN_KEY_5V_DIV 0                // keypad DIV 0: SELECTをLEFTで代用
 //  #define PIN_KEY_5V_DIV 1                // keypad DIV 1: 代用しない
 #else                               // ESPduino 32 WEMOS D1 32用
+	#include <SPIFFS.h>
     #define PIN_KEY 35                      // A2(GPIO 35)へLCD keypadを接続
     #define PIN_KEY_5V_DIV 2                // keypad DIV 2: 市販Arduino互換機用
 #endif
@@ -125,8 +128,13 @@ void setup(){                               // 起動時に一度だけ実行す
     analogSetPinAttenuation(PIN_KEY,ADC_11db);
     unsigned long start_ms=millis();        // 初期化開始時のタイマー値を保存
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
+    #ifdef SD_CARD_EN
+    if(!SD.begin()){                    // ファイルシステムの開始
+        lcd.print("ERROR: NO SD Card"); Serial.println("ERROR: NO SD");
+	#else
     if(!SPIFFS.begin()){                    // ファイルシステムの開始
         lcd.print("ERROR: NO SPIFFS"); Serial.println("ERROR: NO SPIFFS");
+	#endif
         delay(3000);
     }
     /*
@@ -291,7 +299,11 @@ void loop(){                                // 繰り返し実行する関数
         if(AmbientChannelId) sensors_update(s, &s[8]);
         if(!LOG_FILE_OUTPUT) return;
         sprintf(filename,"/%s.txt",s);
-        file = SPIFFS.open(filename,"a");   // 追記保存のためにファイルを開く
+        #ifdef SD_CARD_EN
+            file=SD.open(filename,"a");     // 追記保存のためにファイルを開く
+        #else
+            file=SPIFFS.open(filename,"a"); // 追記保存のためにファイルを開く
+        #endif
         if(file==0){
             Serial.println("ERROR: FALIED TO OPEN. Please format SPIFFS.");
             return;                  // ファイルを開けれなければ戻る
@@ -344,13 +356,15 @@ void loop(){                                // 繰り返し実行する関数
                         strcpy(lcd1,"STOP Jpeg");
                         JPEG_FILE_OUTPUT=0;
                         len=strlen(lcd1);
-                        break;        
+                        break;
+                    #ifndef SD_CARD_EN
                     }else if(len>12 && strncmp(s,"GET /?FORMAT",12)==0){
                         SPIFFS.format();            // ファイル全消去
                         strcpy(&lcd0[9],"FORMAT ");
                         strcpy(lcd1,"FORMAT SD Card or SPIFFS");
                         len=strlen(lcd1);
                         break;                      // 解析処理の終了
+                    #endif
                     }else if (len>6 && strncmp(s,"GET / ",6)==0){
                         len=0;
                         break;                      // 解析処理の終了
@@ -363,7 +377,11 @@ void loop(){                                // 繰り返し実行する関数
                         strcpy(&lcd0[9],"GetFile"); strcpy(lcd1,&s[5]);
                         Serial.print(date); Serial.print(", GetFile: ");
                         Serial.println(&s[5]);
-                        file = SPIFFS.open(&s[4],"r");      // 読取ファイル開く
+                        #ifdef SD_CARD_EN
+                            file = SD.open(&s[4],"r");      // 読取ファイル開く
+                        #else
+                            file = SPIFFS.open(&s[4],"r");  // 読取ファイル開く
+                        #endif
                         if(file==0){                        // 開けなかった時
                             Serial.print(date); Serial.print(", no data: ");
                             Serial.println(&s[4]);          // ファイル無し表示

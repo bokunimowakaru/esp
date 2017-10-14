@@ -140,15 +140,27 @@ void html(WiFiClient &client, char *date, char *lcd, uint32_t ip){
         client.println(" KBytes</td></tr>");
     } // https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md
     */
-    listDir(client,s_ip,SPIFFS, "/", 0);
     
+    #ifdef SD_CARD_EN
+        listDir(client,s_ip,SD, "/", 0);
+    #else
+        listDir(client,s_ip,SPIFFS, "/", 0);
+    #endif
     client.print("<tr><td align=\"right\"> Used</td>");
     client.print("<td align=\"right\">");
 //  client.print(HTML_DIR_BYTES/1024); client.println(" KBytes</td></tr>");
+    #ifdef SD_CARD_EN
+    client.print( (int)(SD.usedBytes()/1024/1024) ); client.println(" MBytes</td></tr>");
+    #else
     client.print( SPIFFS.usedBytes()/1024 ); client.println(" KBytes</td></tr>");
+    #endif
     client.print("<tr><td align=\"right\"> Remain</td>");
     client.print("<td align=\"right\">");
+    #ifdef SD_CARD_EN
+    client.print( (int)((SD.totalBytes()-SD.usedBytes())/1024/1024) ); client.println(" MBytes</td></tr>");
+    #else
     client.print( (SPIFFS.totalBytes()-SPIFFS.usedBytes())/1024 ); client.println(" KBytes</td></tr>");
+    #endif
     client.println("</table></center><br>");
 
     client.println("</body>");
