@@ -7,6 +7,12 @@ Ambient送信用のセンサ機器の設定
 
 *******************************************************************************/
 
+#define SENSOR_SW_PING 0                    // WiFiスイッチャ 2016/9 IOT製作(6)
+#define SENSOR_SW_RDSW 1                    // WiFiドア開閉   2016/9 IOT製作(12)
+#define SENSOR_SW_PIRS 2                    // WiFi人感センサ 2017/3 実習(1) 
+#define SENSOR_SW_ACCM 3                    // WiFi加速センサ 2017/3 実習(2) 
+#define DEBUG_SENSOR
+
 extern Ambient ambient;
 extern AmbData ambData[8];
 /*
@@ -17,8 +23,6 @@ struct AmbData{                             // 履歴保持用 50 byte 17+32+1
     boolean flag=false;                     // 送信許可フラグ
 }ambData[8];                                // クラウドへ送信するデータ
 */
-
-#define DEBUG_SENSOR
 
 void sensors_initAmbData(){
     int index;                              // Ambient データ番号 1～8
@@ -61,14 +65,113 @@ void sensors_initAmbData(){
     */
 }
 
+boolean sensors_ckeckDevId(char *dev){
+    if( strlen(dev)<7 ) return false;
+    if( dev[5] != '_' ) return false;
+    for(int i=0;i<7;i++){
+        if( !isalnum(dev[i]) && dev[i] !='_' ) return false;
+    }
+    return true;
+}
+
+int sensors_getSwDevIndex(char *dev){
+    int index;
+    
+    index=SENSOR_SW_PING; // WiFiスイッチャ 2016年9月 IOT製作(6) example02_sw, example34_sw
+    if( strncmp(dev,"Ping",4)==0 || strncmp(dev,"Pong",4)==0) return index;
+    if( !sensors_ckeckDevId(dev) ){
+	    #ifdef DEBUG_SENSOR
+	        Serial.print("ERROR in sensors_ckeckDevId, dev : ");
+	        Serial.println(dev);
+	    #endif
+    	return -1;
+    }
+    index=SENSOR_SW_RDSW; // Wi-Fiドア開閉センサ 2016年9月 IOT製作(12) example08_sw, example40_sw
+    if( strncmp(dev,"rd_sw_",6)==0 ) return index;
+    
+    index=SENSOR_SW_PIRS; // Wi-Fi人感センサ 2017年3月 実習(1) example11_pir, example43_pir
+    if( strncmp(dev,"pir_s_",6)==0 ) return index;
+    
+    index=SENSOR_SW_ACCM; // Wi-Fi加速度センサ_X 2017年3月 実習(2) example12_acm, example44_acm
+    if( strncmp(dev,"accem_",6)==0 ) return index;
+
+    #ifdef DEBUG_SENSOR
+        Serial.print("Sensor Device : ");
+        Serial.println(dev);
+    #endif
+    return 999; // スイッチ以外のデバイス
+}
+
+int _sensors_csv2val(char *csv,int num){
+    int val=-9999,i;
+    char *p;
+
+    for(i=1;i<num;i++){
+        p=strchr(csv,',');
+        if( !p ) break;
+        csv=p+1;
+    }
+    if( strlen(csv) > 0){
+        val = atoi(csv);
+    }
+    return val;
+}
+
+int sensors_isDetectedSw(char *dev, char *csv){
+    int suff,index,det=0,ret=0;
+    
+    index=sensors_getSwDevIndex(dev);
+    if( index < 0 || index > 100) return -1;
+    #ifdef DEBUG_SENSOR
+        Serial.print("Detected Switch : ");
+        Serial.println(index);
+    #endif
+    
+    if( index==SENSOR_SW_PING ){;       // WiFiスイッチャ
+        if( dev[1]='i' ) det=1;
+        if( dev[1]='o' ) det=0;
+        return det;
+    }
+    
+    if( strlen(csv)<1 ) return -1;
+    suff=atoi(&dev[6]);     // アルファベットの時は0になる
+    #ifdef DEBUG_SENSOR
+        Serial.print("Suff = ");
+        Serial.println(suff);
+    #endif
+    if( suff > 9 || suff < 0 ) suff=0;  // 在り得ないがセグフォ回避の確認
+    
+    if( index==SENSOR_SW_RDSW ){;       // ドア開閉センサ
+	    #ifdef DEBUG_SENSOR
+	        Serial.print("Detected SENSOR_SW_RDSW : ");
+	        Serial.print(_sensors_csv2val(csv,1));
+	        Serial.print(", ");
+	        Serial.println(_sensors_csv2val(csv,2));
+	    #endif
+	    det=_sensors_csv2val(csv,1);
+        if( det == 1 ) return 1;		// OFF 検出回路用（ドアが開いた時に検出する）
+        if( det == 0 ) return 1;		// ON 検出回路用（ドアが閉じた時に検出する）
+        return 0;
+    }
+    if( index==SENSOR_SW_PIRS ){;       // 人感センサ
+        return _sensors_csv2val(csv,1);
+    }
+    if( index==SENSOR_SW_ACCM ){;       // 加速度センサ
+        if( _sensors_csv2val(csv,1) == 0 &&
+            _sensors_csv2val(csv,2) == 0 &&
+            _sensors_csv2val(csv,3) == 0) return 0;
+        return 1;
+    }
+    return -1;
+}
+
 int sensors_update(char *dev, char *csv){
     int ret=-1;
     int index,i,len;
     char *p;
     
-    if( strlen(dev)<7 ) return -1;
+    if( !sensors_ckeckDevId(dev) ) return -1;
     if( strlen(csv)<1 ) return -1;
-    if( dev[5] != '_' ) return -1;
     for(index=1;index<=8;index++){
         len=7;
         p=strchr(ambData[index-1].dev,'?');

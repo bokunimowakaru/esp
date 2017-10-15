@@ -45,18 +45,18 @@ Example 60 LCDへ表示する
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
-#include "readButtons.h"                	// Keypad 用 ドライバ
-#include "Ambient.h"                    	// Ambient接続用 ライブラリ
+#include "readButtons.h"                    // Keypad 用 ドライバ
+#include "Ambient.h"                        // Ambient接続用 ライブラリ
 #include "pitches.h"
 
 #ifdef CQ_PUB_IOT_EXPRESS           // CQ出版 IoT Express 用
-	#include <SD.h>
+    #include <SD.h>
     #define SD_CARD_EN                      // SDカードを使用する
     #define PIN_KEY 32                      // A0(GPIO 32)へLCD keypadを接続
     #define PIN_KEY_5V_DIV 0                // keypad DIV 0: SELECTをLEFTで代用
 //  #define PIN_KEY_5V_DIV 1                // keypad DIV 1: 代用しない
 #else                               // ESPduino 32 WEMOS D1 32用
-	#include <SPIFFS.h>
+    #include <SPIFFS.h>
     #define PIN_KEY 35                      // A2(GPIO 35)へLCD keypadを接続
     #define PIN_KEY_5V_DIV 2                // keypad DIV 2: 市販Arduino互換機用
 #endif
@@ -100,6 +100,7 @@ char date[20];                              // 日時保持用
 int LOG_FILE_OUTPUT=1;                      // ファイル書込みの有効(1)／無効(0)
 int JPEG_FILE_OUTPUT=1;                     // 画像の書き込みの有効(1)／無効(0)
 int JPEG_FILE_VIEWER=0;                     // 画像表示の有効(1)／無効(0)
+int chime=0;                                // チャイムOFF
 
 struct HistData{                            // 履歴保持用 50 byte 17+32+1
     char lcd0[17];                          // LCD表示用(1行目)文字列変数 16字
@@ -128,13 +129,13 @@ void setup(){                               // 起動時に一度だけ実行す
     analogSetPinAttenuation(PIN_KEY,ADC_11db);
     unsigned long start_ms=millis();        // 初期化開始時のタイマー値を保存
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
-    #ifdef SD_CARD_EN
-    if(!SD.begin()){                    // ファイルシステムの開始
+#ifdef SD_CARD_EN
+    if(!SD.begin()){                        // ファイルシステムの開始
         lcd.print("ERROR: NO SD Card"); Serial.println("ERROR: NO SD");
-	#else
+#else
     if(!SPIFFS.begin()){                    // ファイルシステムの開始
         lcd.print("ERROR: NO SPIFFS"); Serial.println("ERROR: NO SPIFFS");
-	#endif
+#endif
         delay(3000);
     }
     /*
@@ -225,7 +226,7 @@ void loop(){                                // 繰り返し実行する関数
                 TIME-=millis()/1000;
             }
             if(AmbientChannelId && time%(AmbientINTERVAL*1000)==0)
-            	sensors_sendToAmbient();	// Ambientへ送信する
+                sensors_sendToAmbient();    // Ambientへ送信する
             // 以下は、表示用コンテンツ部 ここから ---->
             time2txt(date,TIME+time/1000);
             strcpy(lcd0,&date[11]); lcd0[8]=' '; lcd0[16]='\0';
@@ -265,14 +266,22 @@ void loop(){                                // 繰り返し実行する関数
                 if(len>8) lcd_p++; if(len<=lcd_p)lcd_p=0;
             }
             // ----> ここまで 表示用コンテンツ部
-            delay(1);
+            // delay(1); 					// readButtons部で1msの待ち時間あり
         }
         len = udpRx.parsePacket();          // UDP受信パケット長を変数lenに代入
-        if(len <= 8)return;                 // UDPが未受信時にloop()先頭へ
+        if(len <= 5){
+            if(chime){                              // チャイムの有無
+                chime=chimeBells(PIN_BUZZER,chime); // チャイム音を鳴らす
+            }
+            return;                         // UDPなし時にloopの先頭へ戻る
+        }
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udpRx.read(s, 64);                  // UDP受信データを文字列変数sへ代入
         if(len>64){len=64; udpRx.flush();}  // 受信データが残っている場合に破棄
         for(i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';   // 特殊文字除去
+        i=sensors_isDetectedSw(&s[0],&s[8]);// Wi-Fi スイッチの確認
+        if(i>0) chime=2;                    // 1以上の時にチャイムを鳴らす
+        if(len <= 8)return;                 // 8文字以下の場合はデータなし
         if(s[5]!='_' || s[7]!=',')return;   // 6文字目「_」8文字目「,」を確認
         if(strncmp(s,DEVICE_CAM,5)==0){     // カメラからの取得指示のとき
             if(!JPEG_FILE_OUTPUT) return;   // JPEG書き込みがOFFの時は終了
@@ -357,11 +366,11 @@ void loop(){                                // 繰り返し実行する関数
                         JPEG_FILE_OUTPUT=0;
                         len=strlen(lcd1);
                         break;
-                    #ifndef SD_CARD_EN
+                    #ifndef SD_CARD_EN              // SDはフォーマットできない
                     }else if(len>12 && strncmp(s,"GET /?FORMAT",12)==0){
                         SPIFFS.format();            // ファイル全消去
                         strcpy(&lcd0[9],"FORMAT ");
-                        strcpy(lcd1,"FORMAT SD Card or SPIFFS");
+                        strcpy(lcd1,"FORMAT SPIFFS");
                         len=strlen(lcd1);
                         break;                      // 解析処理の終了
                     #endif

@@ -4,8 +4,12 @@ HTMLコンテンツ取得
 *******************************************************************************/
 
 // #define TIMEOUT 3000                     // タイムアウト 3秒
-#include <SPIFFS.h>
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
+#ifdef SD_CARD_EN
+    #include <SD.h>
+#else
+    #include <SPIFFS.h>
+#endif
 
 int httpGet(char *url,int max_size){
     File file;
@@ -42,9 +46,13 @@ int httpGet(char *url,int max_size){
         Serial.println("WARN: Retrying");
         delay(10);                          // 10msのリトライ待ち時間
     }
+#ifdef SD_CARD_EN
+    file = SD.open(s,"w");              // 保存のためにファイルを開く
+#else
     file = SPIFFS.open(s,"w");              // 保存のためにファイルを開く
+#endif
     if(file==0){
-        Serial.println("ERROR: FALIED TO OPEN. Please format SPIFFS.");
+        Serial.println("ERROR: FALIED TO OPEN. Please format SPIFFS or SD.");
         client.flush();                     // ESP32用 ERR_CONNECTION_RESET対策
         client.stop();                      // クライアントの切断
         return 0;                           // ファイルを開けれなければ戻る
