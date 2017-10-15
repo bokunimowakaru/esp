@@ -17,7 +17,7 @@ uint8_t readButtons(uint8_t PIN){
     delay(1);
     int in3_2 = analogRead(PIN);
     
-    if( abs(in3-in3_2)>5 ) return 0x1F;
+    if( abs(in3-in3_2)>10 ) return 0x1F;
     
     #ifdef DEBUG_ADC
         float ad3;

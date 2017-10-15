@@ -366,14 +366,14 @@ void loop(){                                // 繰り返し実行する関数
                         JPEG_FILE_OUTPUT=0;
                         len=strlen(lcd1);
                         break;
-                    #ifndef SD_CARD_EN              // SDはフォーマットできない
                     }else if(len>12 && strncmp(s,"GET /?FORMAT",12)==0){
-                        SPIFFS.format();            // ファイル全消去
-                        strcpy(&lcd0[9],"FORMAT ");
-                        strcpy(lcd1,"FORMAT SPIFFS");
-                        len=strlen(lcd1);
+                        #ifndef SD_CARD_EN          // SDはフォーマットできない
+                            SPIFFS.format();        // ファイル全消去
+                            strcpy(&lcd0[9],"FORMAT ");
+                            strcpy(lcd1,"FORMAT SPIFFS");
+                            len=strlen(lcd1);
+                        #endif
                         break;                      // 解析処理の終了
-                    #endif
                     }else if (len>6 && strncmp(s,"GET / ",6)==0){
                         len=0;
                         break;                      // 解析処理の終了

@@ -11,7 +11,7 @@ Ambient送信用のセンサ機器の設定
 #define SENSOR_SW_RDSW 1                    // WiFiドア開閉   2016/9 IOT製作(12)
 #define SENSOR_SW_PIRS 2                    // WiFi人感センサ 2017/3 実習(1) 
 #define SENSOR_SW_ACCM 3                    // WiFi加速センサ 2017/3 実習(2) 
-#define DEBUG_SENSOR
+// #define DEBUG_SENSOR
 
 extern Ambient ambient;
 extern AmbData ambData[8];
