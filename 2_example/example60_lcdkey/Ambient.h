@@ -6,7 +6,7 @@
 #define Ambient_h
 
 #include "Arduino.h"
-#include <WiFi.h>                           // ESP32—pWiFiƒ‰ƒCƒuƒ‰ƒŠ
+#include <WiFi.h>                           // ESP32ç”¨WiFiãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 
 #define AMBIENT_WRITEKEY_SIZE 18
 #define AMBIENT_MAX_RETRY 5
