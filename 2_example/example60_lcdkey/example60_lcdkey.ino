@@ -96,7 +96,7 @@ int hist_p=0;                               // 過去データ位置(インデ�
 int disp_p=-1;                              // 履歴表示位置,負は非表示
 int disp_mode=0;                            // 表示モード(0:通常,1:棒グラフ)
 IPAddress ip;                               // IPアドレス保持用
-char date[20];                              // 日時保持用
+char date[20]="2000/01/01,00:00:00";        // 日時保持用
 int LOG_FILE_OUTPUT=1;                      // ファイル書込みの有効(1)／無効(0)
 int JPEG_FILE_OUTPUT=1;                     // 画像の書き込みの有効(1)／無効(0)
 int JPEG_FILE_VIEWER=0;                     // 画像表示の有効(1)／無効(0)
