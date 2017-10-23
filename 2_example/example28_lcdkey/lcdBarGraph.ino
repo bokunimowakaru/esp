@@ -340,6 +340,18 @@ void lcd_bar_print_level0(const char *csv, const byte hour12h, const byte min){
 	lcd.print(s);
 }
 
+int lcd_bar_print_onlyBar(const byte lev1){
+	byte i;
+
+	for(i=0 ; i < 5 ; i++){
+		if( lev1 <= 2 * i )				lcd.write( (byte)0x00 );
+		else if( lev1 - 2 * i == 1 )	lcd.write( (byte)0x01 );
+		else							lcd.write( (byte)0x02 );
+	}
+	if(lev1>10) lcd.print("F"); else lcd.write(3);
+	return i;
+}
+
 byte lcd_bar_val2lev(int val,int min,int max){
 	if( min == max ) max = min + 1;		// 0除算対策
 	if(min < max) return ((val - min ) * 10 ) / (max - min);

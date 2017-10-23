@@ -1,5 +1,13 @@
 #!/bin/bash
 # 天気をLEDの状態で表示する(フルカラーLED対応版)
+#
+# http://rss.weather.yahoo.co.jp/rss/days/7.xml		福島県（福島市）
+# http://rss.weather.yahoo.co.jp/rss/days/13.xml	東京都（東京）
+# http://rss.weather.yahoo.co.jp/rss/days/23.xml	愛知県（西部・名古屋）
+# http://rss.weather.yahoo.co.jp/rss/days/26.xml	京都府（南部・京都市）
+# http://rss.weather.yahoo.co.jp/rss/days/27.xml	大阪府（大阪市）
+# http://rss.weather.yahoo.co.jp/rss/days/28.xml	兵庫県（神戸市）
+# http://rss.weather.yahoo.co.jp/rss/days/43.xml	熊本県（熊本市）
 
 IP_LED="192.168.0.2"                                        # ワイヤレスLEDのIP
 while true; do                                              # 永久ループ

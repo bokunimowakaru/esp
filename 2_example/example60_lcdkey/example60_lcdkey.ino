@@ -52,18 +52,18 @@ Example 60 LCDへ表示する
 #ifdef CQ_PUB_IOT_EXPRESS           // CQ出版 IoT Express 用
     #include <SD.h>
     #define SD_CARD_EN                      // SDカードを使用する
+    #define PIN_BUZZER 12                   // GPIO 12にスピーカを接続
     #define PIN_KEY 32                      // A0(GPIO 32)へLCD keypadを接続
     #define PIN_KEY_5V_DIV 0                // keypad DIV 0: SELECTをLEFTで代用
 //  #define PIN_KEY_5V_DIV 1                // keypad DIV 1: 代用しない
 #else                               // ESPduino 32 WEMOS D1 32用
     #include <SPIFFS.h>
+    #define PIN_BUZZER 18                   // GPIO 18にスピーカを接続
     #define PIN_KEY 35                      // A2(GPIO 35)へLCD keypadを接続
     #define PIN_KEY_5V_DIV 2                // keypad DIV 2: 市販Arduino互換機用
 #endif
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
-#define PIN_BUZZER 12                       // GPIO 12にスピーカを接続
 #define TIMEOUT 6000                        // タイムアウト 6秒
-#define WIFI_AP_MODE 1                      // Wi-Fi APモード ※「0」でSTAモード
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
@@ -383,7 +383,7 @@ void loop(){                                // 繰り返し実行する関数
                                 s[i]='\0';         // 区切り文字時に終端する
                             }
                         }
-                        strcpy(&lcd0[9],"GetFile"); strcpy(lcd1,&s[5]);
+                        strcpy(&lcd0[9],"GetFile"); strncpy(lcd1,&s[5],64);
                         Serial.print(date); Serial.print(", GetFile: ");
                         Serial.println(&s[5]);
                         #ifdef SD_CARD_EN
@@ -469,30 +469,3 @@ void loop(){                                // 繰り返し実行する関数
     client.flush();                         // ESP32用 ERR_CONNECTION_RESET対策
     client.stop();                          // クライアントの切断
 }
-
-unsigned long getNtp(){
-    unsigned long highWord;                 // 時刻情報の上位2バイト用
-    unsigned long lowWord;                  // 時刻情報の下位2バイト用
-    unsigned long time;                     // 1970年1月1日からの経過秒数
-    int waiting=0;                          // 待ち時間カウント用
-    char s[20];                             // 表示用
-    
-    sendNTPpacket(NTP_SERVER);              // NTP取得パケットをサーバへ送信する
-    while(udp.parsePacket()<44){
-        delay(100);                         // 受信待ち
-        waiting++;                          // 待ち時間カウンタを1加算する
-        if(waiting%10==0)Serial.print('.'); // 進捗表示
-        if(waiting > 100) return 0ul;       // 100回(10秒)を過ぎたら戻る
-    }
-    udp.read(packetBuffer,NTP_PACKET_SIZE); // 受信パケットを変数packetBufferへ
-    highWord=word(packetBuffer[40],packetBuffer[41]);   // 時刻情報の上位2バイト
-    lowWord =word(packetBuffer[42],packetBuffer[43]);   // 時刻情報の下位2バイト
-    time = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
-    time -= 2208988800UL;                   // 1970年と1900年の差分を減算
-    time2txt(s,time);                       // 時刻をテキスト文字に変換
-    time += 32400UL;                        // +9時間を加算
-    time2txt(s,time);                       // 時刻をテキスト文字に変換
-    return time;
-}
-
-
