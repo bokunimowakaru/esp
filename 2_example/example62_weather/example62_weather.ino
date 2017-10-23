@@ -32,7 +32,6 @@ Example 62 天気情報をLCDへ表示する
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
-#include "pitches.h"                        // 
 
 #ifdef CQ_PUB_IOT_EXPRESS
     #include <SD.h>                         // CQ出版 IoT Express 用の設定

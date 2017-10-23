@@ -55,7 +55,6 @@ Example 60 LCDへ表示する
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 #include "readButtons.h"                    // Keypad 用 ドライバ
 #include "Ambient.h"                        // Ambient接続用 ライブラリ
-#include "pitches.h"
 
 #ifdef CQ_PUB_IOT_EXPRESS           // CQ出版 IoT Express 用
     #include <SD.h>
