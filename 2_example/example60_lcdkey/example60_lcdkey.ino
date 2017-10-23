@@ -29,11 +29,19 @@ Example 60 LCDへ表示する
 ご注意
     ・リセットもしくは電源を切る前に、ファイル出力をOFFに設定してください
     ・ログが保存されない場合は、SPIFFSまたはSDカードを初期化してください
-    
+
+必要なハードウェア
+    ・トランジスタ技術 IoT Express (CQ出版社)
+    ・LCD Keypad Shield (DF Robot製、SainSmart製、D1 ROBOT製など)
+    ・ACアダプタ（マイクロUSB、5V 500mA）
+
 ハードウェアの改造
     ・CQ出版社のIoT Expressを使用する場合：
     　- スケッチ中の「#define CQ_PUB_IOT_EXPRESS」を定義してください（初期状態）
-    　- KeypadのSELECTボタンを使用することが出来ません。
+    　- KeypadのSELECTボタンは使用出来ません。左側の[LEFT]キーで代用してください
+    　- AE-FT234Xの改造もしくは、コンデンサの容量を道鏡してください。
+    　　https://blogs.yahoo.co.jp/bokunimowakaru/55924799.html
+    　　http://toragi.cqpub.co.jp/tabid/848/Default.aspx#1
     ・DOIT ESPduino 32や WEMOS D1 R3でLCD Keypadを使用する場合：
     　- D12(Arduino D8ピンの位置)を10kΩ程度の抵抗でプルダウンし、
     　- D14(Arduino A0ピンの位置)とD16(Arduino A2ピンの位置)をショートして下さい
@@ -266,7 +274,7 @@ void loop(){                                // 繰り返し実行する関数
                 if(len>8) lcd_p++; if(len<=lcd_p)lcd_p=0;
             }
             // ----> ここまで 表示用コンテンツ部
-            // delay(1); 					// readButtons部で1msの待ち時間あり
+            // delay(1);                    // readButtons部で1msの待ち時間あり
         }
         len = udpRx.parsePacket();          // UDP受信パケット長を変数lenに代入
         if(len <= 5){

@@ -2,19 +2,27 @@
 Example 62 天気情報をLCDへ表示する
 
 主要機能：
-・Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad Shield)へ表示
-・予報が雨や曇りに変わったらチャイムでお知らせ（雨＝ピンポン、曇り＝ブーン）
-・最高気温と最低気温を棒グラフで表示
-・現在時刻はNTPで取得
-・取得した天気予報情報をSDカード(またはSPIFFS)へ保存
-・ブラウザでアクセスすると保存した天気予報情報をダウンロードできる
+    ・Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad)へ表示
+    ・予報が雨や曇りに変わったらチャイムでお知らせ（雨＝ピンポン、曇り＝ブーン）
+    ・最高気温と最低気温を棒グラフで表示
+    ・現在時刻はNTPで取得
+    ・取得した天気予報情報をSDカード(またはSPIFFS)へ保存
+    ・ブラウザでアクセスすると保存した天気予報情報をダウンロードできる
 
 地域設定：
-・「#define WEATHER_PREF_ID」 にYahoo!天気・災害の地域コードを設定してください。
+    ・#define WEATHER_PREF_ID にYahoo!天気・災害の地域コードを設定してください。
 
+必要なハードウェア
+    ・トランジスタ技術 IoT Express (CQ出版社)
+    ・LCD Keypad Shield (DF Robot製、SainSmart製、D1 ROBOT製など)
+    ・ACアダプタ（マイクロUSB、5V 500mA）
+    
 ボード設定：
-・CQ出版社 IoT Express用です（初期値）
-・ESPduino 32 や WEMOS D1 32で使用する場合は、#define CQ_PUB_IOT_EXPRESSを削除
+    ・CQ出版社 IoT Express用です（初期値）
+        - AE-FT234Xの改造もしくは、コンデンサの容量を道鏡してください。
+            https://blogs.yahoo.co.jp/bokunimowakaru/55924799.html
+            http://toragi.cqpub.co.jp/tabid/848/Default.aspx#1
+    ・ESPduino 32 や WEMOS D1 32で使用する場合、#define CQ_PUB_IOT_EXPRESSを削除
 
                                                 Copyright (c) 2017 Wataru KUNINO
 *******************************************************************************/
@@ -24,14 +32,14 @@ Example 62 天気情報をLCDへ表示する
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
-#include "pitches.h"
+#include "pitches.h"                        // 
 
-#ifdef CQ_PUB_IOT_EXPRESS           // CQ出版 IoT Express 用
-    #include <SD.h>
+#ifdef CQ_PUB_IOT_EXPRESS
+    #include <SD.h>                         // CQ出版 IoT Express 用の設定
     #define SD_CARD_EN                      // SDカードを使用する
     #define PIN_BUZZER 12                   // GPIO 12にスピーカを接続
-#else                               // ESPduino 32 WEMOS D1 32用
-    #include <SPIFFS.h>
+#else
+    #include <SPIFFS.h>                     // ESPduino 32 WEMOS D1 32用の設定
     #define PIN_BUZZER 18                   // GPIO 18にスピーカを接続
 #endif
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
@@ -75,14 +83,14 @@ void setup(){                               // 起動時に一度だけ実行す
     unsigned long start_ms=millis();        // 初期化開始時のタイマー値を保存
     unsigned long wait_ms=20000;            // 起動待ち時間(ms)
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
-#ifdef SD_CARD_EN
-    if(!SD.begin()){                        // ファイルシステムの開始
-        lcd.print("ERROR: NO SD Card"); Serial.println("ERROR: NO SD");
-#else
-    if(!SPIFFS.begin()){                    // ファイルシステムの開始
-        lcd.print("ERROR: NO SPIFFS"); Serial.println("ERROR: NO SPIFFS");
-#endif
-        delay(3000);
+    #ifdef SD_CARD_EN
+        if(!SD.begin()){                    // ファイルシステムの開始
+            lcd.print("ERROR: NO SD Card"); Serial.println("ERROR: NO SD");
+    #else
+        if(!SPIFFS.begin()){                // ファイルシステムの開始
+            lcd.print("ERROR: NO SPIFFS"); Serial.println("ERROR: NO SPIFFS");
+    #endif
+        delay(3000);                        // エラー表示用の待ち時間
     }
     WiFi.mode(WIFI_STA);                    // 無線LANを【STA】モードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
@@ -95,7 +103,7 @@ void setup(){                               // 起動時に一度だけ実行す
             ledcWriteNote(0,NOTE_B,7);delay(50);ledcWrite(0,0); // ブザー音
             delay(450);                     // 待ち時間処理
         }else{
-            lcd.clear(); lcd.print("No "); lcd.print(SSID); lcd.setCursor(0,1);
+            lcd.clear(); lcd.print("To "); lcd.print(SSID); lcd.setCursor(0,1);
             WiFi.disconnect(); delay(3000); // WiFiアクセスポイントを切断する
             WiFi.begin(SSID,PASS);          // 無線LANアクセスポイントへ再接続
             wait_ms += 20000;               // 待ち時間に20秒追加
@@ -139,7 +147,7 @@ void loop(){                                // 繰り返し実行する関数
             TIME=getNtp();                  // NTP時刻を取得
             TIME-=millis()/1000;
         }
-        delay(1);                           // 重複防止
+        delay(1);                           // 重複作動を回避するための待ち時間
 
         if(chime){                          // チャイムの有無
             chime=chimeBells(PIN_BUZZER,chime); // チャイム音を鳴らす
@@ -147,6 +155,7 @@ void loop(){                                // 繰り返し実行する関数
         
         // 1分ごと(毎時毎分5秒)の処理
         if(len>0 && strncmp(&date[17],"05",2)) return;
+        if(time%1000) return;               // 重複作動を回避するための待ち時間
         len=httpGetBufferedWeather(lcdisp,16);
         
         // 1時間ごと(毎時5分5秒)の処理
@@ -180,18 +189,18 @@ void loop(){                                // 繰り返し実行する関数
             c=client.read();                // データを文字変数cに代入
             if(c=='\n'){                    // 改行を検出した時
                 if(len>12 && strncmp(s,"GET /?FORMAT",12)==0){
-                    #ifndef SD_CARD_EN          // SDはフォーマットできない
-                        SPIFFS.format();        // ファイル全消去
+                    #ifndef SD_CARD_EN      // SDはフォーマットできない
+                        SPIFFS.format();    // ファイル全消去
                         strcpy(lcdisp,"FORMAT ");
                     #endif
-                    break;                      // 解析処理の終了
+                    break;                  // 解析処理の終了
                 }else if (len>6 && strncmp(s,"GET / ",6)==0){
                     len=0;
-                    break;                      // 解析処理の終了
+                    break;                  // 解析処理の終了
                 }else if (len>6 && strncmp(s,"GET /",5)==0){
                     for(i=5;i<strlen(s);i++){  // 文字列を検索
                         if(s[i]==' '||s[i]=='&'||s[i]=='+'){        
-                            s[i]='\0';         // 区切り文字時に終端する
+                            s[i]='\0';      // 区切り文字時に終端する
                         }
                     }
                     strncpy(lcdisp,&s[5],16);
@@ -246,7 +255,7 @@ void loop(){                                // 繰り返し実行する関数
     }
     delay(10);                              // クライアント側の応答待ち時間
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-    	httpGetBufferedWeather(s,64,0);     // 取得した天気データを変数sへ読込む
+        httpGetBufferedWeather(s,64,0);     // 取得した天気データを変数sへ読込む
         html(client,date,s,client.localIP()); // HTMLコンテンツを出力する
         time2txt(date,TIME+time/1000);
         Serial.print(date); Serial.println(", Done.");
