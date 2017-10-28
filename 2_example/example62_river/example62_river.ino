@@ -1,18 +1,18 @@
 /*******************************************************************************
-Example 62 天気情報をLCDへ表示する
+Example 62 河川の水位情報をLCDへ表示する River Water Lev
 
 主要機能：
-    ・Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad)へ表示
-    ・予報が雨や曇りに変わったらチャイムでお知らせ（雨＝ピンポン、曇り＝ブーン）
+    ・国土交通省「川の防災情報」から水位を取得し、液晶シールド(LCD Keypad)へ表示
+    ・水位が急に増加したらチャイムでお知らせ
     ・最高気温と最低気温を棒グラフで表示
     ・現在時刻はNTPで取得
-    ・取得した天気予報情報をSDカード(またはSPIFFS)へ保存
-    ・ブラウザでアクセスすると保存した天気予報情報をダウンロードできる
+    ・取得した水位情報をSDカード(またはSPIFFS)へ保存
+    ・ブラウザでアクセスすると保存した水位情報をダウンロードできる
 
 地域設定：
-    ・#define WEATHER_PREF_ID にYahoo!天気・災害の地域コードを設定してください。
-    ・詳細はYahoo!天気・災害が提供するRSSに関する仕様を参考にしてください。
-            https://weather.yahoo.co.jp/weather/rss/
+    ・#define RIVER_SPOT_ID に観測所コードを設定してください。
+    ・コードは川の防災情報の河川・観測所検索から検索してください。
+            https://www.river.go.jp/kawabou/schObsrv.do
 
 必要なハードウェア
     ・トランジスタ技術 IoT Express (CQ出版社)
@@ -50,14 +50,11 @@ Example 62 天気情報をLCDへ表示する
 #define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
 #define NTP_PORT 8888                       // NTP待ち受けポート
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
-#define FILENAME "/weather.csv"             // 出力データ用ファイル名
+#define FILENAME "/river.csv"               // 出力データ用ファイル名
 
-#define WEATHER_PREF_ID 27                  // 県番号：東京=13,福島=7,愛知=23
-                                            // 大阪=27,京都=26,兵庫=28,熊本=43
-#define WEATHER_FINE  3                     // 晴れ
-#define WEATHER_CLOWD 2                     // くもり
-#define WEATHER_RAIN  1                     // 雨
-#define WEATHER_ALL   0                     // 全受信データをファイルへ出力
+#define RIVER_SPOT_ID "2206800400013"       // 2206800400013 = 淀川
+#define RIVER_DEPTH_MAX     5.0             // 警報
+#define RIVER_DEPTH_ALERT   4.4             // 注意喚起
 
 byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義
@@ -70,7 +67,7 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 unsigned long TIME=0;                       // 1970年からmillis()＝0までの秒数
 char date[20]="2000/01/01,00:00:00";        // 日時保持用
 char lcdisp[17]="";                         // LCD表示用
-int weather=0;                              // 天気コード
+float depth=-1.0;                           // 水位(負は未取得)
 int chime=0;                                // チャイムOFF
 
 void setup(){                               // 起動時に一度だけ実行する関数
@@ -79,8 +76,8 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     lcd.begin(16, 2);                       // 液晶の初期化(16桁×2行)
     lcd_bar_init(); lcd.clear();            // 棒グラフ表示用スケッチの初期化
-    lcd.print("eg. 62 Weather");            // 「ｻﾝﾌﾟﾙ 62」をLCDに表示する
-    Serial.println("Example 62 Weather");
+    lcd.print("River Water Lev.");          // タイトルをLCDに表示する
+    Serial.println("Example 62 River");
     unsigned long start_ms=millis();        // 初期化開始時のタイマー値を保存
     unsigned long wait_ms=20000;            // 起動待ち時間(ms)
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
@@ -138,12 +135,9 @@ void loop(){                                // 繰り返し実行する関数
         // 250msに一回、液晶表示を更新する
         if(time%250) return;                // 250msで割り切れないときはretrun
         time2txt(date,TIME+time/1000); lcd.setCursor(0,0); lcd.print(&date[11]);
-        if(time%500) i=httpGetBufferedTempL(); else i=httpGetBufferedTempH();
-        i/=3; lcd.setCursor(10,0); lcd_bar_print_onlyBar(i); len=strlen(lcdisp);
-        if(len>0){
-            lcd.setCursor(0,1); lcd.print(lcdisp);
-            for(i=len;i<16;i++) lcd.print(' ');
-        }
+        i=(int)( depth * 10. / RIVER_DEPTH_ALERT );
+        lcd.setCursor(10,0); lcd_bar_print_onlyBar(i); len=strlen(lcdisp);
+        lcd.setCursor(0,1);lcd.print(lcdisp);for(i=len;i<16;i++)lcd.print(' ');
         if(time%86400000ul==0){             // 24時間に1回
             TIME=getNtp();                  // NTP時刻を取得
             TIME-=millis()/1000;
@@ -155,17 +149,17 @@ void loop(){                                // 繰り返し実行する関数
         }
         
         // 1分ごと(毎時毎分5秒)の処理
-        if(len>0 && strncmp(&date[17],"05",2)) return;
+        if(depth >= 0. && strncmp(&date[17],"05",2)) return;
         if(time%1000) return;               // 重複作動を回避するための待ち時間
-        len=httpGetBufferedWeather(lcdisp,16);
+        httpGetBufferedDepth(lcdisp,16);
         
-        // 1時間ごと(毎時5分5秒)の処理
-        if(len>0 && strncmp(&date[14],"05",2)) return;
-        if(!httpGetWeather(WEATHER_PREF_ID,s,64,WEATHER_ALL)) return;
-        if(weather != httpGetBufferedWeatherCode()){
-            weather = httpGetBufferedWeatherCode();
-            chime = 3 - weather;
-        }
+        // 10分ごと(毎時x3分5秒)の処理 10分間隔
+        if(depth >= 0. && date[15] != '3' ) return;
+        if(httpGetRiverDepth(RIVER_SPOT_ID) < 0) return;
+        depth = httpGetBufferedDepth();
+        httpGetBufferedDepth(lcdisp,16);
+        if( depth > RIVER_DEPTH_ALERT ) chime = 2;
+        if( depth > RIVER_DEPTH_MAX ) chime = 20;
         #ifdef SD_CARD_EN
             file=SD.open(FILENAME,"a");     // 追記保存のためにファイルを開く
         #else
@@ -177,13 +171,11 @@ void loop(){                                // 繰り返し実行する関数
         }
         file.print(date);                   // 日時を出力する
         file.print(',');                    // 「,」カンマをファイル出力
-        file.println(s);                    // 受信データをファイル出力
+        file.println(lcdisp);               // 受信データをファイル出力
         file.close();                       // ファイルを閉じる
         return;                             // loop()の先頭に戻る
     }
-    lcd.clear();lcd.print("TCP from ");     // 接続されたことを表示
     Serial.print(date); Serial.print(", TCP from ");
-    lcd_cls(1);lcd.print(client.remoteIP());// 接続元IPアドレスをLCD表示
     Serial.println(client.remoteIP());      // 接続元IPアドレスをシリアル表示
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
@@ -197,6 +189,10 @@ void loop(){                                // 繰り返し実行する関数
                     #endif
                     strcpy(lcdisp,"FORMAT ");
                     break;                  // 解析処理の終了
+                }else if(len>11 && strncmp(s,"GET /?DEPTH",11)==0){
+                    depth=-1;
+                    strcpy(lcdisp,"GET DEPTH");
+                    break;                  // 解析処理の終了
                 }else if (len>6 && strncmp(s,"GET / ",6)==0){
                     len=0;
                     break;                  // 解析処理の終了
@@ -206,7 +202,6 @@ void loop(){                                // 繰り返し実行する関数
                             s[i]='\0';      // 区切り文字時に終端する
                         }
                     }
-                    strncpy(lcdisp,&s[5],16);
                     Serial.print(date); Serial.print(", GetFile: ");
                     Serial.println(&s[5]);
                     #ifdef SD_CARD_EN
@@ -217,13 +212,13 @@ void loop(){                                // 繰り返し実行する関数
                     if(file==0){                        // 開けなかった時
                         Serial.print(date); Serial.print(", no data: ");
                         Serial.println(&s[4]);          // ファイル無し表示
-                        client.println("HTTP/1.1 404 Not Found");
+                        client.println("HTTP/1.0 404 Not Found");
                         client.println("Connection: close");
                         client.println();
                         client.println("<HTML>404 Not Found</HTML>");
                         break;
                     } // delay(1);
-                    client.println("HTTP/1.1 200 OK");
+                    client.println("HTTP/1.0 200 OK");
                     client.print("Content-Type: ");
                     if(strstr(&s[5],".jpg")) client.println("image/jpeg");
                     else if(strstr(&s[5],".csv")) client.println("text/csv");
@@ -259,8 +254,7 @@ void loop(){                                // 繰り返し実行する関数
     }
     delay(10);                              // クライアント側の応答待ち時間
     if(client.connected()){                 // 当該クライアントの接続状態を確認
-        httpGetBufferedWeather(s,64,0);     // 取得した天気データを変数sへ読込む
-        html(client,date,s,client.localIP()); // HTMLコンテンツを出力する
+        html(client,date,lcdisp,client.localIP()); // HTMLコンテンツを出力する
         time2txt(date,TIME+time/1000);
         Serial.print(date); Serial.println(", Done.");
     }

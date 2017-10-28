@@ -60,11 +60,11 @@ int httpGetBufferedWeather(char *out, int out_len, int data_number){
             break;
     }
     #ifdef DEBUG_HTTPG
-	    Serial.print(strlen(out));
-	    Serial.print(" Bytes \"");
-	    Serial.print(out);
-	    Serial.println("\"");
-	#endif
+        Serial.print(strlen(out));
+        Serial.print(" Bytes \"");
+        Serial.print(out);
+        Serial.println("\"");
+    #endif
     return strlen(out);
 }
 
@@ -97,7 +97,7 @@ int httpGetWeather(int city, char *out, int out_len, int data_number){
     int headF=0;                            // ヘッダフラグ(0:HEAD 1:EOL 2:DATA)
     unsigned long time;                     // 時間測定用
 
-	out[0]='\0';
+    out[0]='\0';
     if(city<0 || city>100) return 0;
     snprintf(s,128,"rss.weather.yahoo.co.jp/rss/days/%d.xml",city);
     cp=strchr(s,'/');                       // URL内の区切りを検索
@@ -121,14 +121,14 @@ int httpGetWeather(int city, char *out, int out_len, int data_number){
     }
     client.print("GET ");                   // HTTP GETコマンドを送信
     client.print(s);                        // 相手先ディレクトリを指定
-    client.println(" HTTP/1.1");            // HTTPプロトコル
+    client.println(" HTTP/1.0");            // HTTPプロトコル
     client.println("User-Agent: esp-wroom-32");
     client.print("Host: ");                 // ホスト名を指定
     client.print(to);                       // 相手先ホスト名
     client.println();                       // ホスト名の指定を終了
 //  client.println("Accept: *\/*");
-	client.println("Accept: application/xml");
-    client.println("Connection: close\r");  // セッションの都度切断を指定
+    client.println("Accept: application/xml");
+    client.println("Connection: close");    // セッションの都度切断を指定
     client.println();
     
     time=millis(); s[0]='\0';
@@ -137,17 +137,17 @@ int httpGetWeather(int city, char *out, int out_len, int data_number){
             t=0;
             c=client.read();                // TCPデータの読み取り
             if(headF==2 && c){
-				s[(size%128)+128]=c;
-				size++;
-				len = 128 - (size % 128);
-				if(len >0 && len < 128 ) i=client.read((uint8_t *)(s+(size%128)+128),len);
-				else i=0;
-				size += i;
-				if( size % 128 ) continue;
+                s[(size%128)+128]=c;
+                size++;
+                len = 128 - (size % 128);
+                if(len >0 && len < 128 ) i=client.read((uint8_t *)(s+(size%128)+128),len);
+                else i=0;
+                size += i;
+                if( size % 128 ) continue;
                 cp=strstr(s,"<item><title>");   // 13文字のキーワード
                 if( !cp || (int)(cp-s) >= 128 ){
-                    memcpy(s,s+128,128);  	// 変数sの後半を前半へ移動
-                    memset(s+128,0,129);   	// 変数sの後半だけ初期化
+                    memcpy(s,s+128,128);    // 変数sの後半を前半へ移動
+                    memset(s+128,0,129);    // 変数sの後半だけ初期化
                     continue;
                 }
                 
@@ -225,7 +225,7 @@ int httpGetWeather(int city, char *out, int out_len, int data_number){
                 break;
             }
             #ifdef DEBUG_HTTPG
-            	Serial.print(c);            // ヘッダ部のシリアル出力表示
+                Serial.print(c);            // ヘッダ部のシリアル出力表示
             #endif
             if(headF==1){                   // 前回が行端の時
                 if(c=='\n') headF=2;        // 今回も行端ならヘッダ終了
@@ -244,10 +244,10 @@ int httpGetWeather(int city, char *out, int out_len, int data_number){
     Serial.print(millis()-time);
     Serial.println("ms, Done");
     #ifdef DEBUG_HTTPG
-	    Serial.print(ret);
-	    Serial.print(" Bytes \"");
-	    Serial.print(out);
-	    Serial.println("\"");
+        Serial.print(ret);
+        Serial.print(" Bytes \"");
+        Serial.print(out);
+        Serial.println("\"");
     #endif
     return ret;
 }
