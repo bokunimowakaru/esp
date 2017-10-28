@@ -14,6 +14,14 @@ Example 62 河川の水位情報をLCDへ表示する River Water Lev
     ・コードは川の防災情報の河川・観測所検索から検索してください。
             https://www.river.go.jp/kawabou/schObsrv.do
 
+ご注意：
+    ・国土交通省・川の防災情報はブラウザで閲覧することを前提に公開されています。
+    ・サーバへの負担がかかるような使い方は控える必要があります。
+            https://www.river.go.jp/kawabou/qa/QA/chu-i3.html
+    ・台風の時に近郊の下線の情報を10分毎にアクセスするような使い方については、
+      ぎりぎり通常のブラウザでの閲覧の範囲に入ると解釈していますが、可能な限り
+      アクセス頻度、取得情報量を控えてください。
+
 必要なハードウェア
     ・トランジスタ技術 IoT Express (CQ出版社)
     ・LCD Keypad Shield (DF Robot製、SainSmart製、D1 ROBOT製など)

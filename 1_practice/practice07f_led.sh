@@ -8,6 +8,11 @@
 # http://rss.weather.yahoo.co.jp/rss/days/27.xml	大阪府（大阪市）
 # http://rss.weather.yahoo.co.jp/rss/days/28.xml	兵庫県（神戸市）
 # http://rss.weather.yahoo.co.jp/rss/days/43.xml	熊本県（熊本市）
+#
+# ご注意：
+#   ・Yahoo!天気・災害の情報を商用で利用する場合はYahoo! Japanの承諾が必要です。
+#   ・Yahoo!サービスの利用規約にしたがって利用ください。
+#           https://about.yahoo.co.jp/docs/info/terms/
 
 IP_LED="192.168.0.2"                                        # ワイヤレスLEDのIP
 while true; do                                              # 永久ループ

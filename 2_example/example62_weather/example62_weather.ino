@@ -14,6 +14,11 @@ Example 62 天気情報をLCDへ表示する
     ・詳細はYahoo!天気・災害が提供するRSSに関する仕様を参考にしてください。
             https://weather.yahoo.co.jp/weather/rss/
 
+ご注意：
+    ・Yahoo!天気・災害の情報を商用で利用する場合はYahoo! Japanの承諾が必要です。
+    ・Yahoo!サービスの利用規約にしたがって利用ください。
+            https://about.yahoo.co.jp/docs/info/terms/
+
 必要なハードウェア
     ・トランジスタ技術 IoT Express (CQ出版社)
     ・LCD Keypad Shield (DF Robot製、SainSmart製、D1 ROBOT製など)
