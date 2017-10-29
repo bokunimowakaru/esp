@@ -35,7 +35,7 @@ int _httpg_temp_L=0;                        // 天気予想温度（最低気温
 
 int httpGetBufferedWeather(char *out, int out_len, int data_number){
     if(_httpg_day == 0) return 0;
-    out[0]='\0';
+    memset(out,0,out_len+1);
     switch(data_number){
         case 0:
             snprintf(out,out_len+1,"%d,%d,%d,%s,%s",_httpg_day,_httpg_temp_H,_httpg_temp_L,_httpg_weather_disp,_httpg_weather);
@@ -97,7 +97,7 @@ int httpGetWeather(int city, char *out, int out_len, int data_number){
     int headF=0;                            // ヘッダフラグ(0:HEAD 1:EOL 2:DATA)
     unsigned long time;                     // 時間測定用
 
-    out[0]='\0';
+    memset(out,0,out_len+1);
     if(city<0 || city>100) return 0;
     snprintf(s,128,"rss.weather.yahoo.co.jp/rss/days/%d.xml",city);
     cp=strchr(s,'/');                       // URL内の区切りを検索
