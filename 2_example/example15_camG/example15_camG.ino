@@ -3,6 +3,13 @@ Example 15: 監視カメラ for SeeedStudio Grove Serial Camera Kit
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
+/*
+ご注意
+    本サンプルではSPIFFSを使用します。Arduino IDE のFlash Sizeの設定で
+    使用するESPモジュールに合わせて2MB(1MB SPIFFS)又は4MB(3MB SPIFFS)を
+    選択してください。
+    本スケッチを実行するとSPIFFS内のファイルは消去されます。
+*/
 
 #include <SoftwareSerial.h>
 #include <FS.h>

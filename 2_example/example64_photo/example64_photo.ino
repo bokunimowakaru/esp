@@ -7,9 +7,9 @@ Example 64 有機ELディスプレイ フォトフレーム SSD1331ドライバ�
                                                 Copyright (c) 2017 Wataru KUNINO
 *******************************************************************************/
 /*
-    ・本機のアクセスポイントモード動作時はブロードキャストの受信が出来ません
+    ・本機のアクセスポイントモード動作時はブロードキャストの中継が出来ません
     　- ESP32で使用している IPスタックlwIP(lightweight IP)の仕様です
-    　- 子機(カメラ)側で本機のアドレス(192.168.0.1)を指定して送信してください
+    　- 本機でのブロードキャストの送受信は可能です
 */
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
@@ -25,7 +25,7 @@ Example 64 有機ELディスプレイ フォトフレーム SSD1331ドライバ�
 #define PIN_SPI_SCLK    18
 */
 
-#define TIMEOUT 8000                        // タイムアウト 8秒
+#define TIMEOUT 7000                        // タイムアウト 7秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
@@ -118,6 +118,7 @@ void loop(){                                // 繰り返し実行する関数
             else file = SPIFFS.open("/cam.jpg","r"); 
             jpegDrawSlide(file);
             file.close();
+            TIME=millis();
         }
         return;                             // loop()の先頭に戻る
     }
