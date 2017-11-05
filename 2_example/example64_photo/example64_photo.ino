@@ -25,7 +25,7 @@ Example 64 有機ELディスプレイ フォトフレーム SSD1331ドライバ�
 #define PIN_SPI_SCLK    18
 */
 
-#define TIMEOUT 6000                        // タイムアウト 6秒
+#define TIMEOUT 8000                        // タイムアウト 8秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
@@ -84,6 +84,7 @@ void setup(void){
     delay(TIMEOUT);
     if(SD_CARD_EN) jpegDrawSlideShowBegin(SD);
     else jpegDrawSlideShowBegin(SPIFFS);
+    TIME=millis();
 }
 
 void loop(){                                // 繰り返し実行する関数
@@ -98,6 +99,11 @@ void loop(){                                // 繰り返し実行する関数
 
     client = server.available();            // 接続されたTCPクライアントを生成
     if(!client){                            // TCPクライアントが無かった場合
+        if(millis()-TIME > TIMEOUT){
+            if(SD_CARD_EN) jpegDrawSlideShowNext(SD);
+            else jpegDrawSlideShowNext(SPIFFS);
+            TIME=millis();
+        }
         len = udpRx.parsePacket();          // UDP受信パケット長を変数lenに代入
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udpRx.read(s, 64);                  // UDP受信データを文字列変数sへ代入
@@ -113,10 +119,6 @@ void loop(){                                // 繰り返し実行する関数
             jpegDrawSlide(file);
             file.close();
         }
-        if(millis()-TIME < TIMEOUT) return;
-        if(SD_CARD_EN) jpegDrawSlideShowNext(SD);
-        else jpegDrawSlideShowNext(SPIFFS);
-        TIME=millis();
         return;                             // loop()の先頭に戻る
     }
     TIME=millis();
