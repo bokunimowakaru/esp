@@ -73,7 +73,7 @@ void loop(){
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    int len=0;                              // 文字列等の長さカウント用の変数
+    int i,len=0;                            // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     
     if(millis() > TIME) sleep();            // 終了時刻になったらsleep()を実行
@@ -115,16 +115,20 @@ void loop(){
             if(!client.connected()) break;  // 切断されていた場合は転送終了
             client.write((byte)file.read());// ファイルの転送
         }
-        以下(計9行)のように修正し、高速化を行った */
-        t=0; while(file.available()){       // ファイルがあれば繰り返し処理実行
-            s[t]=file.read(); t++;          // ファイルの読み込み
-            if(t >= 64){                    // 64バイトに達した時に転送処理
-                if(!client.connected()) break;              // 接続状態確認
-                client.write( (byte *)s, 64);               // 64バイト送信
-                t=0; delay(1);                              // 送信完了待ち
+        以下のように修正し、高速化を行った */
+        len=0; t=0;                         // 変数lenとtを再利用
+        while( t<3 ){                       // エラー3回以内で繰り返し処理実行
+            if(!file.available()){          // ファイルの有無を確認
+                t++; delay(100);            // ファイル無し時に100msの待ち時間
+                continue;                   // whileループに戻ってリトライ
+            }
+            i=file.read((byte *)s,64);      // ファイル64バイトを読み取り
+            if(i>0){
+                client.write((byte *)s,i);  // ファイルの書き込み
+                len+=i; t=0;                // ファイル長lenを加算
+                if(len>=size) break;        // ファイルサイズに達したら終了
             }
         }
-        if(t>0 && client.connected()) client.write((byte *)s,t);
         file.close();                       // ファイルを閉じる
     }
     client.stop();                          // クライアントの切断

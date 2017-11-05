@@ -52,12 +52,13 @@ void setup(){                               // 起動時に一度だけ実行す
         IP = WiFi.localIP();
     #else // WIFI_AP_MODE==1
         WiFi.mode(WIFI_AP);                 // 無線LANを[AP]モードに設定
-        WiFi.softAP(SSID_AP);               // ソフトウェアAPの起動
+        delay(1000);                        // 切換え・設定待ち時間
         WiFi.softAPConfig(
-            IPAddress(192,168,1,2),         /* 固定IPアドレス */
-            IPAddress(192,168,1,1),         /* ゲートウェイアドレス */
-            IPAddress(255,255,255,0)        /* ネットマスク */
+            IPAddress(192,168,0,1),         // AP側の固定IPアドレス
+            IPAddress(0,0,0,0),             // 本機のゲートウェイアドレス
+            IPAddress(255,255,255,0)        // ネットマスク
         );
+        WiFi.softAP(SSID_AP);               // ソフトウェアAPの起動
         Serial.println(SSID_AP);            // SSIDを表示
         IP = WiFi.softAPIP();
     #endif

@@ -6,7 +6,11 @@ Example 64 有機ELディスプレイ フォトフレーム SSD1331ドライバ�
 
                                                 Copyright (c) 2017 Wataru KUNINO
 *******************************************************************************/
-
+/*
+    ・本機のアクセスポイントモード動作時はブロードキャストの受信が出来ません
+    　- ESP32で使用している IPスタックlwIP(lightweight IP)の仕様です
+    　- 子機(カメラ)側で本機のアドレス(192.168.0.1)を指定して送信してください
+*/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_OLED_CS     17                  // GPIO 4にOLEDのCSを接続
@@ -64,11 +68,11 @@ void setup(void){
         if(millis()-TIME > TIMEOUT){        // 待ち時間後の処理
             WiFi.disconnect();              // WiFiアクセスポイントを切断する
             oled.println("\nWi-Fi AP Mode");// 接続が出来なかったときの表示
-            oled.println(SSID_AP);
+            WiFi.mode(WIFI_AP); delay(100); // 無線LANを【AP】モードに設定
             WiFi.softAP(SSID_AP,PASS_AP);   // ソフトウェアAPの起動
             WiFi.softAPConfig(
                 IPAddress(192,168,0,1),     // AP側の固定IPアドレスの設定
-                IPAddress(192,168,0,1),     // 本機のゲートウェイアドレスの設定
+                IPAddress(0,0,0,0),         // 本機のゲートウェイアドレスの設定
                 IPAddress(255,255,255,0)    // ネットマスクの設定
             ); oled.println(WiFi.softAPIP()); break;
         }

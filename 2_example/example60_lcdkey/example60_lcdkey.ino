@@ -29,6 +29,10 @@ Example 60 LCDへ表示する
 ご注意
     ・リセットもしくは電源を切る前に、ファイル出力をOFFに設定してください
     ・ログが保存されない場合は、SPIFFSまたはSDカードを初期化してください
+    ・本機のアクセスポイントモード動作時はブロードキャストの受信が出来ません
+    　- ESP32で使用している IPスタックlwIP(lightweight IP)の仕様です
+    　- 子機の送信側で本機のアドレス(192.168.0.1)を指定して送信してください
+    　- 本機からのブロードキャスト送信は可能です
 
 必要なハードウェア
     ・トランジスタ技術 IoT Express (CQ出版社)
@@ -70,7 +74,7 @@ Example 60 LCDへ表示する
     #define PIN_KEY_5V_DIV 2                // keypad DIV 2: 市販Arduino互換機用
 #endif
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
-#define TIMEOUT 6000                        // タイムアウト 6秒
+#define TIMEOUT 8000                        // タイムアウト 6秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
@@ -84,7 +88,6 @@ Example 60 LCDへ表示する
 #define PORT 1024                           // センサ機器 UDP受信ポート番号
 #define DEVICE_CAM "cam_a"                  // カメラ(実習4/example15)名前5文字
 #define HIST_MAX 16                         // 過去データ保持件数(1以上)
-#define WAIT_MS 20000                       // 起動待ち時間(最大)
 
 byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
 WiFiUDP udp;                                // NTP通信用のインスタンスを定義
@@ -161,10 +164,10 @@ void setup(){                               // 起動時に一度だけ実行す
         digitalWrite(PIN_LED,!digitalRead(PIN_LED));        // LEDの点滅
         ledcWriteNote(0,NOTE_B,7);delay(50);ledcWrite(0,0); // ブザー音
         delay(450);                         // 待ち時間処理
-        if(millis()-start_ms>WAIT_MS){      // 待ち時間後の処理
+        if(millis()-start_ms>TIMEOUT){      // 待ち時間後の処理
+            WiFi.disconnect();              // WiFiアクセスポイントを切断する
             lcd.clear();
             lcd.print("No Internet AP");    // 接続が出来なかったときの表示
-            WiFi.disconnect();              // WiFiアクセスポイントを切断する
             break;
         }
     }
@@ -188,16 +191,17 @@ void setup(){                               // 起動時に一度だけ実行す
             Serial.println("Started Ambient Client");
         }
     }else{
+        WiFi.mode(WIFI_AP);                 // 無線LANを【AP】モードに設定
+        delay(1000);                        // 切換え・設定待ち時間
         lcd.clear();                        // APモード
         lcd.print("Wi-Fi SoftwareAP");      // APモードであることを表示
         Serial.println("OFF");              // STA接続に失敗したことを出力
-        WiFi.mode(WIFI_AP);                 // 無線LANを【AP】モードに設定
-        WiFi.softAP(SSID_AP,PASS_AP);       // ソフトウェアAPの起動
         WiFi.softAPConfig(
             IPAddress(192,168,0,1),         // AP側の固定IPアドレス
-            IPAddress(192,168,0,1),         // 本機のゲートウェイアドレス
+            IPAddress(0,0,0,0),             // 本機のゲートウェイアドレス
             IPAddress(255,255,255,0)        // ネットマスク
         );
+        WiFi.softAP(SSID_AP,PASS_AP);       // ソフトウェアAPの起動
         lcd.setCursor(0,1);                 // カーソル位置を液晶の左下へ
         lcd.print(WiFi.softAPIP());         // AP側IPアドレスを液晶の1行目に表示
         ip=WiFi.softAPIP();                 // IPアドレスを保持
