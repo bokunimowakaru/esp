@@ -4,12 +4,12 @@ Example 65 アナログ入力ポートから録音した音声を送信する
                                                 Copyright (c) 2017 Wataru KUNINO
 ********************************************************************************
 　マイク入力ポート：GPIO 34 ADC1_CH6
-　　　　　　　　　　IoT Express		A2ピン(P3 3番ピン)
-　　　　　　　　　　WeMos D1 R32		Analog 3ピン
-　　　　　　　　　　ESP-WROOM-32		6番ピン
+　　　　　　　　　　IoT Express     A2ピン(P3 3番ピン)
+　　　　　　　　　　WeMos D1 R32        Analog 3ピン
+　　　　　　　　　　ESP-WROOM-32        6番ピン
 
 　録音開始入力ポート：GPIO 0 を Lレベルへ移行する
-　　　　　　　　　　IoT Express		BOOTスイッチを押す
+　　　　　　　　　　IoT Express     BOOTスイッチを押す
 
 　受信用ソフト：toolsフォルダ内のget_sound.sh(Raspberry Pi用)などを使用する
 *******************************************************************************/
@@ -34,26 +34,26 @@ WiFiUDP udp;                                // UDP通信用のインスタンス
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 unsigned long TIME;                         // 写真公開時刻(起動後の経過時間)
 
-byte snd[SOUND_LEN];						// 音声録音用変数
+byte snd[SOUND_LEN];                        // 音声録音用変数
 int snd_size=0;                             // 音声データの大きさ(バイト)
 const byte Wave_Header0[2]={0,0};
 const byte Wave_Header1[8]={16,0,0,0,1,0,1,0};
-const byte Wave_Header2[4]={0x40,0x1F,0,0};	// 8000Hz -> 00 00 1F 40
+const byte Wave_Header2[4]={0x40,0x1F,0,0}; // 8000Hz -> 00 00 1F 40
 const byte Wave_Header3[4]={1,0,8,0};
 
 int snd_rec(byte *snd, int len, int port){
-	unsigned long time,time_trig=0;
-	int i=0, wait_us=125;					// 8kHz時 サンプリング間隔 125us
-	
-	while(i<len){
-		time=micros();
-		if(time < time_trig) continue;		// 未達時
-		snd[i]=(byte)(analogRead(PIN_AIN)>>4);  // アナログ入力 12ビット→8ビット
-		time_trig += wait_us;
-		i++;
-		if(time_trig < wait_us) break;		// 時間カウンタのオーバフロー
-	}
-	return i;
+    unsigned long time,time_trig=0;
+    int i=0, wait_us=125;                   // 8kHz時 サンプリング間隔 125us
+    
+    while(i<len){
+        time=micros();
+        if(time < time_trig) continue;      // 未達時
+        snd[i]=(byte)(analogRead(PIN_AIN)>>4);  // アナログ入力 12ビット→8ビット
+        time_trig = time + wait_us;
+        i++;
+        if(time_trig < wait_us) break;      // 時間カウンタのオーバフロー
+    }
+    return i;
 }
 
 void setup(){ 
@@ -64,10 +64,10 @@ void setup(){
     TIME=millis();
     digitalWrite(PIN_EN,HIGH);
     Serial.print("Recording... ");
-	snd_size=snd_rec(snd,SOUND_LEN,PIN_AIN);// 音声入力
-	Serial.print(millis()-TIME);
-    Serial.println("s Done");
-	if(snd_size<82) sleep();
+    snd_size=snd_rec(snd,SOUND_LEN,PIN_AIN);// 音声入力
+    Serial.print(millis()-TIME);
+    Serial.println("msec. Done");
+    if(snd_size<82) sleep();
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -128,21 +128,21 @@ void loop(){
     client.println("Content-Type: audio/wav");          // WAVコンテンツ
     client.println("Connection: close");                // 応答後に閉じる
     client.println();                                   // ヘッダの終了
-    client.write("RIFF",4);					// RIFF 					->[4]
-    i = snd_size + 44 - 8;					// ファイルサイズ-8
-    client.write(i & 0xFF);					// サイズ・最下位バイト	 	->[5]
-    client.write((i>>8) & 0xFF);			// サイズ・第2位バイト	 	->[6]
-    client.write(Wave_Header0,2);			// サイズ・第3-4位バイト 	->[8]
-    client.write("WAVEfmt ",8);				// "Wave","fmt "			->[16]
-    client.write(Wave_Header1,8);			// 16,0,0,0,1,0,1,0			->[24]
-    client.write(Wave_Header2,4);			// 68,172,0,0				->[28]
-    client.write(Wave_Header2,4);			// 68,172,0,0				->[32]
-    client.write(Wave_Header3,4);			// 1,0,8,0					->[36]
-    client.write("data",4);					//	"data"					->[40]
-    i = snd_size + 44 - 126;				// ファイルサイズ-126
-    client.write(i & 0xFF);					// サイズ・最下位バイト	 	->[41]
-    client.write((i>>8) & 0xFF);			// サイズ・最下位バイト	 	->[42]
-    client.write("\0\0",2);					// サイズ3-4
+    client.write("RIFF",4);                 // RIFF                     ->[4]
+    i = snd_size + 44 - 8;                  // ファイルサイズ-8
+    client.write(i & 0xFF);                 // サイズ・最下位バイト     ->[5]
+    client.write((i>>8) & 0xFF);            // サイズ・第2位バイト      ->[6]
+    client.write(Wave_Header0,2);           // サイズ・第3-4位バイト    ->[8]
+    client.write("WAVEfmt ",8);             // "Wave","fmt "            ->[16]
+    client.write(Wave_Header1,8);           // 16,0,0,0,1,0,1,0         ->[24]
+    client.write(Wave_Header2,4);           // 68,172,0,0               ->[28]
+    client.write(Wave_Header2,4);           // 68,172,0,0               ->[32]
+    client.write(Wave_Header3,4);           // 1,0,8,0                  ->[36]
+    client.write("data",4);                 //  "data"                  ->[40]
+    i = snd_size + 44 - 126;                // ファイルサイズ-126
+    client.write(i & 0xFF);                 // サイズ・最下位バイト     ->[41]
+    client.write((i>>8) & 0xFF);            // サイズ・最下位バイト     ->[42]
+    client.write("\0\0",2);                 // サイズ3-4
     len=0; t=0;                         // 変数lenとtを再利用
     for(i=0;i<snd_size;i++) client.write(snd[i]);
     client.flush();                         // ESP32用 ERR_CONNECTION_RESET対策
