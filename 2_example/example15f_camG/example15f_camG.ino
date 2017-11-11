@@ -99,7 +99,7 @@ void loop(){
     WiFiClient client;                      // Wi-Fiクライアントの定義
     char c;                                 // 文字変数を定義
     char s[65];                             // 文字列変数を定義 65バイト64文字
-    int len=0;                              // 文字列等の長さカウント用の変数
+    int i,len=0;                            // 文字列等の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     
     if(millis() > TIME) sleep();            // 終了時刻になったらsleep()を実行
@@ -135,10 +135,25 @@ void loop(){
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
+        /*  以下(計4行)、処理速度が遅かった
         for(t=0;t<size;t++){                // ファイルサイズ分の繰り返し処理
             if(!file.available()) break;    // ファイルが無ければ転送終了
             if(!client.connected()) break;  // 切断されていた場合は転送終了
             client.write((byte)file.read());// ファイルの転送
+        }
+        以下のように修正し、高速化を行った */
+        len=0; t=0;                         // 変数lenとtを再利用
+        while( t<3 ){                       // エラー3回以内で繰り返し処理実行
+            if(!file.available()){          // ファイルの有無を確認
+                t++; delay(100);            // ファイル無し時に100msの待ち時間
+                continue;                   // whileループに戻ってリトライ
+            }
+            i=file.read((byte *)s,64);      // ファイル64バイトを読み取り
+            if(i>0){
+                client.write((byte *)s,i);  // ファイルの書き込み
+                len+=i; t=0;                // ファイル長lenを加算
+                if(len>=size) break;        // ファイルサイズに達したら終了
+            }
         }
         file.close();                       // ファイルを閉じる
     }

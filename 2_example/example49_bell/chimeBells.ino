@@ -17,14 +17,14 @@ int 戻り値  count-1（0以上）
 #define LEDC_TIMER_13_BIT  13               // use 13 bit precission for LEDC timer
 #define LEDC_BASE_FREQ     5000             // use 5000 Hz as a LEDC base frequency
 
-void ledSetup(){
+void chimeBellsSetup(int PIN){
     Serial.print("ledSetup LEDC_CHANNEL_0 = ");
     Serial.print(LEDC_CHANNEL_0);
     Serial.print(", PIN_BUZZER = ");
     Serial.print(PIN_BUZZER);
     Serial.print(", freq. = ");
     Serial.println(ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT),3);
-    ledcAttachPin(PIN_BUZZER, LEDC_CHANNEL_0);
+    ledcAttachPin(PIN, LEDC_CHANNEL_0);
 }
 
 int chimeBells(int output, int count) {

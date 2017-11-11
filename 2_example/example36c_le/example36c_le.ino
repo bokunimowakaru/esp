@@ -46,7 +46,7 @@ void setup(){
 void loop(){
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
     float adc;                              // 変数adcを定義
-    char s[20];                             // 表示用
+    char s[8];                              // 表示用
     
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     delay(5);                               // 起動待ち時間
@@ -63,9 +63,9 @@ void loop(){
     Serial.println(t,3);                    // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     /* Ambientへ送信 */
-    dtostrf(adc,2,3,s);                     // 電圧値を文字列に変換
+    dtostrf(adc,-5,3,s);                    // 電圧値を文字列に変換
     ambient.set(1,s);                       // Ambient(データ1)へ送信
-    dtostrf(t,2,3,s);                       // 時間を文字列に変換
+    dtostrf(t,-7,3,s);                      // 時間を文字列に変換
     ambient.set(DATA_NUM,s);                // Ambient(データ#)へ送信
     ambient.send();                         // Ambient送信の終了(実際に送信する)
     sleep();

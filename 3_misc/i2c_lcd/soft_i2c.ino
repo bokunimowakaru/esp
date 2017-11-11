@@ -349,7 +349,7 @@ void i2c_lcd_print_ip(uint32_t ip){
 	char lcd[21];
 	
 	if(_lcd_size_x<=8){
-		sprintf(lcd,"%i.%i.    ",
+		sprintf(lcd,"%d.%d.    ",
 			ip & 255,
 			ip>>8 & 255
 		);
@@ -358,7 +358,7 @@ void i2c_lcd_print_ip(uint32_t ip){
 			ip>>24
 		);
 	}else{
-		sprintf(lcd,"%i.%i.%i.%i",
+		sprintf(lcd,"%d.%d.%d.%d",
 			ip & 255,
 			ip>>8 & 255,
 			ip>>16 & 255,
@@ -371,7 +371,7 @@ void i2c_lcd_print_ip(uint32_t ip){
 void i2c_lcd_print_ip2(uint32_t ip){
 	char lcd[21];
 	
-	sprintf(lcd,"%i.%i.%i.%i",
+	sprintf(lcd,"%d.%d.%d.%d",
 		ip & 255,
 		ip>>8 & 255,
 		ip>>16 & 255,

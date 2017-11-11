@@ -85,10 +85,10 @@ void loop(){
     udpTx.println(s);                       // データを送信
     udpTx.endPacket();                      // UDP送信の終了(実際に送信する)
     /* クラウドへ */
-    dtostrf(((double)(time%86400))/3600,2,5,s);
+    dtostrf(((double)(time%86400))/3600,-8,5,s);
     Serial.println(s);                      // テキスト文字を表示
     ambient.set(1,s);                       // Ambient(データ1)へ温度を送信
-    dtostrf(v,5,3,s);                       // 電圧値を文字列に変換
+    dtostrf(v,-5,3,s);                      // 電圧値を文字列に変換
     ambient.set(8,s);                       // Ambient(データ8)へ送信
     ambient.send();                         // Ambient送信の終了(実際に送信する)
     sleep();

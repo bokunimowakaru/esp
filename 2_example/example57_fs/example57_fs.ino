@@ -1,18 +1,14 @@
 /*******************************************************************************
 Example 57 (=32+25): センサ受信データ・ファイルシステム
 
-※本サンプル作成の段階では、(暫定的に)下記ライブラリを使用しました。
-    https://github.com/copercini/arduino-esp32-SPIFFS
-※今後、esp-idfや上記ライブラリを基にしたものが公式サポートされると思います。
-※現時点のライブラリにFORMAT機能が無いため、ファイルシステムの初期化は出来ません
-
-※※※ html.inoにも同ライブラリの使用か所あり
-
                                            Copyright (c) 2016-2017 Wataru KUNINO
+********************************************************************************
+その他
+・開発時に下記ライブラリを使用しました(現在はESP32ライブラリに含まれています。)
+　https://github.com/copercini/arduino-esp32-SPIFFS
 *******************************************************************************/
 
 #include <SPIFFS.h>
-//#include <FS.h>
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define TIMEOUT 20000                       // タイムアウト 20秒
@@ -29,10 +25,10 @@ int LCD_EN;                                 // LCDに何らかのメッセージ
 unsigned long TIME;                         // 1970年からmillis()＝0までの秒数
                                             // ※現在時刻は TIME+millis()/1000
 void setup(){
-    while(!SPIFFS.begin())delay(1000);      // ファイルシステムの開始
     lcdSetup(8,2);                          // 8桁×2行のI2C液晶の準備
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.25 FS");       // 「Example 25」をシリアル出力表示
+    if(!SPIFFS.begin()) Serial.println("ERR: Please format FS."); // SPIFFS開始
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ

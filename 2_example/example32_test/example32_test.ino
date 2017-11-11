@@ -63,7 +63,7 @@ void loop(){                                // 繰り返し実行する関数
     t1=millis();                            // 2回目のボタン押し時刻を保持
     delay(100);                             // チャタリング防止措置
     while(!digitalRead(PIN_SW));            // 意図しない繰り返し処理の防止
-    dtostrf(1000.L/(double)(t1-t0),5,2,s);  // 以下、送信データ作成
+    dtostrf(1000.L/(double)(t1-t0),-5,2,s); // 以下、送信データ作成
     sprintf(data,"{\"writeKey\":\"%s\",\"d1\":\"%s\"}",AmbientWriteKey,s);
     Serial.print(s);
     Serial.println(" Hz");

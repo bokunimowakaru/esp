@@ -1,5 +1,6 @@
 #!/bin/bash
 if [ -e ~/RaspberryPi/network/i.myMimamoriPi ]; then
+	cd ~/RaspberryPi/
 	git pull
 	echo "更新しました"
 else

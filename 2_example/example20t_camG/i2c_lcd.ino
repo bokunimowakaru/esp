@@ -21,7 +21,7 @@ void _utf_del_uni(char *s){
 			if((byte)s[i+1]==0xBE) s[i+2] += 0x40;
 			i+=2;
 		}
-		if(isprint(s[i])){
+		if(isprint(s[i]) || (s[i] >=0xA0 && s[i] <= 0xDF)){
 			s[j]=s[i];
 			j++;
 		}
@@ -97,7 +97,7 @@ void lcdPrintIp(uint32_t ip){
 	char lcd[21];
 	
 	if(_lcd_size_x<=8){
-		sprintf(lcd,"%i.%i.    ",
+		sprintf(lcd,"%d.%d.    ",
 			ip & 255,
 			ip>>8 & 255
 		);
@@ -106,7 +106,7 @@ void lcdPrintIp(uint32_t ip){
 			ip>>24
 		);
 	}else if(_lcd_size_x>=16){
-		sprintf(lcd,"%i.%i.%i.%i",
+		sprintf(lcd,"%d.%d.%d.%d",
 			ip & 255,
 			ip>>8 & 255,
 			ip>>16 & 255,
@@ -119,7 +119,7 @@ void lcdPrintIp(uint32_t ip){
 void lcdPrintIp2(uint32_t ip){
 	char lcd[21];
 	
-	sprintf(lcd,"%i.%i.%i.%i",
+	sprintf(lcd,"%d.%d.%d.%d",
 		ip & 255,
 		ip>>8 & 255,
 		ip>>16 & 255,
