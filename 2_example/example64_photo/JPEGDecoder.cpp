@@ -41,6 +41,7 @@ unsigned char JPEGDecoder::pjpeg_callback(unsigned char* pBuf, unsigned char buf
 {
     JPEGDecoder *thisPtr = JpegDec.thisPtr ;
     thisPtr->pjpeg_need_bytes_callback(pBuf, buf_size, pBytes_actually_read, pCallback_data);
+    return 0;
 }
 
 
@@ -48,7 +49,7 @@ unsigned char JPEGDecoder::pjpeg_need_bytes_callback(unsigned char* pBuf, unsign
 {
     uint n,i=0,t=0;
 
-    pCallback_data;
+//  pCallback_data;
     
     n = min(g_nInFileSize - g_nInFileOfs, buf_size);
 
@@ -221,7 +222,8 @@ int JPEGDecoder::decode(File pInFile, unsigned char pReduce){
         
         return -1;
     }
-    memset(pImage , 0 , sizeof(pImage));
+    // memset(pImage , 0 , sizeof(pImage));
+	memset(pImage , 0 , image_info.m_MCUWidth * image_info.m_MCUHeight * image_info.m_comps);
 
     row_blocks_per_mcu = image_info.m_MCUWidth >> 3;
     col_blocks_per_mcu = image_info.m_MCUHeight >> 3;

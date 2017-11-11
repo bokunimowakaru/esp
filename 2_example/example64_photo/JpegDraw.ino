@@ -137,7 +137,6 @@ void bmpDraw(File bmpFile, uint8_t x, uint8_t y) {
     int      w, h, row, col;
     uint8_t  r, g, b;
     uint32_t pos = 0, startTime = millis();
-    char str[100];
 
     if((x >= oled.width()) || (y >= oled.height())) return;
 

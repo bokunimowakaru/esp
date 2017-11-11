@@ -40,7 +40,7 @@ Example 64 有機ELディスプレイ フォトフレーム SSD1331ドライバ�
 #include <SPIFFS.h>
 #include "JPEGDecoder.h"
 
-Adafruit_SSD1331 oled = Adafruit_SSD1331(PIN_OLED_CS, PIN_OLED_DC, PIN_OLED_RST);   
+Adafruit_SSD1331 oled = Adafruit_SSD1331(PIN_OLED_CS, PIN_OLED_DC, PIN_OLED_RST);
 WiFiUDP udpRx;                              // UDP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 IPAddress ip;                               // IPアドレス保持用
