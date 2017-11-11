@@ -4,7 +4,7 @@ Example 36(=32+4): 乾電池駆動の低消費電力動作のサンプル [Ambie
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_EN 2                            // GPIO 2(24番ピン)をセンサの電源に
 #define PIN_AIN 34                          // GPIO 34 ADC1_CH6(6番ピン)をADCに
 

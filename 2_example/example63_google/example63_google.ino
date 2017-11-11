@@ -26,7 +26,7 @@ Example 63 Google カレンダー(予定表) から予定を取得する
 
 #include <WiFi.h>
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #include "HTTPSRedirect.h"                  // リダイレクト接続用ライブラリ
 
 #define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用

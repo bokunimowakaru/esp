@@ -10,7 +10,7 @@ Example 42 (=32+10): 気圧センサ LPS25H
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_EN 2                            // GPIO 2(24番ピン)をセンサの電源に
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード

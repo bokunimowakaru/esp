@@ -8,7 +8,7 @@ Example 38(=32+6): 照度センサ NJL7502L
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_EN 2                            // GPIO 2(24番ピン)をセンサの電源に
 #define PIN_AIN 34                          // GPIO 34 ADC1_CH6(6番ピン)をADCに
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID

@@ -10,7 +10,7 @@ Example 41 (=32+9): 湿度センサ HDC1000
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス

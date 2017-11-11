@@ -5,7 +5,7 @@ Example 43 (=32+11): ワイヤレス人感センサ
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_SW 0                            // GPIO 0(25番ピン)にスイッチを接続
 #define PIN_SW_GPIO_NUM GPIO_NUM_0          // GPIO 0をスリープ解除信号へ設定
 #define BUTTON_PIN_BITMASK 0x000000001      // 2^(PIN_SW+1) in hex
@@ -56,7 +56,7 @@ void loop(){
 
 void sleep(){
     delay(200);                             // 送信待ち時間
-    esp_deep_sleep_enable_ext0_wakeup(PIN_INT_GPIO_NUM,0);  // 1=High, 0=Low
+    esp_sleep_enable_ext0_wakeup(PIN_INT_GPIO_NUM,0);  // 1=High, 0=Low
                                             // センサの状態が変化すると
                                             // スリープを解除するように設定
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行

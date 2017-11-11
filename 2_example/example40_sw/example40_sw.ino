@@ -6,7 +6,7 @@ Example 40=(32+8): リードスイッチ・ドアスイッチ・呼鈴
 　　　　リードスイッチをGPIOへ接続するだけで同じ作用を果たすことが出来ます。
 　　　　本サンプルでは、GPIO 0へリードスイッチを接続すると、GPIO 0の信号に
 　　　　変化があった時に送信します（ドア開閉の両方に対応）。
-　　　　開/閉の片方にしたい場合はesp_deep_sleep_enable_ext0_wakeupの第2引数に
+　　　　開/閉の片方にしたい場合はesp_sleep_enable_ext0_wakeupの第2引数に
 　　　　0または1を指定してください。
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
@@ -14,7 +14,7 @@ Example 40=(32+8): リードスイッチ・ドアスイッチ・呼鈴
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include "esp_deep_sleep.h"                 // ESP32用Deep Sleep ライブラリ
+#include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_SW 0                            // GPIO 0(25番ピン)にスイッチを接続
 #define PIN_SW_GPIO_NUM GPIO_NUM_0          // GPIO 0をスリープ解除信号へ設定
 #define BUTTON_PIN_BITMASK 0x000000001      // 2^(PIN_SW+1) in hex
@@ -65,7 +65,7 @@ void loop(){
 
 void sleep(){
     delay(200);                             // 送信待ち時間
-    esp_deep_sleep_enable_ext0_wakeup(PIN_INT_GPIO_NUM,!reed);  // 1=High,0=Low
+    esp_sleep_enable_ext0_wakeup(PIN_INT_GPIO_NUM,!reed);  // 1=High,0=Low
                                             // リードスイッチの状態が変化すると
                                             // スリープを解除するように設定
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
