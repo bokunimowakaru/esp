@@ -55,6 +55,10 @@ void loop() {
 }
 
 float mvAnalogIn(uint8_t PIN){
+    return mvAnalogIn(PIN, 1.075584e-1);
+}
+
+float mvAnalogIn(uint8_t PIN, float offset){
     int in0,in3;
     float ad0,ad3;
     
@@ -64,9 +68,9 @@ float mvAnalogIn(uint8_t PIN){
     if( in3 > 2599 ){
         ad3 = -1.457583e-7 * (float)in3 * (float)in3
             + 1.510116e-3 * (float)in3
-            - 0.573300;
+            - 0.680858 + offset;
     }else{
-        ad3 = 8.378998e-4 * (float)in3 + 1.891456e-1;
+        ad3 = 8.378998e-4 * (float)in3 + offset;
     }
     Serial.print("ADC (ATT=3;11dB) = ");
     Serial.print(ad3,3);
@@ -75,7 +79,7 @@ float mvAnalogIn(uint8_t PIN){
     if( in3 < 200 ){
         analogSetPinAttenuation(PIN,ADC_0db);
         in0=analogRead(PIN);
-        ad0 = 2.442116e-4 * (float)in0 + 1.075584e-1;
+        ad0 = 2.442116e-4 * (float)in0 + offset;
         Serial.print("ADC (ATT=0; 0dB) = ");
         Serial.print(ad0,3);
         Serial.print(" [V], "); 
