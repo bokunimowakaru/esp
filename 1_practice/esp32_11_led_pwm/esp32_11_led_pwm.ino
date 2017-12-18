@@ -1,18 +1,27 @@
 /*******************************************************************************
-Practice esp32 11 led 【Wi-Fi インジケータ親機 UDP版】
+Practice esp32 11 led PWM 【Wi-Fi インジケータ親機 UDP版】
+
+・IO 2に電流制限抵抗100Ωと赤色LED OSDR3133Aを接続して実験を行います
+・電流制限抵抗が1kΩの時は、#define LED_MAXを8000に修正してください
+　（LED_MAXはPWMの変更幅で、上限は8191です。高いほど点灯時の輝度が上がります）
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_LED 2                           // GPIO 2にLEDを接続
+#define PMW_CH 0                            // LEDのPWM駆動用のチャンネル番号
+#define LED_MAX 400                         // LEDの最大輝度(8191以下)
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
 #define PASS_AP "password"                  // パスワード
 #define PORT 1024                           // 受信ポート番号
 WiFiUDP udp;                                // UDP通信用のインスタンスを定義
+int led=0;                                  // LEDの輝度値保持用の変数を定義
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
+    ledcSetup(PMW_CH, 5000, 13);            // PWM用設定 PMW_CH 0ch, 5kHz, 13bit
+    ledcAttachPin(PIN_LED, PMW_CH);         // PWM 0chをPIN_LEDへ割り当てる
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("Practice32 11 led");    // Practice32 01 ledをシリアル出力
     WiFi.mode(WIFI_AP); delay(100);         // 無線LANを【AP】モードに設定
@@ -35,36 +44,29 @@ void loop(){                                // 繰り返し実行する関数
     udp.read(s, 64);                        // UDP受信データを文字列変数sへ代入
     Serial.println(s);                      // 受信データを表示する
     
+    if(!strncmp(s,"Test",4)){               // 受信データの先頭4文字がTestのとき
+        if(led == 0){                       // 消灯時
+            strcpy(s,"Ping");               // コマンドをPingに書き換える
+        }else{                              // 点灯時
+            strcpy(s,"Pong");               // コマンドをPongに書き換える
+        }
+    }
     if(!strncmp(s,"Ping",4)){               // 受信データの先頭4文字がPingのとき
-        digitalWrite(PIN_LED,HIGH);         // LEDの点灯
+        for(led=0; led<LED_MAX; led++){     // LED輝度を0から400まで徐々に上げる
+            ledcWrite(PMW_CH,led);          // LEDへ輝度を設定
+            delay(5);                       // LEDを徐々に変化させる為の待ち時間
+        }
     }
     if(!strncmp(s,"Pong",4)){               // 受信データの先頭4文字がPongのとき
-        digitalWrite(PIN_LED,LOW);          // LEDの消灯
+        for(led=LED_MAX; led>0; led--){     // LED輝度を400から1まで徐々に下げる
+            ledcWrite(PMW_CH,led);          // LEDへ輝度を設定
+            delay(5);                       // LEDを徐々に変化させる為の待ち時間
+        }
     }
-    if(!strncmp(s,"Test",4)){               // 受信データの先頭4文字がTestのとき
-        digitalWrite(PIN_LED,!digitalRead(PIN_LED));        // LEDの状態を反転
+    if(!strncmp(s,"level_",6) && isalnum(s[6]) && s[7]==','){
+        led=atoi(s+8);                      // UDPからの入力値をledへ代入
+        if(led < 0) led=0;                  // ledの下限値0を下回らないように
+        if(led > LED_MAX) led=LED_MAX;      // ledの輝度の最大値を400に
     }
-    /* 以下は本文中の演習の正解例の一つです。 */
-    if(!strncmp(s,"onoff_",6) && isalnum(s[6]) && s[7]==','){
-        digitalWrite(PIN_LED,atoi(s+8) & 1);
-    }
-    /* 解説 ********************************************************************
-    
-        onoff_n,0を受信するとLEDをOFFし、
-        onoff_n,1を受信するとLEDをONする
-        nは数字またはアルファベットとした。
-        
-        !strncmp(s,"onoff_",6)  : 先頭6文字がonoff_のときに真となる
-        isalnum(s[6])           : 先頭から7文字目が数字かアルファベットの時に真
-        s[7]==','               : 先頭から8文字目がカンマの時に真
-        
-        以上の条件を満たしたときに、LEDを制御する
-        
-        atoi(s+8)               : 先頭から9文字目(以降)の文字列型の数字を数値へ
-        & 1                     : 論理積。上記が0なら0、0以外なら1となる
-        
-        ※本文中には「nが数字またはアルファベット」であることを明記していない。
-        したがって、本来の正解は、!strncmp(s,"onoff_n,",8)）のようにnで判定。
-        ここでは、本書中の他のサンプルとの整合性からこのようにした。
-    */
+    ledcWrite(PMW_CH,led);                  // LEDへ輝度を設定
 }

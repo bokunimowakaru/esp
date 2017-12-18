@@ -1,5 +1,5 @@
 /*******************************************************************************
-Practice32 02 sw 【Wi-Fi スイッチャ子機 UDP版】
+Practice esp32 12 sw 【Wi-Fi スイッチャ子機 UDP版 IFTTT対応版】
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
@@ -24,7 +24,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     pinMode(PIN_SW,INPUT_PULLUP);           // スイッチを接続したポートを入力に
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
-    Serial.println("Practice32 02 sw dash");// Practice32 02 swをシリアル出力
+    Serial.println("Practice32 12 sw dash");// Practice32 12 swをシリアル出力
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
