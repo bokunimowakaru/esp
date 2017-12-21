@@ -56,7 +56,7 @@ void loop(){
 
 void sleep(){
     delay(200);                             // 送信待ち時間
-    esp_sleep_enable_ext0_wakeup(PIN_INT_GPIO_NUM,0);  // 1=High, 0=Low
+    esp_sleep_enable_ext0_wakeup(PIN_SW_GPIO_NUM,0);  // 1=High, 0=Low
                                             // センサの状態が変化すると
                                             // スリープを解除するように設定
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
