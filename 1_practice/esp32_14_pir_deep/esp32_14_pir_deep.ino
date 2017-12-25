@@ -1,5 +1,5 @@
 /*******************************************************************************
-Practice esp32 14 pir 【Wi-Fi 人感センサ子機】
+Practice esp32 14 pir 【Wi-Fi 人感センサ子機】ディープスリープ版
 
                                            Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/
@@ -8,7 +8,6 @@ Practice esp32 14 pir 【Wi-Fi 人感センサ子機】
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_LED 2                           // IO 2にLEDを接続
 #define PIN_SW 14                           // IO 14にスイッチを接続
-#define PIN_SW_GPIO_NUM GPIO_NUM_14         // IO 14をスリープ解除信号へ設定
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
@@ -36,17 +35,15 @@ void loop(){                                // 繰り返し実行する関数
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
-    udp.print(pir);                         // 起動直後のセンサ状態を送信
+    udp.print(!pir);                        // 起動直後のセンサ状態を送信
     udp.print(", ");                        // 「,」カンマと「␣」を送信
     pir=digitalRead(PIN_SW);                // 人感センサの状態を取得
-    udp.println(pir);                       // 現在のセンサの状態を送信
+    udp.println(!pir);                      // 現在のセンサの状態を送信
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(10);                              // 送信待ち時間
-    if(pir==LOW)sleep();                    // sleepを実行
-    delay(500);                             // 0.5秒の待ち時間
+    sleep();                                // sleepを実行
 }
 
 void sleep(){
-    esp_sleep_enable_ext0_wakeup(PIN_SW_GPIO_NUM,HIGH);    // HIGHを待ち受け
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }
