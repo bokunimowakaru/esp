@@ -90,6 +90,7 @@ void loop(){                                // 繰り返し実行する関数
     if(!strncmp(s,"pir_s_",6)) strcpy(talk,"jinn'kannse'nnsaga/hannno-.");
     if(!strncmp(s,"rd_sw_",6)) strcpy(talk,"do'aga/hirakima'_shita.");
     if(!strncmp(s,"alarm_",6)) strcpy(talk,"yotei'no/ji'kandesu.");
+    if(!strncmp(s,"voice_",6)) strcpy(talk,"o'nse'iwo/jushinshima'_shita.");
     if(!strlen(talk)) return;               // talkに代入されていれば以下を実行
     Serial.print(talk);                     // AquesTalkへ出力する
     Serial.print('\r');                     // 改行コード（CR）を出力する

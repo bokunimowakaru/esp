@@ -45,8 +45,8 @@ void loop(){                                // 繰り返し実行する関数
         digitalWrite(PIN_LED,!digitalRead(PIN_LED));        // LEDの状態を反転
     }
     /* 以下は本文中の演習の正解例の一つです。 */
-    if(!strncmp(s,"onoff_",6) && isalnum(s[6]) && s[7]==','){
-        digitalWrite(PIN_LED,atoi(s+8) & 1);
+    if(!strncmp(s,"onoff_",6) || !strncmp(s,"voice_",6)){
+        if(isalnum(s[6]) && s[7]==',') digitalWrite(PIN_LED,atoi(s+8) & 1);
     }
     /* 解説 ********************************************************************
     

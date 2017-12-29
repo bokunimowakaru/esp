@@ -68,5 +68,8 @@ void loop(){                                // 繰り返し実行する関数
         if(led < 0) led=0;                  // ledの下限値0を下回らないように
         if(led > LED_MAX) led=LED_MAX;      // ledの輝度の最大値を400に
     }
+    if(!strncmp(s,"onoff_",6) || !strncmp(s,"voice_",6)){
+        if(isalnum(s[6]) && s[7]==',') led = LED_MAX * (atoi(s+8) & 1);
+    }
     ledcWrite(PMW_CH,led);                  // LEDへ輝度を設定
 }
