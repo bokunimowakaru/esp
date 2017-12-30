@@ -20,15 +20,13 @@ Practice esp32 17 talk 【Wi-Fi 音声アナウンス親機・子機】
 #define DEVICE "atalk_1,"                   // 子機デバイス名(5文字+"_"+ID+",")
 
 WiFiUDP udp;                                // UDP通信用のインスタンスを定義
-IPAddress IP;                               // IPアドレスの保持用
 int mode;                                   // Wi-Fiモード 0:親機AP 1:子機STA
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_SW,INPUT_PULLUP);           // スイッチを接続したポートを入力に
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     Serial.begin(9600);                     // AquesTalkとの通信ポート(9600bps)
-    Serial.print("\r$");                    // ブレークコマンドを出力する
-    delay(100);                             // 待ち時間処理
+    Serial.print("\r$"); delay(100);        // ブレークコマンドを出力する
     Serial.print("?kon'nnichi/wa.\r");      // 音声「こんにちわ」を出力する
     WiFi.mode(WIFI_STA);                    // 無線LANを【子機】モードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
@@ -37,10 +35,11 @@ void setup(){                               // 起動時に一度だけ実行す
         if(millis()>10000 || !digitalRead(PIN_SW)){     // 10秒経過orボタン押下
             WiFi.disconnect();              // WiFiアクセスポイントを切断する
             while(millis()<2000);           // 音声「こんにちわ」の終了待ち
-            break;
+            break;                          // whileを抜ける
         }
-        delay(500);                         // 待ち時間処理
+        delay(100);                         // 待ち時間処理(LED点滅用)
     }
+    
     if(WiFi.status() == WL_CONNECTED){      // 接続に成功した時
         Serial.print("ko'kidesu.\r");       // 音声「子機です」を出力する
         mode=1;                             // 子機モードであることを保持
@@ -58,24 +57,20 @@ void setup(){                               // 起動時に一度だけ実行す
     delay(2000);                            // 音声「親機／子機です」の終了待ち
     Serial.print("<NUM VAL=");              // 数字読み上げ用タグ出力
     if(mode) Serial.print(WiFi.localIP());  // 子機IPアドレスを読み上げる
-    else     Serial.print(WiFi.softAPIP()); // 親機IPアドレスを読み上げる
+      else   Serial.print(WiFi.softAPIP()); // 親機IPアドレスを読み上げる
     Serial.print(">.\r");                   // タグの終了を出力する
     udp.begin(PORT);                        // UDP待ち受け開始(STA側+AP側)
 }
 
 void loop(){                                // 繰り返し実行する関数
-    char s[57];                             // 文字列変数を定義 57バイト56文字
-    char talk[49];                          // 文字列変数を定義 49バイト48文字
-    int len=0;                              // 文字列長を示す整数型変数を定義
-    int i;
-
-    len = udp.parsePacket();                // UDP受信パケット長を変数lenに代入
+    char s[57],talk[49];                    // 文字列変数sとtalkを定義
+    int len = udp.parsePacket();            // UDP受信パケット長を変数lenに代入
     if(len==0) return;                      // TCPとUDPが未受信時にloop()先頭へ
     
     memset(s, 0, 57);                       // 文字列変数sの初期化(57バイト)
     memset(talk, 0, 49);                    // 文字列変数talkの初期化(49バイト)
     udp.read(s, 56);                        // UDP受信データを文字列変数sへ代入
-    for(i=0;i<16;i++)if(iscntrl(s[i]))s[i]=0; // 制御文字をNullへ置き換え
+    for(int i=0;i<16;i++) if(iscntrl(s[i]))s[i]=0; // 制御文字をNullへ置き換え
     if(!strncmp(s,"Ping",4)) Serial.print("yo'birinnga/osarema'_shita.\r");
     if(len<8 || !isalnum(s[6]) || s[7]!=',' ) return;   // フォーマット外を排除
     if(!strncmp(s,DEVICE,8)) return;        // 本機による送信を排除

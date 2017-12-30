@@ -48,6 +48,8 @@ void loop(){
         t++; digitalWrite(PIN_LED,LED);     // 終了待ち時間を1つカウント
         if(t < 16 || phoneme_i == 0)return; // 待ち時間変数tが16未満の時に戻る
     }
+    
+    /**** 単語認識部 ****/
     char vr[9]; memset(vr,0,9);             // 認識結果の保存用変数定期と初期化
     int led=-1;                             // 認識結果(未/ON/OFF)の保存用変数
     char *spo=strchr(phoneme,'o');          // 音声データ内に「o」が含まれる
@@ -70,6 +72,8 @@ void loop(){
     t=0; phoneme_i=0; memset(phoneme,0,17); // 時間、音声データ用の変数の初期化
     if(led==LED || led<0) return;           // LED状態に変化がないときに戻る
     LED=led;                                // LED状態を保持する変数LEDの更新
+    
+    /**** Wi-Fi送信部 ****/
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
