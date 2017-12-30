@@ -15,13 +15,12 @@ Practice esp32 18 voice 【簡易音声認識子機】
 #define PORT 1024                           // 受信ポート番号
 #define DEVICE "voice_1,"                   // デバイス名(5文字+"_"+番号+",")
 
-int LED=0;                                  // LEDの出力状態
 signal voice(PIN_AIN);                      // 音声入力の有効化
 char phoneme[17];                           // 音声データ用の変数
-int phoneme_i=0;                            // 音声データ数
-int t=0;                                    // 待ち時間カウント用の変数
+int phoneme_i=0,t=0,LED=0;                  // 音声データ数,待ち時間,LED状態保持
 
 void setup(){
+    WiFi.mode(WIFI_OFF); btStop();          // 無線LANとBluetoothをOFFに設定する
     pinMode(PIN_LED, OUTPUT);               // LEDを接続したポートを出力に
     digitalWrite(PIN_LED,HIGH);             // LEDを点灯する(起動を知らせる)
     voice.f_enabled = true;                 // f音の検出を行う
@@ -31,11 +30,8 @@ void setup(){
     voice.vconstant = 3;                    // v音の閾値設定
     voice.shconstant = 4;                   // sh音の閾値設定
     voice.calibrate();                      // マイク入力のDC値の設定
-    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
-    Serial.println("esp32 18 voice");       // 「esp32 18 voice」をシリアル出力
     memset(phoneme,0,17);                   // 音声データ用の変数の初期化
-    WiFi.mode(WIFI_OFF);                    // 無線LANをOFFに設定する
-    btStop();                               // BluetoothをOFFに設定する
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
 }
 
 void loop(){
@@ -44,22 +40,16 @@ void loop(){
     if(p!=' '){                             // 認識結果が有音だった場合
         Serial.print(p);                    // 認識した音をシリアル出力表示
         if(phoneme_i > 0 && p==phoneme[phoneme_i-1]) return;    // 同音時に戻る
-        digitalWrite(PIN_LED,!LED);         // 変数LEDの値を反転してLEDへ出力
-        t=0;                                // 終了待ち時間のリセット
-        phoneme[phoneme_i] = p;             // 認識音を音声データ配列変数へ保存
-        phoneme_i++;                        // 音声データ数を加算
+        t=0; digitalWrite(PIN_LED,!LED);    // 終了待ち時間のリセット
+        phoneme[phoneme_i++] = p;           // 認識音を音声データ配列変数へ保存
         if(phoneme_i<16) return;            // 配列16以内ならloopの先頭へ戻る
     }else{                                  // 認識結果が無音だったとき
         if(phoneme_i && t==0) Serial.print(' ');    // 空白をシリアル出力表示
-        t++;                                // 終了待ち時間を1つカウント
-        digitalWrite(PIN_LED,LED);          // 変数LEDの値をLEDへ出力
-        if(t < 16 || phoneme_i == 0) return; // 待ち時間変数tが16未満の時に戻る
+        t++; digitalWrite(PIN_LED,LED);     // 終了待ち時間を1つカウント
+        if(t < 16 || phoneme_i == 0)return; // 待ち時間変数tが16未満の時に戻る
     }
-    
-    /* 認識部 */
-    char vr[9];                             // 認識結果の保存用変数
+    char vr[9]; memset(vr,0,9);             // 認識結果の保存用変数定期と初期化
     int led=-1;                             // 認識結果(未/ON/OFF)の保存用変数
-    memset(vr,0,9);                         // 認識結果の初期化
     char *spo=strchr(phoneme,'o');          // 音声データ内に「o」が含まれる
     char *sph=strchr(phoneme,'h');          // 音声データ内に「h」が含まれる
     char *spf=strchr(phoneme,'f');          // 音声データ内に「f」が含まれる
@@ -73,31 +63,25 @@ void loop(){
         else led=1;                         // なければONと判定し変数ledを1へ
     }
     if(led>=0) digitalWrite(PIN_LED,led);   // 判定結果でLEDを制御
-    else strcpy(vr,",ERR");                 // 結果無し時は文字列変数へERRを代入
+      else strcpy(vr,",ERR");               // 結果無し時は文字列変数へERRを代入
     if(led==0) strcpy(vr,",OFF");           // led=0のとき文字列変数へOFFを代入
-    else if(led==1) strcpy(vr,",ON");       // led=1のとき文字列変数へONを代入
+      else if(led==1) strcpy(vr,",ON");     // led=1のとき文字列変数へONを代入
     Serial.println(vr);                     // 文字列変数をシリアル出力表示
-    t=0;                                    // 待ち時間カウンタのリセット
-    phoneme_i=0;                            // 音声データ数を0に
-    memset(phoneme,0,17);                   // 音声データ用の変数の初期化
+    t=0; phoneme_i=0; memset(phoneme,0,17); // 時間、音声データ用の変数の初期化
     if(led==LED || led<0) return;           // LED状態に変化がないときに戻る
     LED=led;                                // LED状態を保持する変数LEDの更新
-    
-    /* 送信部 */
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         digitalWrite(PIN_LED,!digitalRead(PIN_LED));            // LEDの点滅
         delay(100);                         // 待ち時間
-    }
-    Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
+    } Serial.println(WiFi.localIP());       // 本機のIPアドレスをシリアル出力
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     udp.print(LED);                         // ON=1、OFF=0を送信
     udp.println(vr);                        // 認識結果の文字列vrを送信
-    udp.endPacket();                        // UDP送信の終了(実際に送信する)
-    delay(10);
+    udp.endPacket(); delay(10);             // UDP送信の終了(実際に送信する)
     WiFi.disconnect(true);                  // WiFiアクセスポイントを切断する
     WiFi.mode(WIFI_OFF);                    // 無線LANをOFFに設定する
 }
