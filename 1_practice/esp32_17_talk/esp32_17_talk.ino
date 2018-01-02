@@ -71,16 +71,13 @@ void loop(){                                // 繰り返し実行する関数
     memset(talk, 0, 49);                    // 文字列変数talkの初期化(49バイト)
     udp.read(s, 56);                        // UDP受信データを文字列変数sへ代入
     for(int i=0;i<16;i++) if(iscntrl(s[i]))s[i]=0; // 制御文字をNullへ置き換え
-    if(!strncmp(s,"Ping",4)) Serial.print("yo'birinnga/osarema'_shita.\r");
+    if(!strncmp(s,"Ping",4)) Serial.print("yobi'rinnga/osarema'_shita.\r");
     if(len<8 || !isalnum(s[6]) || s[7]!=',' ) return;   // フォーマット外を排除
-    if(!strncmp(s,DEVICE,8)) return;        // 本機による送信を排除
-    if(!strncmp(s,DEVICE,6)){               // デバイス名の先頭6文字が一致
+    if(!strncmp(s,DEVICE,8) || (mode>0 && !strncmp(s,"atalk_0,",8)) ){
         Serial.print(s+8);                  // AquesTalkへ出力する
         Serial.print('\r');                 // 改行コード（CR）を出力する
-        return;                             // 「atalk_」以外の場合に以下を実行
     }
-    if(mode > 0) return;                    // 親機の時だけ以下を実施
-    
+    if(mode==0) return;                     // 親機の時だけ以下を実施
     if(!strncmp(s,"onoff_",6)) strcpy(talk,"bo'tanga/osarema'_shita.");
     if(!strncmp(s,"pir_s_",6)) strcpy(talk,"jinn'kannse'nnsaga/hannno-.");
     if(!strncmp(s,"rd_sw_",6)) strcpy(talk,"do'aga/hirakima'_shita.");
@@ -90,7 +87,7 @@ void loop(){                                // 繰り返し実行する関数
     Serial.print(talk);                     // AquesTalkへ出力する
     Serial.print('\r');                     // 改行コード（CR）を出力する
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
-    udp.print(DEVICE);                      // デバイス名を送信
+    udp.print("atalk_0,");                  // 親機デバイス名を送信
     udp.println(talk);                      // 音声用データを他の子機へ送信
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(10);                              // 送信待ち時間
