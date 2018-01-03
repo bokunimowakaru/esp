@@ -5,10 +5,8 @@ Practice esp32 21 bell lcd
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
-#define PIN_LED 2                           // GPIO 2にLEDを接続
 #define SSID_AP "1234ABCD"                  // 本機の無線アクセスポイントのSSID
 #define PASS_AP "password"                  // パスワード
-#define PORT 1024                           // 受信ポート番号
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 受信ポート番号
 WiFiUDP udp;                                // UDP通信用のインスタンスを定義
@@ -28,7 +26,6 @@ void send(const char *device, int id, const char *message){
 }
 
 void setup(){                               // 起動時に一度だけ実行する関数
-    pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     lcd.begin(16, 2);                       // 液晶の初期化(16桁×2行)
     lcdisp("IoTｼｽﾃﾑ esp32_21");             // タイトルをLCDへ表示
     WiFi.mode(WIFI_AP); delay(100);         // 無線LANを【AP】モードに設定

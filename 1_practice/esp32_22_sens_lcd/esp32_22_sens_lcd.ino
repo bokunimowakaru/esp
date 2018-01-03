@@ -20,12 +20,13 @@ LiquidCrystal lcd(17,26,13,14,15,16);       // CQ出版 IoT Express 用 LCD開�
 void lcdisp4(const char *s,int num){        // LCDへの4分割表示用関数の定義
     char lc[7];                             // LCD表示用の6文字配列変数lcの定義
     strncpy(lc,s,6);                        // 文字列を6文字まで変数lcへコピー
+    if(lc[5]=='_') lc[5]=s[6];              // 6文字目が_のときは7文字目をコピー
     for(int i=strlen(lc);i<6;i++) lc[i]=' ';// 6文字に満たない場合に空白を代入
     lc[6]='\0';                             // 文字列の終端(文字列の最後は'\0')
-    lcd.setCursor(8*(num/2)%2,(num%2));     // num=0:左上,1:左下,2:右上,3:右下
+    lcd.setCursor(8*((num/2)%2),(num%2));   // num=0:左上,1:左下,2:右上,3:右下
     lcd.print(num+1);                       // num+1の値を表示
     lcd.print(':');                         // 「:」を表示
-    lcd.print(s);                           // 文字列を表示
+    lcd.print(lc);                          // 文字列を表示
 }
 
 void lcdisp4(int val,int num){              // 整数1値入力時の表示用関数の定義
@@ -36,7 +37,7 @@ void lcdisp4(int val,int num){              // 整数1値入力時の表示用�
 
 void lcdisp4(int val1,int val2,int num){    // 整数2値入力時の表示用関数の定義
     char lc[7];                             // LCD表示用の6文字配列変数lcの定義
-    snprintf(lc,6,"%d,%d",val1,val2);       // 数値val1と2を文字列変数lcへ代入
+    snprintf(lc,7,"%d,%d",val1,val2);       // 数値val1と2を文字列変数lcへ代入
     lcdisp4(lc,num);                        // 前記lcdisp4を呼び出す
 }
 
@@ -51,8 +52,9 @@ void setup(){                               // 起動時に一度だけ実行す
         IPAddress(255,255,255,0)            // ネットマスク
     );
     udp.begin(PORT);                        // UDP待ち受け開始
-    lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
-    lcd.print(WiFi.softAPIP());             // 本APのIPアドレスをLCDへ表示
+    lcd.clear();                            // LCD消去
+    lcd.print(DEV1); lcd.print(DEV3);       // 初期表示1行目
+    lcd.setCursor(0,1); lcd.print(DEV2);    // 初期表示2行目
 }
 
 void loop(){                                // 繰り返し実行する関数
@@ -66,6 +68,8 @@ void loop(){                                // 繰り返し実行する関数
     if(!strncmp(s,DEV1,8)) num=0;           // DEV0と一致したらnumへ0を代入
     if(!strncmp(s,DEV2,8)) num=1;           // DEV0と一致したらnumへ1を代入
     if(!strncmp(s,DEV3,8)) num=2;           // DEV0と一致したらnumへ2を代入
+    lcdisp4(s,num); delay(500);             // センサ名を0.5秒間、表示する
+
     /* デジタル入力センサ値を受信したとき */
     if(!strncmp(s,"onoff_",6)||!strncmp(s,"pir_s_",6)||!strncmp(s,"rd_sw_",6)){
         if(atoi(s+8)) lcdisp4("ON",num);
@@ -74,8 +78,14 @@ void loop(){                                // 繰り返し実行する関数
     /* 照度センサ値を受信したとき */
     if(!strncmp(s,"illum_",6)) lcdisp4(atoi(s+8),num);
     /* 温湿度センサ値を受信したとき */
-    if(!strncmp(s,"humid_1",6)) lcdisp4(atoi(s+8),atoi(strchr(s+9,',')+1),num);
+    if(!strncmp(s,"humid_",6)) lcdisp4(atoi(s+8),atoi(strchr(s+9,',')+1),num);
     /* その他のIoTセンサ値を受信したとき */
-    if(!strncmp(s,"alarm_",6))lcdisp4(s+8,num);
-    if(!strncmp(s,"voice_",6))lcdisp4(s+8,num);
+    if(!strncmp(s,"alarm_",6)) lcdisp4(s+8,num);
+    if(!strncmp(s,"voice_",6)) lcdisp4(s+8,num);
+    if(!strncmp(s,"temp._",6)) lcdisp4(atoi(s+8),num);
+    if(!strncmp(s,"press_",6)) lcdisp4(atoi(s+8),atoi(strchr(s+9,',')+1),num);
+    if(!strncmp(s,"accem_",6)) lcdisp4(atoi(s+8),atoi(strchr(s+9,',')+1),num);
+    if(!strncmp(s,"adcnv_",6)) lcdisp4(s+8,num);
+    if(!strncmp(s,"ocean_",6)) lcdisp4(atoi(s+8),num);
+    if(!strncmp(s,"meter_",6)) lcdisp4(atoi(s+8),num);
 }
