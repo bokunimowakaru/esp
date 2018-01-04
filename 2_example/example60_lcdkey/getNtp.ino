@@ -18,6 +18,14 @@
 
 // send an NTP request to the time server at the given address
 
+#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
+#define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
+#define NTP_PORT 8888                       // NTP待ち受けポート
+#define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
+
+byte packetBuffer[NTP_PACKET_SIZE];         // 送受信用バッファ
+WiFiUDP udp;                                // NTP通信用のインスタンスを定義
+
 unsigned long getNtp(){
     unsigned long highWord;                 // 時刻情報の上位2バイト用
     unsigned long lowWord;                  // 時刻情報の下位2バイト用
@@ -43,7 +51,7 @@ unsigned long getNtp(){
     return time;
 }
 
-unsigned long sendNTPpacket(char* address)
+unsigned long sendNTPpacket(const char* address)
 {
   // set all bytes in the buffer to 0
   memset(packetBuffer, 0, NTP_PACKET_SIZE);

@@ -28,7 +28,7 @@ void setup(){                               // 起動時に一度だけ実行す
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
-        if(millis()>10000){                 // 10秒経過orボタン押下
+        if(millis()>10000){                 // 10秒経過時
             lcdisp("AP ｾﾂｿﾞｸ ｼｯﾊﾟｲ",1);     // Wi-Fi APへの接続を失敗した
             WiFi.disconnect(true);          // WiFiアクセスポイントを切断する
             WiFi.mode(WIFI_OFF);            // 無線LANをOFFに設定する

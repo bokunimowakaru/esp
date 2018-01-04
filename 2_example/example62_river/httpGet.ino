@@ -49,7 +49,7 @@ int httpGetBufferedMinute(){
     return _httpg_minute;
 }
 
-int _httpGetFindTag(char *s, char *keyword){
+int _httpGetFindTag(char *s, const char *keyword){
     char *cp;
     int ret=0;
     
@@ -69,8 +69,7 @@ void _httpGetShiftBuff(char *s){
 }
 
 
-float httpGetRiverDepth(char *id){
-    File file;
+float httpGetRiverDepth(const char *id){
     WiFiClient client;                      // Wi-Fiクライアントの定義
     int i,len,t=0,size=0;                   // 変数i,j,t=待ち時間,size=保存容量
     char c,to[33],s[257];                   // 文字変数、to=アクセス先,s=汎用
@@ -81,7 +80,8 @@ float httpGetRiverDepth(char *id){
 
     if(strlen(id) != 13) return 0;
     memset(s,0,257);
-    snprintf(s,256,"www.river.go.jp/kawabou/ipSuiiKobetu.do\?obsrvId=%s\&gamenId=01-1003\&stgGrpKind=survOnly\&fvrt=yes\&timeType=10",id);
+//  snprintf(s,256,"www.river.go.jp/kawabou/ipSuiiKobetu.do\?obsrvId=%s\&gamenId=01-1003\&stgGrpKind=survOnly\&fvrt=yes\&timeType=10",id);
+	snprintf(s,256,"www.river.go.jp/kawabou/ipSuiiKobetu.do\?obsrvId=%s&gamenId=01-1003&stgGrpKind=survOnly&fvrt=yes&timeType=10",id);
     cp=strchr(s,'/');                       // URL内の区切りを検索
     len=(int)(cp-s);
     if( len<1 || len>32) return 0;

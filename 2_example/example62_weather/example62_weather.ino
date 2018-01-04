@@ -37,7 +37,6 @@ Example 62 天気情報をLCDへ表示する
 #define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 
 #ifdef CQ_PUB_IOT_EXPRESS
@@ -52,9 +51,6 @@ Example 62 天気情報をLCDへ表示する
 #define TIMEOUT 6000                        // タイムアウト 6秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
-#define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
-#define NTP_PORT 8888                       // NTP待ち受けポート
-#define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 #define FILENAME "/weather.csv"             // 出力データ用ファイル名
 
 #define WEATHER_PREF_ID 27                  // 県番号：東京=13,福島=7,愛知=23
@@ -64,8 +60,6 @@ Example 62 天気情報をLCDへ表示する
 #define WEATHER_RAIN  1                     // 雨
 #define WEATHER_ALL   0                     // 全受信データをファイルへ出力
 
-byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
-WiFiUDP udp;                                // NTP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 #ifdef CQ_PUB_IOT_EXPRESS 
     LiquidCrystal lcd(17,26,13,14,15,16);   // CQ出版 IoT Express 用 LCD開始
@@ -120,7 +114,6 @@ void setup(){                               // 起動時に一度だけ実行す
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
     lcd.print(WiFi.localIP());              // IPアドレスを液晶の2行目に表示
     Serial.println(WiFi.localIP());         // IPアドレスをシリアル出力表示
-    udp.begin(NTP_PORT);                    // NTP待ち受け開始(STA側)
     TIME=getNtp();                          // NTP時刻を取得
     TIME-=millis()/1000;                    // カウント済み内部タイマー事前考慮
     delay(1000);                            // 表示内容の確認待ち時間

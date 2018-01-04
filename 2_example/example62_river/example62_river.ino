@@ -16,9 +16,11 @@ Example 62 河川の水位情報をLCDへ表示する River Water Lev
 
 ご注意：
     ・国土交通省・川の防災情報はブラウザで閲覧することを前提に公開されています。
-    ・サーバへの負担がかかるような使い方は控える必要があります。
+    ・実運用を行う場合は、一般財団法人・河川情報センターが配信する水防災オープン
+    　データ提供サービスなどの数値データを利用したシステムへ修正してください。
+    ・ブラウザでの閲覧よりもサーバへ負担がかかる使い方は控える必要があります。
             https://www.river.go.jp/kawabou/qa/QA/chu-i3.html
-    ・台風の時に近郊の下線の情報を10分毎にアクセスするような使い方については、
+    ・台風の時に近郊の河川の情報を10分毎にアクセスするような使い方については、
       ぎりぎり通常のブラウザでの閲覧の範囲に入ると解釈していますが、可能な限り
       アクセス頻度、取得情報量を控えてください。
 
@@ -40,7 +42,6 @@ Example 62 河川の水位情報をLCDへ表示する River Water Lev
 #define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 
 #ifdef CQ_PUB_IOT_EXPRESS
@@ -55,17 +56,12 @@ Example 62 河川の水位情報をLCDへ表示する River Water Lev
 #define TIMEOUT 6000                        // タイムアウト 6秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
-#define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
-#define NTP_PORT 8888                       // NTP待ち受けポート
-#define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 #define FILENAME "/river.csv"               // 出力データ用ファイル名
 
 #define RIVER_SPOT_ID "2206800400013"       // 2206800400013 = 淀川
 #define RIVER_DEPTH_MAX     5.0             // 警報
 #define RIVER_DEPTH_ALERT   4.4             // 注意喚起
 
-byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
-WiFiUDP udp;                                // NTP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 #ifdef CQ_PUB_IOT_EXPRESS 
     LiquidCrystal lcd(17,26,13,14,15,16);   // CQ出版 IoT Express 用 LCD開始
@@ -120,7 +116,6 @@ void setup(){                               // 起動時に一度だけ実行す
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
     lcd.print(WiFi.localIP());              // IPアドレスを液晶の2行目に表示
     Serial.println(WiFi.localIP());         // IPアドレスをシリアル出力表示
-    udp.begin(NTP_PORT);                    // NTP待ち受け開始(STA側)
     TIME=getNtp();                          // NTP時刻を取得
     TIME-=millis()/1000;                    // カウント済み内部タイマー事前考慮
     delay(1000);                            // 表示内容の確認待ち時間

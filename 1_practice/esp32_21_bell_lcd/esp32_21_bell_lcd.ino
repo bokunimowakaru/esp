@@ -36,7 +36,7 @@ void setup(){                               // 起動時に一度だけ実行す
         IPAddress(255,255,255,0)            // ネットマスク
     );
     udp.begin(PORT);                        // UDP待ち受け開始
-    lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ
+    lcd.setCursor(0,1);                     // LCDのカーソル位置を液晶の左下へ
     lcd.print(WiFi.softAPIP());             // 本APのIPアドレスをLCDへ表示
 }
 

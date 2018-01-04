@@ -358,7 +358,7 @@ byte lcd_bar_val2lev(int val,int min,int max){
 	else return ((val - max ) * 10 ) / (min - max);
 }
 
-void lcd_bar_print(char *dev, char *csv, char *time){
+void lcd_bar_print(char *dev, char *csv, const char *time){
 	// dev デバイス名 5文字
 	// csv カンマ区切りの数値データ
 	// time 時刻5文字 00:00 形式

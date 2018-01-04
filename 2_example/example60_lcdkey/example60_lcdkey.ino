@@ -81,15 +81,10 @@ Example 60 LCDへ表示する
 #define AmbientChannelId 0000               // チャネル名(整数) 0=無効
 #define AmbientWriteKey "0123456789abcdef"  // ライトキー(16桁の16進数)
 #define AmbientINTERVAL 60                  // Ambient 送信間隔60秒
-#define NTP_SERVER "ntp.nict.jp"            // NTPサーバのURL
-#define NTP_PORT 8888                       // NTP待ち受けポート
-#define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 #define PORT 1024                           // センサ機器 UDP受信ポート番号
 #define DEVICE_CAM "cam_a"                  // カメラ(実習4/example15)名前5文字
 #define HIST_MAX 16                         // 過去データ保持件数(1以上)
 
-byte packetBuffer[NTP_PACKET_SIZE];         // NTP送受信用バッファ
-WiFiUDP udp;                                // NTP通信用のインスタンスを定義
 WiFiUDP udpRx;                              // UDP通信用のインスタンスを定義
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 #ifdef CQ_PUB_IOT_EXPRESS 
@@ -181,7 +176,6 @@ void setup(){                               // 起動時に一度だけ実行す
         Serial.println(WiFi.localIP());     // IPアドレスをシリアル表示
         Serial.println(WiFi.subnetMask());  // ネットマスクをシリアル表示
         Serial.println(WiFi.gatewayIP());   // ゲートウェイをシリアル表示
-        udp.begin(NTP_PORT);                // NTP待ち受け開始(STA側)
         TIME=getNtp();                      // NTP時刻を取得
         TIME-=millis()/1000;                // カウント済み内部タイマー事前考慮
         if(AmbientChannelId){               // Ambient 開始
