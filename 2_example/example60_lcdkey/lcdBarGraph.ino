@@ -21,7 +21,7 @@
 
 // デバイスリスト
 
-#define lcd_bar_DEV_ATTR_MAX 17
+#define lcd_bar_DEV_ATTR_MAX 20
 // #define DEBUG
 int lcd_bar_DEV_ATTR_MAX_var=0;
 
@@ -152,8 +152,28 @@ byte lcd_bar_lcd_bar_devAttr_init(){
 	lcd_bar_devAttr[15].max[0]=   30;
 	lcd_bar_devAttr[15].min[1]=	0;
 	lcd_bar_devAttr[15].max[1]= 1026;
+	strncpy(lcd_bar_devAttr[16].dev,"onoff",6);
+	lcd_bar_devAttr[16].num_a=		2;
+	lcd_bar_devAttr[16].num[0]=		1;
+	lcd_bar_devAttr[16].num[1]=		2;
+	lcd_bar_devAttr[16].min[0]=		0;
+	lcd_bar_devAttr[16].max[0]=	    1;
+	lcd_bar_devAttr[16].min[1]=		0;
+	lcd_bar_devAttr[16].max[1]=	    1;
+	strncpy(lcd_bar_devAttr[17].dev,"ocean",6);
+	lcd_bar_devAttr[17].num_a=		1;
+	lcd_bar_devAttr[17].num[0]=		1;
+	lcd_bar_devAttr[17].num[1]=		0;
+	lcd_bar_devAttr[17].min[0]=		0;
+	lcd_bar_devAttr[17].max[0]=	   30;
+	strncpy(lcd_bar_devAttr[18].dev,"alarm",6);
+	lcd_bar_devAttr[18].num_a=		1;
+	lcd_bar_devAttr[18].num[0]=		1;
+	lcd_bar_devAttr[18].num[1]=		0;
+	lcd_bar_devAttr[18].min[0]=		0;
+	lcd_bar_devAttr[18].max[0]=	   10;
 	// 終端
-	strncpy(lcd_bar_devAttr[16].dev,"",6);
+	strncpy(lcd_bar_devAttr[19].dev,"",6);
 	lcd_bar_DEV_ATTR_MAX_var = sizeof(lcd_bar_devAttr) / sizeof(lcd_bar_devAttr[0]);
 	#ifdef DEBUG
 		Serial.print("lcd_bar_DEV_ATTR_MAX_var=");
