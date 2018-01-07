@@ -33,14 +33,19 @@ unsigned long getNtp(){
     int waiting=0;                          // 待ち時間カウント用
     char s[20];                             // 表示用
     
+    udp.begin(NTP_PORT);                    // NTP待ち受け開始
     sendNTPpacket(NTP_SERVER);              // NTP取得パケットをサーバへ送信する
     while(udp.parsePacket()<44){
         delay(100);                         // 受信待ち
         waiting++;                          // 待ち時間カウンタを1加算する
         if(waiting%10==0)Serial.print('.'); // 進捗表示
-        if(waiting > 100) return 0ul;       // 100回(10秒)を過ぎたら戻る
+        if(waiting > 100){
+            udp.stop();
+            return 0ul;                     // 100回(10秒)を過ぎたら戻る
+        }
     }
     udp.read(packetBuffer,NTP_PACKET_SIZE); // 受信パケットを変数packetBufferへ
+    udp.stop();
     highWord=word(packetBuffer[40],packetBuffer[41]);   // 時刻情報の上位2バイト
     lowWord =word(packetBuffer[42],packetBuffer[43]);   // 時刻情報の下位2バイト
     time = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
