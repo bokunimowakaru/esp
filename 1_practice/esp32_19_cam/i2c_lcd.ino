@@ -312,7 +312,7 @@ void i2c_lcd_init_xy(byte x, byte y){
 	i2c_lcd_init();
 }
 
-void i2c_lcd_print(char *s){
+void i2c_lcd_print(const char *s){
 	byte i,j;
 	char str[65];
 	byte lcd[21];
@@ -337,7 +337,7 @@ void i2c_lcd_print(char *s){
 	}
 }
 
-void i2c_lcd_print2(char *s){
+void i2c_lcd_print2(const char *s){
 	byte i;
 	char str[65];
 	byte lcd[21];
@@ -393,7 +393,7 @@ void i2c_lcd_print_ip2(uint32_t ip){
 }
 
 
-void i2c_lcd_print_val(char *s,int in){
+void i2c_lcd_print_val(const char *s,int in){
 	char lcd[21];
 	sprintf(lcd,"%d",in);
 	i2c_lcd_print(s);
@@ -513,11 +513,11 @@ void lcdOut(byte y,byte *lcd){
 	i2c_lcd_out(y,lcd);
 }
 
-void lcdPrint(char *s){
+void lcdPrint(const char *s){
 	i2c_lcd_print(s);
 }
 
-void lcdPrint2(char *s){
+void lcdPrint2(const char *s){
 	i2c_lcd_print2(s);
 }
 
@@ -529,7 +529,7 @@ void lcdPrintIp2(uint32_t ip){
 	i2c_lcd_print_ip2(ip);
 }
 
-void lcdPrintVal(char *s,int in){
+void lcdPrintVal(const char *s,int in){
 	i2c_lcd_print_val(s,in);
 }
 

@@ -38,7 +38,16 @@ WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)�
 int size=0;                                 // 画像データの大きさ(バイト)
 unsigned long TIME;                         // 写真公開時刻(起動後の経過時間)
 
-void setup(){ 
+void send_udp(const char *s){
+    udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
+    udp.println(s);                         // 変数sの内容を送信"
+    udp.endPacket();                        // UDP送信の終了(実際に送信する)
+    Serial.println(s);                      // 送信内容をシリアル出力する
+    delay(20);                              // 送信完了待ち
+}
+
+void setup(){
+    char s[65];                             // 64文字65バイトの文字配列変数
     lcdSetup(8,2);                          // 液晶の初期化(8桁×2行)
     pinMode(PIN_CAM,OUTPUT);                // FETを接続したポートを出力に
     digitalWrite(PIN_CAM,LOW);              // FETをLOW(ON)にする
@@ -67,20 +76,19 @@ void setup(){
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         i2c_lcd_print_val("WiFi STA",millis()/1000); // 接続進捗をLCDへ表示
-        if(millis()>30000) sleep();         // 30秒を過ぎたらスリープ
+        if(millis()>TIMEOUT) sleep();       // 20秒を過ぎたらスリープ
         delay(500);                         // 待ち時間処理
     }
-    udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
-    udp.print(DEVICE);                      // デバイス名を送信
-    udp.print(size);                        // ファイルサイズを送信
-    udp.print(", http://");                 // デバイス名を送信
-    udp.print(WiFi.localIP());              // 本機のIPアドレスを送信
-    udp.println(FILENAME);                  // ファイル名を送信
-    udp.endPacket();                        // UDP送信の終了(実際に送信する)
-    Serial.print("http://");                // デバイス名を送信
-    Serial.print(WiFi.localIP());           // 本機のIPアドレスを送信
-    Serial.println(FILENAME);               // ファイル名を送信
-    lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスを液晶に表示
+    int cause=esp_sleep_get_wakeup_cause(); // 起動事由を変数causeへ代入
+    if(cause!=3){                           // causeが3(タイマー起動)以外の時
+        i2c_lcd_print_val("WakeIvnt",cause);// causeの内容をLCDへ表示
+        send_udp("Ping");                   // Pingを送信
+        send_udp("Pong");                   // Pongを送信
+    }
+    uint32_t ip=WiFi.localIP();
+    snprintf(s,64,"%s%d, http://%d.%d.%d.%d%s",
+        DEVICE,size,ip&255,ip>>8&255,ip>>16&255,ip>>24,FILENAME);
+    send_udp(s);
     TIME=millis()+TIMEOUT;                  // 終了時刻を保存(現時刻＋TIMEOUT)
     server.begin();                         // HTTPサーバを起動する
 }
