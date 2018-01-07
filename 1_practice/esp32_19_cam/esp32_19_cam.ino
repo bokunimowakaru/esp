@@ -4,10 +4,9 @@ Practice esp32 19 cam 【カメラ for SeeedStudio Grove Serial Camera Kit】
     カメラ接続用
     GPIO16(27番ピン) U2RXD カメラ側はTXD端子(黄色)
     GPIO17(28番ピン) U2TXD カメラ側はRXD端子(白色)
+    GPIO 2(24番ピン) Pch-FETを接続(※カメラ用の電源制御が必要な場合のみ)
 
-    GPIO 2(24番ピン)にPch-FETを接続(カメラ用の電源制御が必要な場合のみ)
-
-    I2C LCD接続用
+    I2C LCD(AE-AQM0802)接続用
     ※ I2C LCDを使用するときは、#define I2C_LCD_OFF を削除してください
     GPIO 21(33番ピン) I2C SDAポート 
     GPIO 22(36番ピン) I2C SCLポート
@@ -24,7 +23,7 @@ Practice esp32 19 cam 【カメラ for SeeedStudio Grove Serial Camera Kit】
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 1*25*1000000                // スリープ時間 25秒(uint32_t)
+#define SLEEP_P 1*55*1000000                // スリープ時間 55秒(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
 
@@ -37,6 +36,7 @@ WiFiUDP udp;                                // UDP通信用のインスタンス
 WiFiServer server(80);                      // Wi-Fiサーバ(ポート80=HTTP)定義
 int size=0;                                 // 画像データの大きさ(バイト)
 unsigned long TIME;                         // 写真公開時刻(起動後の経過時間)
+int cause;                                  // 起動事由を保持
 
 void send_udp(const char *s){
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
@@ -52,10 +52,9 @@ void setup(){
     pinMode(PIN_CAM,OUTPUT);                // FETを接続したポートを出力に
     digitalWrite(PIN_CAM,LOW);              // FETをLOW(ON)にする
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
-    Serial.println("ESP32 eg.15 Cam");      // 「Example 15」をシリアル出力表示
-    lcdPrint("ESP32 eg15 Cam");             // 「Example 15」を液晶に表示
+    lcdPrint("ESP32   eg19 Cam");           // 「ESP32 eg19」を液晶に表示
     if(!SPIFFS.begin()){                    // ファイルシステムSPIFFSの開始
-        Serial.println("Formating SPIFFS.");
+        lcdPrint("SPIFFS  Init.ing");       // フォーマット中をLCDへ表示
         SPIFFS.format(); SPIFFS.begin();    // エラー時にSPIFFSを初期化
     }
     file = SPIFFS.open(FILENAME,"w");       // 保存のためにファイルを開く
@@ -72,25 +71,26 @@ void setup(){
     CamCapture();                           // カメラで写真を撮影する
     size=CamGetData(file);                  // 撮影した画像をファイルに保存
     file.close();                           // ファイルを閉じる
+    digitalWrite(PIN_CAM,HIGH);             // FETをOFFにする(WiFiと排他動作)
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
-        i2c_lcd_print_val("WiFi STA",millis()/1000); // 接続進捗をLCDへ表示
+        i2c_lcd_print_val("WiFi STA",(TIMEOUT-millis())/1000); // 接続進捗を表示
         if(millis()>TIMEOUT) sleep();       // 20秒を過ぎたらスリープ
-        delay(500);                         // 待ち時間処理
+        delay(250);                         // 待ち時間処理
     }
-    int cause=esp_sleep_get_wakeup_cause(); // 起動事由を変数causeへ代入
+    cause=esp_sleep_get_wakeup_cause();     // 起動事由を変数causeへ代入
     if(cause!=3){                           // causeが3(タイマー起動)以外の時
         i2c_lcd_print_val("WakeIvnt",cause);// causeの内容をLCDへ表示
         send_udp("Ping");                   // Pingを送信
-        send_udp("Pong");                   // Pongを送信
     }
-    uint32_t ip=WiFi.localIP();
+    uint32_t ip=WiFi.localIP();             // 本機のIPアドレスを変数ipへ代入
     snprintf(s,64,"%s%d, http://%d.%d.%d.%d%s",
         DEVICE,size,ip&255,ip>>8&255,ip>>16&255,ip>>24,FILENAME);
-    send_udp(s);
+    send_udp(s);                            // UDPメッセージを送信する
     TIME=millis()+TIMEOUT;                  // 終了時刻を保存(現時刻＋TIMEOUT)
     server.begin();                         // HTTPサーバを起動する
+    lcdPrintIp(WiFi.localIP());             // 本機のIPアドレスを液晶に表示
 }
 
 void loop(){
@@ -153,12 +153,15 @@ void loop(){
     client.stop();                          // クライアントの切断
     Serial.print(size);                     // ファイルサイズをシリアル出力表示
     Serial.println(" Bytes");               // シリアル出力表示
+    if(cause!=3) send_udp("Pong");          // Pongを送信
     sleep();                                // sleep()へ
 }
 
 void sleep(){
     lcdPrint("Sleepingzzz...");             // 「Sleeping」を液晶に表示
-    Serial.println("Done");                 // 終了表示
-    delay(200);                             // 送信待ち時間
+    delay(100);                             // 送信完了待ち時間
+    WiFi.disconnect();                      // 切断
+    Serial.println("Done");                 // 完了表示
+    delay(100);                             // 切断完了待ち時間
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }

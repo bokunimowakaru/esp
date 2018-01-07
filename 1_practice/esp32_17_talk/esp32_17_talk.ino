@@ -20,7 +20,22 @@ Practice esp32 17 talk 【Wi-Fi 音声アナウンス親機・子機】
 #define DEVICE "atalk_1,"                   // 子機デバイス名(5文字+"_"+ID+",")
 
 WiFiUDP udp;                                // UDP通信用のインスタンスを定義
-int mode;                                   // Wi-Fiモード 0:親機AP 1:子機STA
+int mode=1;                                 // Wi-Fiモード 0:親機AP 1:子機STA
+
+void wifi_sta(){                            // 無線LANを【子機】モードで起動
+    unsigned long time=millis();            // 現在のタイマー値を保持する
+    WiFi.mode(WIFI_STA);                    // 無線LANを【子機】モードに設定
+    WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
+    while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
+        digitalWrite(PIN_LED,!digitalRead(PIN_LED));     // LEDの点滅
+        if(millis()-time>10000 || !digitalRead(PIN_SW)){ // 10秒経過orボタン押下
+            WiFi.disconnect();              // WiFiアクセスポイントを切断する
+            while(millis()<2000);           // 音声「こんにちわ」の終了待ち
+            break;                          // whileを抜ける
+        }
+        delay(100);                         // 待ち時間処理(LED点滅用)
+    }
+}
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_SW,INPUT_PULLUP);           // スイッチを接続したポートを入力に
@@ -28,21 +43,9 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.begin(9600);                     // AquesTalkとの通信ポート(9600bps)
     Serial.print("\r$"); delay(100);        // ブレークコマンドを出力する
     Serial.print("?kon'nnichi/wa.\r");      // 音声「こんにちわ」を出力する
-    WiFi.mode(WIFI_STA);                    // 無線LANを【子機】モードに設定
-    WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
-    while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
-        digitalWrite(PIN_LED,!digitalRead(PIN_LED));    // LEDの点滅
-        if(millis()>10000 || !digitalRead(PIN_SW)){     // 10秒経過orボタン押下
-            WiFi.disconnect();              // WiFiアクセスポイントを切断する
-            while(millis()<2000);           // 音声「こんにちわ」の終了待ち
-            break;                          // whileを抜ける
-        }
-        delay(100);                         // 待ち時間処理(LED点滅用)
-    }
-    
+    wifi_sta();                             // 無線LANを【子機】モードで起動
     if(WiFi.status() == WL_CONNECTED){      // 接続に成功した時
         Serial.print("ko'kidesu.\r");       // 音声「子機です」を出力する
-        mode=1;                             // 子機モードであることを保持
     }else{
         Serial.print("oya'kidesu.\r");      // 音声「親機です」を出力する
         WiFi.mode(WIFI_AP); delay(100);     // 無線LANを【親機】モードに設定
@@ -51,8 +54,7 @@ void setup(){                               // 起動時に一度だけ実行す
             IPAddress(192,168,0,1),         // AP側の固定IPアドレス
             IPAddress(0,0,0,0),             // 本機のゲートウェイアドレス
             IPAddress(255,255,255,0)        // ネットマスク
-        );
-        mode=0;                             // 親機モードであることを保持
+        ); mode=0;                          // 親機モードであることを保持
     }
     delay(2000);                            // 音声「親機／子機です」の終了待ち
     Serial.print("<NUM VAL=");              // 数字読み上げ用タグ出力
@@ -65,6 +67,7 @@ void setup(){                               // 起動時に一度だけ実行す
 void loop(){                                // 繰り返し実行する関数
     char s[57],talk[49];                    // 文字列変数sとtalkを定義
     int len = udp.parsePacket();            // UDP受信パケット長を変数lenに代入
+    if(mode && WiFi.status() != WL_CONNECTED ) wifi_sta(); // 子機切断時に再接続
     if(len==0) return;                      // TCPとUDPが未受信時にloop()先頭へ
     
     memset(s, 0, 57);                       // 文字列変数sの初期化(57バイト)
