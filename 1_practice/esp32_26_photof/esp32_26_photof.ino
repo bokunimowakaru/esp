@@ -61,8 +61,7 @@ void setup(void){
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     TIME=millis();
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
-        oled.print("."); delay(450);        // 接続進捗を表示
-        ledcWriteNote(0,NOTE_B,7);delay(50);ledcWrite(0,0); // ブザー音
+        oled.print("."); delay(500);        // 接続進捗を表示
         if(millis()-TIME>TIMEOUT||!digitalRead(PIN_SW)){    // 7秒経過orボタン押
             WiFi.disconnect();              // WiFiアクセスポイントを切断する
             oled.println("\nWi-Fi AP Mode");// 接続が出来なかったときの表示
