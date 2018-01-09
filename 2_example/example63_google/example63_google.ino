@@ -49,7 +49,7 @@ Google Apps Script(https://script.google.com/)へアクセスし、GoogleCalenda
 ???の部分を #define GScriptId の""内へコピーしてください。
 
 ※注意事項：???の部分が他人に知られると、アカウント内の予定表が閲覧されます。
-*/
+*******************************************************************************/
 
 #ifdef CQ_PUB_IOT_EXPRESS
     #define PIN_BUZZER 12                   // GPIO 12にスピーカを接続
