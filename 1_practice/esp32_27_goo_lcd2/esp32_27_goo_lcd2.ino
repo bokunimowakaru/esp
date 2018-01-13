@@ -124,9 +124,8 @@ void loop() {
     time2txt(date,TIME+time/1000);          // 時刻を文字配列変数dateへ代入
     if(time%21600000ul<100){                // 6時間に1回の処理
         wifi_ntp();                         // wifi_ntpを実行
-        return;
     }
-    if(time%(SLEEP_P)<100){                 // SLEEP_P間隔の処理
+    if(time%(SLEEP_P/1000)<100){            // SLEEP_P間隔の処理
         wifi_google();                      // Googleカレンダから予定を取得する
         buf_i=0;                            // 表示用の予定番号をリセット
     }
