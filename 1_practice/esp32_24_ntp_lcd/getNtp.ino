@@ -28,7 +28,7 @@ NTPクライアント
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 
 byte packetBuffer[NTP_PACKET_SIZE];         // 送受信用バッファ
-WiFiUDP udp;                                // NTP通信用のインスタンスを定義
+WiFiUDP udp_ntp;                            // NTP通信用のインスタンスを定義
 
 unsigned long getNtp(){
     unsigned long highWord;                 // 時刻情報の上位2バイト用
@@ -37,19 +37,19 @@ unsigned long getNtp(){
     int waiting=0;                          // 待ち時間カウント用
     char s[20];                             // 表示用
     
-    udp.begin(NTP_PORT);                    // NTP待ち受け開始
+    udp_ntp.begin(NTP_PORT);                    // NTP待ち受け開始
     sendNTPpacket(NTP_SERVER);              // NTP取得パケットをサーバへ送信する
-    while(udp.parsePacket()<44){
+    while(udp_ntp.parsePacket()<44){
         delay(100);                         // 受信待ち
         waiting++;                          // 待ち時間カウンタを1加算する
         if(waiting%10==0)Serial.print('.'); // 進捗表示
         if(waiting > 100){
-            udp.stop();
+            udp_ntp.stop();
             return 0ul;                     // 100回(10秒)を過ぎたら戻る
         }
     }
-    udp.read(packetBuffer,NTP_PACKET_SIZE); // 受信パケットを変数packetBufferへ
-    udp.stop();
+    udp_ntp.read(packetBuffer,NTP_PACKET_SIZE); // 受信パケットを変数packetBufferへ
+    udp_ntp.stop();
     highWord=word(packetBuffer[40],packetBuffer[41]);   // 時刻情報の上位2バイト
     lowWord =word(packetBuffer[42],packetBuffer[43]);   // 時刻情報の下位2バイト
     time = highWord<<16 | lowWord;          // 時刻(1900年1月からの秒数)を代入
@@ -78,7 +78,7 @@ unsigned long sendNTPpacket(const char* address)
 
   // all NTP fields have been given values, now
   // you can send a packet requesting a timestamp:
-  udp.beginPacket(address, 123); //NTP requests are to port 123
-  udp.write(packetBuffer, NTP_PACKET_SIZE);
-  udp.endPacket();
+  udp_ntp.beginPacket(address, 123); //NTP requests are to port 123
+  udp_ntp.write(packetBuffer, NTP_PACKET_SIZE);
+  udp_ntp.endPacket();
 }

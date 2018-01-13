@@ -10,7 +10,7 @@ Google カレンダー(予定表) から予定を取得する
                                            Copyright (c) 2017-2018 Wataru KUNINO
 ********************************************************************************/
 
-#include <WiFi.h>
+#include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #include "HTTPSRedirect.h"                  // リダイレクト接続用ライブラリ
@@ -24,7 +24,6 @@ Google カレンダー(予定表) から予定を取得する
 #define SLEEP_P 1*60*1000000                // スリープ時間 1分(uint32_t)
 #define HTTPTO "script.google.com"          // HTTPSアクセス先
 #define HTRED "script.googleusercontent.com"// HTTPSリダイレクト先
-#define PORT 443                            // HTTPSポート番号
 
 LiquidCrystal lcd(17,26,13,14,15,16);       // CQ出版 IoT Express 用 LCD開始
 String url = String("/macros/s/") + String(GScriptId) + "/exec";
@@ -52,8 +51,8 @@ void loop() {
     int events_n;                           // イベント数
     int hour,min;                           // 時刻
     
-    HTTPSRedirect client(PORT);             // リダイレクト可能なHTTP接続client
-    if(!client.connect(HTTPTO,PORT))sleep();// HTTP接続の実行(失敗時はスリープ)
+    HTTPSRedirect client(443);              // リダイレクト可能なHTTP接続client
+    if(!client.connect(HTTPTO,443))sleep(); // HTTP接続の実行(失敗時はスリープ)
     data=client.getData(url,HTTPTO,HTRED);  // データ受信
     Serial.println(data);                   // 受信データをシリアルへ出力
     sp=data.indexOf("|Length,");            // 受信データから文字列Lengthを検索

@@ -10,7 +10,8 @@ Google カレンダー(予定表) から予定を取得する
                                            Copyright (c) 2017-2018 Wataru KUNINO
 ********************************************************************************/
 
-#include <WiFi.h>
+#include <WiFi.h>                           // ESP32用WiFiライブラリ
+#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 #include "HTTPSRedirect.h"                  // リダイレクト接続用ライブラリ
 
@@ -25,11 +26,13 @@ Google カレンダー(予定表) から予定を取得する
 #define SLEEP_P 10*60*1000000               // スリープ時間 10分(uint32_t)
 #define HTTPTO "script.google.com"          // HTTPSアクセス先
 #define HTRED "script.googleusercontent.com"// HTTPSリダイレクト先
-#define PORT 443                            // HTTPSポート番号
+#define SENDTO "192.168.0.255"              // 送信先のIPアドレス
+#define PORT 1024                           // 受信ポート番号
 
 LiquidCrystal lcd(17,26,13,14,15,16);       // CQ出版 IoT Express 用 LCD開始
 String url = String("/macros/s/") + String(GScriptId) + "/exec";
 unsigned long TIME=0;                       // 1970年からmillis()＝0までの秒数
+unsigned long TIME_WOFF=0;                  // 無線を切断する時刻
 char date[20]="2000/01/01,00:00:00";        // 日時保持用
 char buf[8][17];                            // データ保持用バッファ8件分
 int buf_n=0;                                // データ保持件数
@@ -37,6 +40,8 @@ int buf_i=0;                                // 表示中データ番号の保持
 int chime=0;                                // チャイム音の鳴音回数
 
 int wifi_on(){                              // 無線LANの接続
+    TIME_WOFF = millis() + 70000;           // 70秒後のタイマー値をTIME_WOFFへ
+    if(WiFi.status()==WL_CONNECTED)return 1;// 既に接続状態なら何もせずに戻る
     unsigned long time=millis();            // 初期化開始時のタイマー値を保存
     lcdisp("Google ｶﾚﾝﾀﾞ LCD");             // タイトルをLCDに表示する
     WiFi.mode(WIFI_STA);                    // 無線LANを【STA】モードに設定
@@ -57,6 +62,7 @@ int wifi_on(){                              // 無線LANの接続
 }
 
 void wifi_off(){                            // 無線LANの切断
+    if(WiFi.status()!=WL_CONNECTED) return; // 既に切断状態なら何もせずに戻る
     WiFi.disconnect(true);                  // WiFiアクセスポイントを切断する
     WiFi.mode(WIFI_OFF);                    // 無線LANをOFFに設定する
     delay(10);                              // 処理完了待ち時間
@@ -66,7 +72,6 @@ void wifi_ntp(){                            // Wi-Fi接続とNTPアクセスの�
     if(!wifi_on()) return;                  // 無線LANの接続
     TIME=getNtp();                          // NTP時刻を取得
     TIME-=millis()/1000;                    // カウント済み内部タイマー値を減算
-    wifi_off();                             // 無線LANの切断
 }
 
 void wifi_google(){                         // Googleカレンダから予定を取得する
@@ -77,13 +82,9 @@ void wifi_google(){                         // Googleカレンダから予定を
     int hour,min;                           // 時刻
     
     if(!wifi_on()) return;                  // 無線LANの接続
-    HTTPSRedirect client(PORT);             // リダイレクト可能なHTTP接続client
-    if(!client.connect(HTTPTO,PORT)){       // HTTP接続の実行(失敗時はスリープ)
-        wifi_off();                         // 見つからなければ無線LANを切断する
-        return;
-    }
+    HTTPSRedirect client(443);              // リダイレクト可能なHTTP接続client
+    if(!client.connect(HTTPTO,443)) return; // 接続に失敗したら戻る
     data=client.getData(url,HTTPTO,HTRED);  // データ受信
-    wifi_off();                             // 無線LANの切断
     Serial.println(data);                   // 受信データをシリアルへ出力
     sp=data.indexOf("|Length,");            // 受信データから文字列Lengthを検索
     if(sp>=0) sp+=8; else return;           // 見つけた場合は、spに8を加算
@@ -107,6 +108,17 @@ void wifi_google(){                         // Googleカレンダから予定を
     }
 }
 
+void wifi_talk(const char *s){
+    if(!wifi_on()) return;                  // 無線LANの接続
+    WiFiUDP udp;                            // UDP通信用のインスタンスを定義
+    udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
+    udp.print("atalk_0,");                  // デバイス名を送信
+    udp.println(s);                         // 文字列を送信
+    udp.endPacket();                        // UDP送信の終了(実際に送信する)
+    delay(10);                              // 送信待ち時間
+    udp.stop();                             // UDP通信の終了
+}
+
 void setup() {
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
@@ -118,10 +130,8 @@ void setup() {
 }
 
 void loop() {
-    delay(100);                             // 待ち時間処理
+    delay(99);                              // 待ち時間処理
     unsigned long time=millis();            // ミリ秒の取得
-    if(time%1000 > 100) return;             // 以下は1秒に一回の処理
-    time2txt(date,TIME+time/1000);          // 時刻を文字配列変数dateへ代入
     if(time%21600000ul<100){                // 6時間に1回の処理
         wifi_ntp();                         // wifi_ntpを実行
     }
@@ -129,23 +139,30 @@ void loop() {
         wifi_google();                      // Googleカレンダから予定を取得する
         buf_i=0;                            // 表示用の予定番号をリセット
     }
-    if(!strncmp(date+11,buf[0],5)){         // 予定の時刻と一致
-        if(!chime) chime = 2;               // 0→2 1→1
-        if(!strncmp(buf[0]+6,"LED=",4)){
-            int led = atoi(buf[0]+10) % 2;  // 「LED=」の数値を変数ledへ代入
-            digitalWrite(PIN_LED,led);      // LEDの点灯または消灯
-        }
-    }
+    if(time%1000 > 100) return;             // 以下は1秒に一回の処理
+    time2txt(date,TIME+time/1000);          // 時刻を文字配列変数dateへ代入
     chime=chimeBells(PIN_BUZZER,chime);     // chimeが0以外の時にチャイム鳴音
+    if(time > TIME_WOFF) wifi_off();        // 70秒以上経過していたら無線LAN切断
     if(buf_n <= 1){                         // 予定件数が0件または1件の時
         lcdisp(date+5);                     // dateの6文字目以降をLCDへ表示
         if(buf_n==1){                       // 予定件数が1件の時
             lcdisp(buf[0],1);               // LCDの2行目に予定を表示
         }
-        return;
+    }else{
+	    buf_i++;
+	    if(buf_i >= buf_n) buf_i=1;         // 表示番号が上限に達したらリセット
+	    lcdisp(buf[0]);                     // 1行目に1件目の予定を表示
+	    lcdisp(buf[buf_i],1);               // 2行目に2件目以降の予定を表示
+	}
+	if(date[18] != '0') return;             // 以下は10秒に1回の処理
+    for(int i=0;i<8;i++){
+        if(!strncmp(date+11,buf[i],5)){     // 予定の時刻と一致
+            if(!chime) chime = 2;               // chimeの値が0のとき2に設定
+            if(!strncmp(buf[i]+6,"LED=",4)){    // 予定の内容がLED制御だった時
+                int led = atoi(buf[i]+10) % 2;  // 「LED=」の数値を変数ledへ代入
+                digitalWrite(PIN_LED,led);      // LEDの点灯または消灯
+            }
+            wifi_talk("yoteino/ji'kokudesu.");  // 「予定の時刻です」を送信
+        }
     }
-    buf_i++;
-    if(buf_i >= buf_n) buf_i=1;             // 表示番号が上限に達したらリセット
-    lcdisp(buf[0]);                         // 1行目に1件目の予定を表示
-    lcdisp(buf[buf_i],1);                   // 2行目に2件目以降の予定を表示
 }
