@@ -1,28 +1,28 @@
 /*******************************************************************************
-Google ƒJƒŒƒ“ƒ_[(—\’è•\) ‚©‚ç—\’è‚ðŽæ“¾‚·‚é
+Google ã‚«ãƒ¬ãƒ³ãƒ€ãƒ¼(äºˆå®šè¡¨) ã‹ã‚‰äºˆå®šã‚’å–å¾—ã™ã‚‹
 
                                                 Copyright (c) 2018 Wataru KUNINO
 ********************************************************************************
-ŽÀs•û–@
-    1. Google Apps Script(https://script.google.com/)‚ÖƒAƒNƒZƒX
-    2. –{ƒXƒNƒŠƒvƒg‚ðƒy[ƒXƒg‚µA‰æ–Ê“àƒƒjƒ…[‚Ì[ƒtƒ@ƒCƒ‹]¨[•Û‘¶]‚ðŽÀs
-    3. [ƒvƒƒWƒFƒNƒg–¼‚Ì•ÒW]‰æ–Ê‚ÅƒvƒƒWƒFƒNƒg–¼‚ð“ü—Í‚µ‚ÄA[OK]‚ðƒNƒŠƒbƒN
-    4. [ŒöŠJ]ƒƒjƒ…[‚©‚ç[ƒEƒFƒuƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Æ‚µ‚Ä“±“ü]‚ð‘I‘ð
-    5. [³”F‚ª•K—v‚Å‚·]‚ÌƒƒbƒZ[ƒW‚ª•\Ž¦‚³‚ê‚é‚Ì‚Å[‹–‰Â‚ðŠm”F]‚ðƒNƒŠƒbƒN
-    6. [ƒAƒJƒEƒ“ƒg‘I‘ð]‰æ–Ê‚ÅŽ©•ª‚ÌƒAƒJƒEƒ“ƒg‚ð‘I‘ð‚µA[‹–‰Â]‚ðƒNƒŠƒbƒN
-    7. €–Ú[ŽŸ‚Ìƒ†[ƒU‚Æ‚µ‚ÄƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ðŽÀs]‚ÅŽ©•ª‚ÌƒAƒJƒEƒ“ƒg‚ð‘I‘ð
-    8. €–Ú[ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÉƒAƒNƒZƒX‚Å‚«‚éƒ†[ƒU[]‚Å[‘Sˆõ(“½–¼ŠÜ‚Þ)]‚ð‘I‘ð
-    9. [“±“ü]‚ð‰Ÿ‚·‚ÆŒöŠJURL‚ª•\Ž¦‚³‚ê‚é‚Ì‚ÅAƒRƒs[‚·‚é
-    10. ƒRƒs[‚µ‚½ŒöŠJURL‚ðƒuƒ‰ƒEƒU‚ÅƒAƒNƒZƒX‚µA“®ìŠm”F
+å®Ÿè¡Œæ–¹æ³•
+    1. Google Apps Script(https://script.google.com/)ã¸ã‚¢ã‚¯ã‚»ã‚¹
+    2. æœ¬ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’ãƒšãƒ¼ã‚¹ãƒˆã—ã€ç”»é¢å†…ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®[ãƒ•ã‚¡ã‚¤ãƒ«]â†’[ä¿å­˜]ã‚’å®Ÿè¡Œ
+    3. [ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆåã®ç·¨é›†]ç”»é¢ã§ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆåã‚’å…¥åŠ›ã—ã¦ã€[OK]ã‚’ã‚¯ãƒªãƒƒã‚¯
+    4. [å…¬é–‹]ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰[ã‚¦ã‚§ãƒ–ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã¨ã—ã¦å°Žå…¥]ã‚’é¸æŠž
+    5. [æ‰¿èªãŒå¿…è¦ã§ã™]ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒè¡¨ç¤ºã•ã‚Œã‚‹ã®ã§[è¨±å¯ã‚’ç¢ºèª]ã‚’ã‚¯ãƒªãƒƒã‚¯
+    6. [ã‚¢ã‚«ã‚¦ãƒ³ãƒˆé¸æŠž]ç”»é¢ã§è‡ªåˆ†ã®ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã‚’é¸æŠžã—ã€[è¨±å¯]ã‚’ã‚¯ãƒªãƒƒã‚¯
+    7. é …ç›®[æ¬¡ã®ãƒ¦ãƒ¼ã‚¶ã¨ã—ã¦ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å®Ÿè¡Œ]ã§è‡ªåˆ†ã®ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã‚’é¸æŠž
+    8. é …ç›®[ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã«ã‚¢ã‚¯ã‚»ã‚¹ã§ãã‚‹ãƒ¦ãƒ¼ã‚¶ãƒ¼]ã§[å…¨å“¡(åŒ¿åå«ã‚€)]ã‚’é¸æŠž
+    9. [å°Žå…¥]ã‚’æŠ¼ã™ã¨å…¬é–‹URLãŒè¡¨ç¤ºã•ã‚Œã‚‹ã®ã§ã€ã‚³ãƒ”ãƒ¼ã™ã‚‹
+    10. ã‚³ãƒ”ãƒ¼ã—ãŸå…¬é–‹URLã‚’ãƒ–ãƒ©ã‚¦ã‚¶ã§ã‚¢ã‚¯ã‚»ã‚¹ã—ã€å‹•ä½œç¢ºèª
 
-o—ÍŒ`Ž®
-    Length,—\’è”
-    Žž,•ª,ƒ^ƒCƒgƒ‹1
-    Žž,•ª,ƒ^ƒCƒgƒ‹2
-    ...(6ŽžŠÔˆÈ“à‚Ì‘S—\’è)...
+å‡ºåŠ›å½¢å¼
+    Length,äºˆå®šæ•°
+    æ™‚,åˆ†,ã‚¿ã‚¤ãƒˆãƒ«1
+    æ™‚,åˆ†,ã‚¿ã‚¤ãƒˆãƒ«2
+    ...(6æ™‚é–“ä»¥å†…ã®å…¨äºˆå®š)...
     [EOF]
 
-ŽQl•¶Œ£F
+å‚è€ƒæ–‡çŒ®ï¼š
     https://github.com/bokunimowakaru/esp/tree/master/2_example/example63_google
     https://github.com/wilda17/ESP8266-Google-Calendar-Arduino
     https://developers.google.com/apps-script/reference/calendar/calendar-app
