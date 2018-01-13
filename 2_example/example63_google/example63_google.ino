@@ -114,7 +114,7 @@ void loop() {
     Serial.println(data);                   // 受信データをシリアルへ出力
     
     sp=data.indexOf("|Length,");
-    if(sp>0) sp+=8; else sleep();
+    if(sp>=0) sp+=8; else sleep();
     events_n=data.substring(sp).toInt();
     lcd.clear();
     for(i=0;i<events_n;i++){
