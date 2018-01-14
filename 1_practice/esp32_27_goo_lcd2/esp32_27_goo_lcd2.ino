@@ -15,7 +15,6 @@ Google カレンダー(予定表) から予定を取得する
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ
 #include "HTTPSRedirect.h"                  // リダイレクト接続用ライブラリ
 
-#define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define GScriptId "★ここにGoogle Apps Scriptのトークンを記入してください★"
@@ -168,15 +167,15 @@ void loop() {
         lcdisp(buf[buf_i],1);               // 2行目に2件目以降の予定を表示
     }
     if(sec%20 != 0) return;                 // 以下は20秒に1回(1分間に3回実行)
-    for(int i=0;i<8;i++){
-        if(!strncmp(date+11,buf[i],5)){     // 予定の時刻と一致
+    for(int i=0;i<buf_n;i++){               // 予定件数と同じ回数、繰り返す
+        if(!strncmp(date+11,buf[i],5)){     // 予定の時刻と一致したとき
             if(!chime) chime = 2;                   // chimeの値が0のとき2に設定
             if(!strncmp(buf[i]+6,"LED=",4)){        // 予定の内容がLED制御の時
                 int led = atoi(buf[i]+10) % 2;      // 「LED=」の数値を変数ledへ
                 digitalWrite(PIN_LED,led);          // LEDの点灯または消灯
             }
-            if(sec==0) wifi_udp(buf[i]);   			// 予定を送信
-            else if(sec==20)wifi_talk("ara'-mu"); 	// 音声データを送信
+            if(sec==0) wifi_udp(buf[i]);            // 予定を送信
+            else if(sec==20)wifi_talk("ara'-mu");   // 音声データを送信
             else wifi_talk("gu-guru/kare'nda.");    // 音声データを送信
             delay(1000);                            // 音声完了待ち
         }

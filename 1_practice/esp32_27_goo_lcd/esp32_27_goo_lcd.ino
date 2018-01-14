@@ -15,7 +15,6 @@ Google カレンダー(予定表) から予定を取得する
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #include "HTTPSRedirect.h"                  // リダイレクト接続用ライブラリ
 
-#define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define GScriptId "★ここにGoogle Apps Scriptのトークンを記入してください★"
