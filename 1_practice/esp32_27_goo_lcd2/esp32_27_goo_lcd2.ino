@@ -167,7 +167,7 @@ void loop() {
         lcdisp(buf[0]);                     // 1行目に1件目の予定を表示
         lcdisp(buf[buf_i],1);               // 2行目に2件目以降の予定を表示
     }
-    if(sec%20 == 0) return;                 // 以下は20秒に1回(1分間に3回実行)
+    if(sec%20 != 0) return;                 // 以下は20秒に1回(1分間に3回実行)
     for(int i=0;i<8;i++){
         if(!strncmp(date+11,buf[i],5)){     // 予定の時刻と一致
             if(!chime) chime = 2;                   // chimeの値が0のとき2に設定
