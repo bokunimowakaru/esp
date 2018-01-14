@@ -80,15 +80,15 @@ void loop(){                                // 繰り返し実行する関数
         Serial.print(s+8);                  // AquesTalkへ出力する
         Serial.print('\r');                 // 改行コード（CR）を出力する
     }
-    if(mode==0) return;                     // 親機の時だけ以下を実施
     if(!strncmp(s,"onoff_",6)) strcpy(talk,"bo'tanga/osarema'_shita.");
     if(!strncmp(s,"pir_s_",6)) strcpy(talk,"jinn'kannse'nnsaga/hannno-.");
     if(!strncmp(s,"rd_sw_",6)) strcpy(talk,"do'aga/hirakima'_shita.");
-    if(!strncmp(s,"alarm_",6)) strcpy(talk,"yotei'no/ji'kandesu.");
+    if(!strncmp(s,"alarm_",6)) strcpy(talk,"yoteino/ji'kokudesu.");
     if(!strncmp(s,"voice_",6)) strcpy(talk,"o'nse'iwo/jushinshima'_shita.");
     if(!strlen(talk)) return;               // talkに代入されていれば以下を実行
     Serial.print(talk);                     // AquesTalkへ出力する
     Serial.print('\r');                     // 改行コード（CR）を出力する
+    if(mode==0) return;                     // 親機の時だけ以下を実施
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print("atalk_0,");                  // 親機デバイス名を送信
     udp.println(talk);                      // 音声用データを他の子機へ送信

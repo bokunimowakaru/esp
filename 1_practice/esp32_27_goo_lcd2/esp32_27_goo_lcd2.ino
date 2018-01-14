@@ -28,6 +28,7 @@ Google カレンダー(予定表) から予定を取得する
 #define HTRED "script.googleusercontent.com"// HTTPSリダイレクト先
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 受信ポート番号
+#define DEVICE "alarm_1,"                   // 子機デバイス名(5文字+"_"+ID+",")
 
 LiquidCrystal lcd(17,26,13,14,15,16);       // CQ出版 IoT Express 用 LCD開始
 String url = String("/macros/s/") + String(GScriptId) + "/exec";
@@ -108,15 +109,23 @@ void wifi_google(){                         // Googleカレンダから予定を
     }
 }
 
-void wifi_talk(const char *s){
+void wifi_udp(const char *dv,const char *s){// UDPで送信(dv:デバイス名,s:データ)
     if(!wifi_on()) return;                  // 無線LANの接続
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
-    udp.print("atalk_0,");                  // デバイス名を送信
+    udp.print(dv);                          // デバイス名を送信
     udp.println(s);                         // 文字列を送信
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
     delay(10);                              // 送信待ち時間
     udp.stop();                             // UDP通信の終了
+}
+
+void wifi_udp(const char *s){               // メッセージをUDPで送信
+    wifi_udp(DEVICE,s);                     // デバイス名を送信
+}
+
+void wifi_talk(const char *s){              // 音声データをWi-Fi音声子機へ送信
+    wifi_udp("atalk_0,$",s);                // デバイス名とブレーク信号を送信
 }
 
 void setup() {
@@ -125,8 +134,11 @@ void setup() {
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     lcd.begin(16, 2);                       // 液晶の初期化(16桁×2行)
     chimeBellsSetup(PIN_BUZZER);            // ブザー/LED用するPWM制御部の初期化
+    wifi_talk("rokuji'kanni'naino/yoteio/osirasesimasu");
     wifi_ntp();                             // 時刻情報の取得
     wifi_google();                          // Googleカレンダから予定を取得する
+    char s[33]; snprintf(s,33,"<NUMK VAL=%d COUNTER=ken>desu",buf_n);
+    wifi_talk(s);                           // Wi-Fi音声子機「〇件です」を話す
 }
 
 void loop() {
@@ -141,6 +153,7 @@ void loop() {
     }
     if(time%1000 > 100) return;             // 以下は1秒に一回の処理
     time2txt(date,TIME+time/1000);          // 時刻を文字配列変数dateへ代入
+    int sec=atoi(date+17);                  // 時刻の中から秒を抽出
     chime=chimeBells(PIN_BUZZER,chime);     // chimeが0以外の時にチャイム鳴音
     if(time > TIME_WOFF) wifi_off();        // 70秒以上経過していたら無線LAN切断
     if(buf_n <= 1){                         // 予定件数が0件または1件の時
@@ -149,20 +162,23 @@ void loop() {
             lcdisp(buf[0],1);               // LCDの2行目に予定を表示
         }
     }else{
-	    buf_i++;
-	    if(buf_i >= buf_n) buf_i=1;         // 表示番号が上限に達したらリセット
-	    lcdisp(buf[0]);                     // 1行目に1件目の予定を表示
-	    lcdisp(buf[buf_i],1);               // 2行目に2件目以降の予定を表示
-	}
-	if(date[18] != '0') return;             // 以下は10秒に1回の処理
+        buf_i++;
+        if(buf_i >= buf_n) buf_i=1;         // 表示番号が上限に達したらリセット
+        lcdisp(buf[0]);                     // 1行目に1件目の予定を表示
+        lcdisp(buf[buf_i],1);               // 2行目に2件目以降の予定を表示
+    }
+    if(sec%20 == 0) return;                 // 以下は20秒に1回(1分間に3回実行)
     for(int i=0;i<8;i++){
         if(!strncmp(date+11,buf[i],5)){     // 予定の時刻と一致
-            if(!chime) chime = 2;               // chimeの値が0のとき2に設定
-            if(!strncmp(buf[i]+6,"LED=",4)){    // 予定の内容がLED制御だった時
-                int led = atoi(buf[i]+10) % 2;  // 「LED=」の数値を変数ledへ代入
-                digitalWrite(PIN_LED,led);      // LEDの点灯または消灯
+            if(!chime) chime = 2;                   // chimeの値が0のとき2に設定
+            if(!strncmp(buf[i]+6,"LED=",4)){        // 予定の内容がLED制御の時
+                int led = atoi(buf[i]+10) % 2;      // 「LED=」の数値を変数ledへ
+                digitalWrite(PIN_LED,led);          // LEDの点灯または消灯
             }
-            wifi_talk("yoteino/ji'kokudesu.");  // 「予定の時刻です」を送信
+            if(sec==0) wifi_udp(buf[i]);   			// 予定を送信
+            else if(sec==20)wifi_talk("ara'-mu"); 	// 音声データを送信
+            else wifi_talk("gu-guru/kare'nda.");    // 音声データを送信
+            delay(1500);                            // 音声完了待ち
         }
     }
 }
