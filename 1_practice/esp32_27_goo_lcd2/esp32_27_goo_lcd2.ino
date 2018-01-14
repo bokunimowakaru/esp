@@ -178,7 +178,7 @@ void loop() {
             if(sec==0) wifi_udp(buf[i]);   			// 予定を送信
             else if(sec==20)wifi_talk("ara'-mu"); 	// 音声データを送信
             else wifi_talk("gu-guru/kare'nda.");    // 音声データを送信
-            delay(1500);                            // 音声完了待ち
+            delay(1000);                            // 音声完了待ち
         }
     }
 }

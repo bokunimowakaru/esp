@@ -52,13 +52,13 @@ void loop(){                                // 繰り返し実行する関数
         delay(2500);                        // 子機での「Ping」処理完了待ち
     }
     if(!strncmp(s,"Pong",4)){               // 受信データの先頭4文字がPongのとき
-        send("atalk",0,"raikyakudesu");     // デバイスatalkへ「来客です」を送信
+        send("atalk",0,"$raikyakudesu");    // デバイスatalkへ「来客です」を送信
         lcdisp("ﾗｲｷｬｸ ﾃﾞｽ",1);              // メッセージをLCD2行目に表示
     }
     if(len<8 || !isalnum(s[6]) || s[7]!=',' ) return;   // フォーマット外を排除
-    if(!strncmp(s,"onoff_",6)) send("atalk",0,"bo'tanga/osarema'_shita.");
-    if(!strncmp(s,"pir_s_",6)) send("atalk",0,"jinn'kannse'nnsaga/hannno-.");
-    if(!strncmp(s,"rd_sw_",6)) send("atalk",0,"do'aga/hirakima'_shita.");
-    if(!strncmp(s,"alarm_",6)) send("atalk",0,"yotei'no/ji'kandesu.");
-    if(!strncmp(s,"voice_",6)) send("atalk",0,"o'nse'iwo/jushinshima'_shita.");
+    if(!strncmp(s,"onoff_",6)) send("atalk",0,"$bo'tanga/osarema'_shita.");
+    if(!strncmp(s,"pir_s_",6)) send("atalk",0,"$jinn'kannse'nnsaga/hannno-.");
+    if(!strncmp(s,"rd_sw_",6)) send("atalk",0,"$do'aga/hirakima'_shita.");
+    if(!strncmp(s,"alarm_",6)) send("atalk",0,"$yotei'no/ji'kandesu.");
+    if(!strncmp(s,"voice_",6)) send("atalk",0,"$o'nse'iwo/jushinshima'_shita.");
 }
