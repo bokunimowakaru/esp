@@ -20,7 +20,7 @@ unsigned long TIME;                         // 1970年からmillis()＝0まで�
                                             // ※現在時刻は TIME+millis()/1000
 void setup(){
     pinMode(PIN_OUT,OUTPUT);                // リレーを接続したポートを出力に
-    Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("Example 24 AC Outlet"); // 「Example 24」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続

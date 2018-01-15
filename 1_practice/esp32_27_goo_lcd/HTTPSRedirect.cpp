@@ -149,7 +149,7 @@ String HTTPSRedirect::getData(const char* url, const char* host, const char* red
 String HTTPSRedirect::createRequest(const char* url, const char* host){
   return String("GET ") + url + " HTTP/1.1\r\n" +
                           "Host: " + host + "\r\n" +
-                          "User-Agent: ESP8266\r\n" +
+                          "User-Agent: ESP32\r\n" +
                           (keepAlive ? "" : "Connection: close") + 
                           "\r\n\r\n";
   

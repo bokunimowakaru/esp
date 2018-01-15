@@ -23,7 +23,7 @@ int PiPASS=0;                                   // パスワード入力中
 void setup(){                                   // 起動時に一度だけ実行する関数
     pinMode(PIN_POW,OUTPUT);                    // 電源制御回路ポートを出力に
     digitalWrite(PIN_POW,LOW);                  // Raspberry PiをLOW(OFF)にする
-    Serial.begin(9600);                         // 動作確認のためのシリアル出力
+    Serial.begin(115200);                       // 動作確認のためのシリアル出力
     hardSerial.begin(115200);               // RaspberryPiとの通信ポート
     WiFi.mode(WIFI_STA);                        // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                      // 無線LANアクセスポイント接続
