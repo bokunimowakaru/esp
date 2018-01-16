@@ -196,13 +196,13 @@ void loop() {
             if(sec==0){                             // 現在時刻の秒が0のとき
                 wifi_udp(buf[i]);                   // 予定を送信
                 chime=chimeBells(PIN_BUZZER,chime); // チャイム音
-				String s = buf[i];
-				if(s.indexOf("AC=") == 6){          // 予定の内容がAC制御の時
+                String s = buf[i];
+                if(s.indexOf("AC=") == 6){          // 予定の内容がAC制御の時
                     int ac=s.substring(9).toInt();  // 「AC=」の数値を変数acへ
                     if(ac) httpGet(DEV_AC_ON);      // ACリレーをONにする
                     else httpGet(DEV_AC_OFF);       // ACリレーをOFFにする
                 }
-				if(s.indexOf("IR=") == 6){          // 予定の内容がAC制御の時
+                if(s.indexOf("IR=") == 6){          // 予定の内容がAC制御の時
                     int ir=s.substring(9).toInt();  // 「AC=」の数値を変数irへ
                     if(ir) httpPost(DEV_IR,IR_ON);  // エアコンの電源をONにする
                     else httpPost(DEV_IR,IR_OFF);   // エアコンの電源をOFFにする
