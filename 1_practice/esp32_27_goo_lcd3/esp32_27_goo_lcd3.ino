@@ -29,14 +29,23 @@ Google カレンダー(予定表) から予定を取得する
 #define PORT 1024                           // 受信ポート番号
 #define DEVICE "alarm_1,"                   // 子機デバイス名(5文字+"_"+ID+",")
 
-#define DEV_AC_ON  "" 						// ACリレーをONにするときのコマンド
-#define DEV_AC_OFF ""						// ACリレーをOFFにするときのコマンド
+#define DEV_AC_ON  ""                       // ACリレーをONにするときのコマンド
+#define DEV_AC_OFF ""                       // ACリレーをOFFにするときのコマンド
 
-/*	WiFiｺﾝｼｪﾙｼﾞｪ電源担当(ACリレー)を使用する場合は以下のように設定してください。
-	（IPアドレスは、WiFiｺﾝｼｪﾙｼﾞｪ電源担当のアドレスに書き換える）
-	
-#define DEV_AC_ON  "192.168.0.155/?RELAY=1" // ACリレーをONにするときのコマンド
-#define DEV_AC_OFF "192.168.0.155/?RELAY=0" // ACリレーをOFFにするときのコマンド
+/*  WiFiｺﾝｼｪﾙｼﾞｪ電源担当(ACリレー)を使用する場合は以下のように設定してください。
+    （IPアドレスは、WiFiｺﾝｼｪﾙｼﾞｪ電源担当のアドレスに書き換える）
+#define DEV_AC_ON  "192.168.0.3/?RELAY=1"   // ACリレーをONにするときのコマンド
+#define DEV_AC_OFF "192.168.0.3/?RELAY=0"   // ACリレーをOFFにするときのコマンド
+*/
+
+#define DEV_IR ""                           // 赤外線リモコン送信機のIPアドレス
+#define IR_ON  "IR=104,AA,5A,CF,10,00,11,20,3F,18,B0,00,F4,B1"  // エアコンON
+#define IR_OFF "IR=104,AA,5A,CF,10,00,21,20,3F,18,B0,00,F4,81"  // エアコンOFF
+
+/*  WiFiｺﾝｼｪﾙｼﾞｪリモコン担当(赤外線リモコン)を使用する場合は以下のように設定して
+　　ください。
+    （IPアドレスは、WiFiｺﾝｼｪﾙｼﾞｪリモコン担当のアドレスに書き換える）
+#define DEV_IR "192.168.0.4/"               // 赤外線リモコン送信機のIPアドレス
 */
 
 LiquidCrystal lcd(17,26,13,14,15,16);       // CQ出版 IoT Express 用 LCD開始
@@ -184,14 +193,20 @@ void loop() {
                 int led = atoi(buf[i]+10) % 2;      // 「LED=」の数値を変数ledへ
                 digitalWrite(PIN_LED,led);          // LEDの点灯または消灯
             }
-            if(sec==0){								// 現在時刻の秒が0のとき
-				wifi_udp(buf[i]);            		// 予定を送信
-            	delay(1000);                 		// 音声完了待ち
-	            if(!strncmp(buf[i]+6,"AC=",3)){     // 予定の内容がAC制御の時
-	                int ac = atoi(buf[i]+9);   		// 「AC=」の数値を変数ledへ
-	                if(ac) httpGet(DEV_AC_ON);
-	                else httpGet(DEV_AC_OFF);
-	            }
+            if(sec==0){                             // 現在時刻の秒が0のとき
+                wifi_udp(buf[i]);                   // 予定を送信
+                chime=chimeBells(PIN_BUZZER,chime); // チャイム音
+				String s = buf[i];
+				if(s.indexOf("AC=") == 6){          // 予定の内容がAC制御の時
+                    int ac=s.substring(9).toInt();  // 「AC=」の数値を変数acへ
+                    if(ac) httpGet(DEV_AC_ON);      // ACリレーをONにする
+                    else httpGet(DEV_AC_OFF);       // ACリレーをOFFにする
+                }
+				if(s.indexOf("IR=") == 6){          // 予定の内容がAC制御の時
+                    int ir=s.substring(9).toInt();  // 「AC=」の数値を変数irへ
+                    if(ir) httpPost(DEV_IR,IR_ON);  // エアコンの電源をONにする
+                    else httpPost(DEV_IR,IR_OFF);   // エアコンの電源をOFFにする
+                }
             }
         }
     }
