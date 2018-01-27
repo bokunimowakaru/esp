@@ -88,7 +88,7 @@ void loop(){                                // 繰り返し実行する関数
     if(!strlen(talk)) return;               // talkに代入されていれば以下を実行
     Serial.print(talk);                     // AquesTalkへ出力する
     Serial.print('\r');                     // 改行コード（CR）を出力する
-    if(mode==0) return;                     // 親機の時だけ以下を実施
+    if(mode) return;                        // 親機の時だけ以下を実施
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print("atalk_0,");                  // 親機デバイス名を送信
     udp.println(talk);                      // 音声用データを他の子機へ送信
