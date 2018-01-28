@@ -23,7 +23,7 @@ void setup() {                          // 起動時に一度だけ実行され�
 void loop() {                           // setup実行後に繰り返し実行される関数
     int adc;                            // AD変換値保存用の整数型変数adcを定義
 
-    adc=(int)mvAnalogIn(PIN_AIN, 0.1);  // AD変換器から値を取得
+    adc=(int)mvAnalogIn(PIN_AIN, 0.0);  // AD変換器から値を取得
     Serial.println(adc);                // 変数adcの値をシリアル出力表示
     delay(3000);                        // 3秒間(3000ms)の待ち時間処理
 }
