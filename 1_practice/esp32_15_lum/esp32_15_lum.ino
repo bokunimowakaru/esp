@@ -45,7 +45,7 @@ void loop(){                                // 繰り返し実行する関数
 }
 
 float mvAnalogIn(uint8_t PIN){
-    return mvAnalogIn(PIN, 1.075584e-1);
+    return mvAnalogIn(PIN, 0.0);            // 動作最小電圧 0.0 ～ 0.1(V)程度
 }
 
 float mvAnalogIn(uint8_t PIN, float offset){
@@ -60,7 +60,7 @@ float mvAnalogIn(uint8_t PIN, float offset){
             + 1.510116e-3 * (float)in3
             - 0.680858 + offset;
     }else{
-        ad3 = 8.378998e-4 * (float)in3 + offset;
+        ad3 = 8.378998e-4 * (float)in3 + 8.158714e-2 + offset;
     }
     if( in3 < 200 ){
         analogSetPinAttenuation(PIN,ADC_0db);
