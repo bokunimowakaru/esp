@@ -22,7 +22,7 @@ char * utf_del_uni(char *in){
 			if((byte)s[i+1]==0xBE) s[i+2] += 0x40;
 			i+=2;
 		}
-		if(isprint(s[i]) || (s[i] >=0xA0 && s[i] <= 0xDF)){
+		if(isprint(s[i]) || ((byte)s[i] >=0xA0 && (byte)s[i] <= 0xDF)){
 			s[j]=s[i];
 			j++;
 		}

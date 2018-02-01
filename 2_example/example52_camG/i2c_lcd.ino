@@ -273,7 +273,7 @@ void utf_del_uni(char *s){
 			i+=2;
 		}
 		// fprintf(stderr,"%02X ",s[i]);
-		if(isprint(s[i]) || (s[i]>=0xA1 && s[i] <=0xDF)){
+		if(isprint(s[i]) || ((byte)s[i] >=0xA0 && (byte)s[i] <= 0xDF)){
 			s[j]=s[i];
 			j++;
 		}
