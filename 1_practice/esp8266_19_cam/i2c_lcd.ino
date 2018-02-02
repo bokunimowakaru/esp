@@ -1,5 +1,5 @@
 /*******************************************************************************
-Arduino ESP32/ESP8266 用 ソフトウェアI2C ドライバ soft_i2c
+Arduino ESP32/ESP8266 用 ソフトウェア I2C LCD ドライバ soft_i2c
 
 本ソースリストおよびソフトウェアは、ライセンスフリーです。(詳細は別記)
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
@@ -129,7 +129,7 @@ byte i2c_start(void){
 //	if(!i2c_init())return(0);				// SDA,SCL	H Out
 	int i;
 
-	for(i=5000;i>0;i--){					// リトライ 5000ms
+	for(i=GPIO_RETRY;i>0;i--){					// リトライ50回まで
 		i2c_SDA(1);							// (SDA)	H Imp
 		i2c_SCL(1);							// (SCL)	H Imp
 		if( digitalRead(PORT_SCL)==1 &&

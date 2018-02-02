@@ -1,5 +1,5 @@
 /*******************************************************************************
-Arduino ESP32 用 ソフトウェアI2C ドライバ soft_i2c
+Arduino ESP32 用 ソフトウェア I2C LCD ドライバ soft_i2c
 
 本ソースリストおよびソフトウェアは、ライセンスフリーです。(詳細は別記)
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
@@ -129,7 +129,7 @@ byte i2c_start(void){
 //	if(!i2c_init())return(0);				// SDA,SCL	H Out
 	int i;
 
-	for(i=5000;i>0;i--){					// リトライ 5000ms
+	for(i=GPIO_RETRY;i>0;i--){					// リトライ50回まで
 		i2c_SDA(1);							// (SDA)	H Imp
 		i2c_SCL(1);							// (SCL)	H Imp
 		if( digitalRead(PORT_SCL)==1 &&
@@ -247,6 +247,10 @@ byte i2c_write(byte adr, byte *tx, byte len){
 }
 
 void i2c_lcd_out(byte y,byte *lcd){
+	#ifdef I2C_LCD_OFF
+		Serial.println((char *)lcd);
+		return;
+	#endif
 	byte data[2];
 	byte i;
 	data[0]=0x00;
@@ -284,6 +288,9 @@ void utf_del_uni(char *s){
 }
 
 void i2c_lcd_init(void){
+	#ifdef I2C_LCD_OFF
+		return;
+	#endif
 	byte data[2];
 	data[0]=0x00; data[1]=0x39; i2c_write(I2C_lcd,data,2);	// IS=1
 	data[0]=0x00; data[1]=0x11; i2c_write(I2C_lcd,data,2);	// OSC
@@ -297,12 +304,15 @@ void i2c_lcd_init(void){
 }
 
 void i2c_lcd_init_xy(byte x, byte y){
+	#ifdef I2C_LCD_OFF
+		return;
+	#endif
 	if(x==16||x==8||x==20) _lcd_size_x=x;
 	if(y==1 ||y==2) _lcd_size_y=y;
 	i2c_lcd_init();
 }
 
-void i2c_lcd_print(char *s){
+void i2c_lcd_print(const char *s){
 	byte i,j;
 	char str[65];
 	byte lcd[21];
@@ -327,7 +337,7 @@ void i2c_lcd_print(char *s){
 	}
 }
 
-void i2c_lcd_print2(char *s){
+void i2c_lcd_print2(const char *s){
 	byte i;
 	char str[65];
 	byte lcd[21];
@@ -383,7 +393,7 @@ void i2c_lcd_print_ip2(uint32_t ip){
 }
 
 
-void i2c_lcd_print_val(char *s,int in){
+void i2c_lcd_print_val(const char *s,int in){
 	char lcd[21];
 	sprintf(lcd,"%d",in);
 	i2c_lcd_print(s);
@@ -503,11 +513,11 @@ void lcdOut(byte y,byte *lcd){
 	i2c_lcd_out(y,lcd);
 }
 
-void lcdPrint(char *s){
+void lcdPrint(const char *s){
 	i2c_lcd_print(s);
 }
 
-void lcdPrint2(char *s){
+void lcdPrint2(const char *s){
 	i2c_lcd_print2(s);
 }
 
@@ -519,7 +529,7 @@ void lcdPrintIp2(uint32_t ip){
 	i2c_lcd_print_ip2(ip);
 }
 
-void lcdPrintVal(char *s,int in){
+void lcdPrintVal(const char *s,int in){
 	i2c_lcd_print_val(s,in);
 }
 
