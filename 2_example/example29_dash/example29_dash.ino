@@ -59,24 +59,30 @@ extern "C" {
 #include "user_interface.h"                 // ESP8266用の拡張IFライブラリ
 }
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#define PIN_EN 13                           // IO 13(5番ピン)をセンサ用の電源に
+#define PIN_EN 13                           // IO 13(5番ピン)をLEDなどへ接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 #define DEVICE "adash_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define MAC_LIST_N_MAX 8                    // MACリストの最大保持数
+#define TIMEOUT 15                          // タイムアウト 15秒
 
 byte MAC_LIST[MAC_LIST_N_MAX][6];           // MACリスト
 int MAC_LIST_N=0;
 int channel;                                // 無線LAN物理チャンネル
 
-void connect(){
+int connect(){
+    int count=0;
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
         delay(500);                         // 待ち時間処理
         digitalWrite(PIN_EN,!digitalRead(PIN_EN));      // LEDの点滅
-        Serial.print(".");
+        Serial.print("."); count++;
+        if(count>TIMEOUT*2){                // 15秒経過したときは終了
+            WiFi.disconnect();              // WiFiアクセスポイントを切断する
+            return 0; 
+        }
     }
     channel=wifi_get_channel();             // 物理チャンネルを取得
     Serial.print(WiFi.localIP());           // 本機のIPアドレスをシリアル出力
@@ -85,27 +91,29 @@ void connect(){
     Serial.print(' ');
     Serial.print(channel);                  // 物理チャンネルの表示
     Serial.println("ch");
+    return 1;
 }
 
 void setup(){                               // 起動時に一度だけ実行する関数
     char data[512];                         // TFTPデータ用変数
     int len_tftp;                           // TFTPデータ長
     
-    pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
+    pinMode(PIN_EN,OUTPUT);                 // LEDなど用の出力
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 29 ADASH");     // 「ESP32 eg.29」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     if(ini_init(data)) initialize(data);    // SPIFFSからINIファイルの読み込み
-    connect();                              // Wi-Fiアクセスポイントへ接続
-    tftpStart();                            // TFTPの開始
-    do{
-        len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
-        if(len_tftp>0){
-            initialize(data);               // INIファイル内の内容を変数へ代入
-            ini_save(data);                 // INIファイルをSPIFFSへ書込み
-        }
-    }while(len_tftp);
-    WiFi.disconnect();                      // WiFiアクセスポイントを切断する
+    if(connect()){                          // Wi-Fiアクセスポイントへ接続
+        tftpStart();                        // TFTPの開始
+        do{
+            len_tftp = tftpGet(data);       // TFTP受信(data=受信データ)
+            if(len_tftp>0){
+                initialize(data);           // INIファイル内の内容を変数へ代入
+                ini_save(data);             // INIファイルをSPIFFSへ書込み
+            }
+        }while(len_tftp);
+        WiFi.disconnect();                  // WiFiアクセスポイントを切断する
+    }
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
 }
 
@@ -129,21 +137,22 @@ void loop(){
     if(i==MAC_LIST_N_MAX) return;
     promiscuous_stop();
 
-    connect();                              // Wi-Fiアクセスポイントへ接続
-    digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
-    udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
-    udp.print(DEVICE);                      // デバイス名を送信
-    udp.print(i+1);                         // ACCEPT番号を送信
-    for(i=0;i<6;i++){
-        udp.print(',');
-        if(mac[i]<0x10) udp.print(0);
-        udp.print(mac[i],HEX);              // MACアドレスを送信
+    if(connect()){                          // Wi-Fiアクセスポイントへ接続
+        digitalWrite(PIN_EN,HIGH);          // LEDをONに
+        udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
+        udp.print(DEVICE);                  // デバイス名を送信
+        udp.print(i+1);                     // ACCEPT番号を送信
+        for(i=0;i<6;i++){
+            udp.print(',');
+            if(mac[i]<0x10) udp.print(0);
+            udp.print(mac[i],HEX);          // MACアドレスを送信
+        }
+        udp.println();
+        udp.endPacket();                    // UDP送信の終了(実際に送信する)
+        delay(200);                         // 送信待ち時間
+        digitalWrite(PIN_EN,LOW);           // LEDをOFFに
+        WiFi.disconnect();                  // WiFiアクセスポイントを切断する
     }
-    udp.println();
-    udp.endPacket();                        // UDP送信の終了(実際に送信する)
-    delay(200);                             // 送信待ち時間
-    digitalWrite(PIN_EN,LOW);               // センサ用の電源をOFFに
-    WiFi.disconnect();                      // WiFiアクセスポイントを切断する
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
 }
 
