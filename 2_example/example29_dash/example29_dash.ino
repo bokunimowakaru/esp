@@ -133,10 +133,11 @@ void loop(){
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
     udp.beginPacket(SENDTO, PORT);          // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
+    udp.print(i+1);                         // ACCEPT番号を送信
     for(i=0;i<6;i++){
         udp.print(',');
         if(mac[i]<0x10) udp.print(0);
-        udp.print(mac[i],HEX);
+        udp.print(mac[i],HEX);              // MACアドレスを送信
     }
     udp.println();
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
