@@ -45,7 +45,8 @@ while true; do                                      # 永久に繰り返し
 			if [ "${mac_address}" = "${mac}" ]; then
 				echo $mac_name
 				mac_csv=`echo ${mac_address}|tr ":" ","`
-				echo ${DEVICE}${i}","${mac_address}","${mac_name} > /dev/udp/${SENDTO}/${PORT}
+				n=$(( i + 1 ))
+				echo ${DEVICE}${n}","${mac_address}","${mac_name} > /dev/udp/${SENDTO}/${PORT}
 				break
 			fi
 		done
