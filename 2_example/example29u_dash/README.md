@@ -1,24 +1,24 @@
-# MACƒuƒ[ƒhƒLƒƒƒXƒg^ Amazon Dash ƒ{ƒ^ƒ“ŒŸo
+# MACãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆï¼ Amazon Dash ãƒœã‚¿ãƒ³æ¤œå‡º
 
-ƒŠƒXƒg’†‚Ì“Á’è‚ÌMACƒAƒhƒŒƒX‚Ì’[––‚Ìƒuƒ[ƒhƒLƒƒƒXƒg‚ðƒvƒƒ~ƒXƒLƒƒƒXƒ‚[ƒh‚Å‘Ò‚¿Žó‚¯AŒŸoŽž‚ÉUARTo—Í‚µ‚Ü‚·B  
-ƒXƒ}[ƒgƒtƒHƒ“‚âPC‚ðŽ©‘î‚ÉŽ‚¿‹A‚è–³üLAN‚ÖŽ©“®Ú‘±‚·‚é‚Æ‚«‚âAAmazon Dashƒ{ƒ^ƒ“‚ª‰Ÿ‰º‚³‚ê‚½‚Æ‚«‚È‚Ç‚ÉA‘—M‚·‚éMACƒuƒ[ƒhƒLƒƒƒXƒg‚ðŒŸo‚µ‚Ü‚·B  
+ãƒªã‚¹ãƒˆä¸­ã®ç‰¹å®šã®MACã‚¢ãƒ‰ãƒ¬ã‚¹ã®ç«¯æœ«ã®ãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆã‚’ãƒ—ãƒ­ãƒŸã‚¹ã‚­ãƒ£ã‚¹ãƒ¢ãƒ¼ãƒ‰ã§å¾…ã¡å—ã‘ã€æ¤œå‡ºæ™‚ã«UARTå‡ºåŠ›ã—ã¾ã™ã€‚  
+ã‚¹ãƒžãƒ¼ãƒˆãƒ•ã‚©ãƒ³ã‚„PCã‚’è‡ªå®…ã«æŒã¡å¸°ã‚Šç„¡ç·šLANã¸è‡ªå‹•æŽ¥ç¶šã™ã‚‹ã¨ãã‚„ã€Amazon Dashãƒœã‚¿ãƒ³ãŒæŠ¼ä¸‹ã•ã‚ŒãŸã¨ããªã©ã«ã€é€ä¿¡ã™ã‚‹MACãƒ–ãƒ­ãƒ¼ãƒ‰ã‚­ãƒ£ã‚¹ãƒˆã‚’æ¤œå‡ºã—ã¾ã™ã€‚  
 
                                            Copyright (c) 2017-2018 Wataru KUNINO  
 ********************************************************************************
 
-* ’ˆÓF ƒfƒtƒHƒ‹ƒg‚Å‚Í ƒVƒŠƒAƒ‹‚ð115200bps‚ÉÝ’è‚µ‚Ä‚¢‚é
+* æ³¨æ„ï¼š ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ã¯ ã‚·ãƒªã‚¢ãƒ«ã‚’115200bpsã«è¨­å®šã—ã¦ã„ã‚‹
 
-* o—ÍŒ`Ž®Fæ“ª‚É'(0x27)‚ÆƒXƒy[ƒX(0x20)‚É‘±‚¢‚Ä6Œ…‚ÌMACƒAƒhƒŒƒX‚ðƒeƒLƒXƒgo—Í
+* å‡ºåŠ›å½¢å¼ï¼šå…ˆé ­ã«'(0x27)ã¨ã‚¹ãƒšãƒ¼ã‚¹(0x20)ã«ç¶šã„ã¦6æ¡ã®MACã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’ãƒ†ã‚­ã‚¹ãƒˆå‡ºåŠ›
 
 `' xx:xx:xx:xx:xx:xx`
 `' xx:xx:xx:xx:xx:xx`
 
-* ŽQl•¶Œ£
+* å‚è€ƒæ–‡çŒ®
 
-‰º‹L‚Ìî•ñ‚¨‚æ‚Ñƒ\[ƒXƒR[ƒh‚ð—˜—p‚³‚¹‚Ä‚¢‚½‚¾‚«‚Ü‚µ‚½(2017/9/16)B
+ä¸‹è¨˜ã®æƒ…å ±ãŠã‚ˆã³ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã‚’åˆ©ç”¨ã•ã›ã¦ã„ãŸã ãã¾ã—ãŸ(2017/9/16)ã€‚
 
-ƒvƒƒ~ƒXƒLƒƒƒXƒ‚[ƒh‚ð—p‚¢‚½ESP8266‚Å‚ÌAmazon Dash Button‚ÌƒCƒxƒ“ƒgŽæ“¾
+ãƒ—ãƒ­ãƒŸã‚¹ã‚­ãƒ£ã‚¹ãƒ¢ãƒ¼ãƒ‰ã‚’ç”¨ã„ãŸESP8266ã§ã®Amazon Dash Buttonã®ã‚¤ãƒ™ãƒ³ãƒˆå–å¾—
 <http://qiita.com/kat-kai/items/3b1d5c74138d77a27c4d>
 
-ƒ‰ƒCƒZƒ“ƒXFQiita—˜—p‹K–ñ‚ÉŠî‚Ã‚­
-Œ —˜ŽÒFkat-kai http://qiita.com/kat-kai
+ãƒ©ã‚¤ã‚»ãƒ³ã‚¹ï¼šQiitaåˆ©ç”¨è¦ç´„ã«åŸºã¥ã
+æ¨©åˆ©è€…ï¼škat-kai http://qiita.com/kat-kai
