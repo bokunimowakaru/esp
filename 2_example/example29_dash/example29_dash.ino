@@ -13,7 +13,7 @@ Example 29: MACブロードキャスト／ Amazon Dash ボタン検出
 
 ご注意：ネットセキュリティ上の脆弱性の十分に注意して利用してください。
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2017-2018 Wataru KUNINO
 ********************************************************************************
 
 TFTPサーバ上から設定ファイルをダウンロードし、モジュール内の設定を変更します。
@@ -153,6 +153,7 @@ void loop(){
         digitalWrite(PIN_EN,LOW);           // LEDをOFFに
         WiFi.disconnect();                  // WiFiアクセスポイントを切断する
     }
+    promiscuous_ready();                    // 処理完了
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
 }
 
