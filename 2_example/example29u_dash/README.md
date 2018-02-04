@@ -10,9 +10,9 @@ Copyright (c) 2017-2018 Wataru KUNINO
 
 * 出力形式：先頭に'(0x27)とスペース(0x20)に続いて6桁のMACアドレスをテキスト出力
 
-`' xx:xx:xx:xx:xx:xx  
-' xx:xx:xx:xx:xx:xx  
-' xx:xx:xx:xx:xx:xx`  
+`' xx:xx:xx:xx:xx:xx`  
+`' xx:xx:xx:xx:xx:xx`  
+`' xx:xx:xx:xx:xx:xx`  
 
 * 参考文献
 
