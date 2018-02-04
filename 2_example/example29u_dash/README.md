@@ -3,22 +3,23 @@
 リスト中の特定のMACアドレスの端末のブロードキャストをプロミスキャスモードで待ち受け、検出時にUART出力します。  
 スマートフォンやPCを自宅に持ち帰り無線LANへ自動接続するときや、Amazon Dashボタンが押下されたときなどに、送信するMACブロードキャストを検出します。  
 
-                                           Copyright (c) 2017-2018 Wataru KUNINO  
+Copyright (c) 2017-2018 Wataru KUNINO  
 ********************************************************************************
 
 * 注意： デフォルトでは シリアルを115200bpsに設定している
 
 * 出力形式：先頭に'(0x27)とスペース(0x20)に続いて6桁のMACアドレスをテキスト出力
 
-`' xx:xx:xx:xx:xx:xx`
-`' xx:xx:xx:xx:xx:xx`
+`' xx:xx:xx:xx:xx:xx  
+' xx:xx:xx:xx:xx:xx  
+' xx:xx:xx:xx:xx:xx`  
 
 * 参考文献
 
 下記の情報およびソースコードを利用させていただきました(2017/9/16)。
 
-プロミスキャスモードを用いたESP8266でのAmazon Dash Buttonのイベント取得
+プロミスキャスモードを用いたESP8266でのAmazon Dash Buttonのイベント取得  
 <http://qiita.com/kat-kai/items/3b1d5c74138d77a27c4d>
 
-ライセンス：Qiita利用規約に基づく
+ライセンス：Qiita利用規約に基づく  
 権利者：kat-kai http://qiita.com/kat-kai
