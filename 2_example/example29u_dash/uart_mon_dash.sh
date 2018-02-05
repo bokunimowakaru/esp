@@ -1,12 +1,11 @@
 #!/bin/bash
-# シリアルUARTからMACアドレスを受信し、UDPで送信する
+# シリアルUARTからMACアドレスを受信し、リストに一致した機器のログを保存する
 # Copyright (c) 2018 Wataru KUNINO
 
 #UART="/dev/ttyUSB0"
 UART=""
-SENDTO="127.0.0.1"                                  # ローカルへ
+SAVETO="log_adash_1.csv"                            # ローカルへ
 DEVICE="adash_1,"
-PORT=1024
 MAC_LIST=(
     "01:23:45:67:89:AB dash1"
     "00:11:22:33:44:55 dash2"
@@ -22,13 +21,13 @@ if [ ${#UARTS[*]} -lt 1 ]; then
     exit
 fi
 for ((i=0; i < ${#UARTS[*]}; i++)); do
-    if [ "$UART" = "${UARTS[i]}" ]; then
+    if [ "$UART" = "${UARTS[$i]}" ]; then
         break
     fi
 done
 if [ $i -eq ${#UARTS[*]} ]; then
     i=$(( i - 1 ))
-    UART=${UARTS[i]}
+    UART=${UARTS[$i]}
 fi
 echo "UART["${i}"]="${UART}
 stty --file ${UART} 115200 igncr
@@ -37,16 +36,17 @@ while true; do                                      # 永久に繰り返し
     delimiter=`echo $UIN|cut -d" " -f1`
     mac=`echo $UIN|cut -d" " -f2`
     if [ "${delimiter}" = "'" ] && [ -n $mac ]; then
-        echo -n ${mac}" "
+        DATE=`date "+%Y/%m/%d %R"`
+        echo -n ${DATE}", "${mac}" "
         for (( i=0; i < $MAC_NUM; i++ )); do
-            mac_array=(${MAC_LIST[i]})
+            mac_array=(${MAC_LIST[$i]})
             mac_address=(${mac_array[0]})
             mac_name=(${mac_array[1]})
             if [ "${mac_address}" = "${mac}" ]; then
                 echo $mac_name
                 mac_csv=`echo ${mac_address}|tr ":" ","`
                 n=$(( i + 1 ))
-                sudo echo ${DEVICE}${n}","${mac_address}","${mac_name} > /dev/udp/${SENDTO}/${PORT}
+                echo ${DATE}", "${DEVICE}${n}","${mac_csv}","${mac_name} >> $SAVETO
                 break
             fi
         done
