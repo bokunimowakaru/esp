@@ -2,8 +2,10 @@
 # シリアルUARTからMACアドレスを受信し、リストに一致した機器のログを保存する
 # Copyright (c) 2018 Wataru KUNINO
 
-#UART="/dev/ttyUSB0"
+WIFI_CH=1                                           # 監視対象の物理チャンネル
 UART=""
+#UART="/dev/ttyUSB0"
+
 SAVETO="log_adash_1.csv"                            # ローカルへ
 DEVICE="adash_1,"
 MAC_LIST=(
@@ -14,6 +16,7 @@ MAC_LIST=(
     "22:33:44:55:66:77 iphone7"
 )                                                   # 監視対象のMACアドレスと機器名
 MAC_NUM=${#MAC_LIST[*]}
+MAC_WAIT_SEC=10                                     # 連続検出防止用の待ち時間(秒)
 
 UARTS=(`ls /dev/ttyUSB*`) &> /dev/null
 if [ ${#UARTS[*]} -lt 1 ]; then
@@ -31,8 +34,12 @@ if [ $i -eq ${#UARTS[*]} ]; then
 fi
 echo "UART["${i}"]="${UART}
 stty --file ${UART} 115200 igncr
+echo > ${UART}
+echo "channel=${WIFI_CH}" > ${UART}
+mac_prev=""
+mac_wait_time=0
 while true; do                                      # 永久に繰り返し
-    UIN=`timeout 1 cat /dev/ttyUSB1`
+    UIN=`timeout 1 cat ${UART}`
     delimiter=`echo $UIN|cut -d" " -f1`
     mac=`echo $UIN|cut -d" " -f2`
     if [ "${delimiter}" = "'" ] && [ -n $mac ]; then
@@ -42,16 +49,25 @@ while true; do                                      # 永久に繰り返し
             mac_array=(${MAC_LIST[$i]})
             mac_address=(${mac_array[0]})
             mac_name=(${mac_array[1]})
-            if [ "${mac_address}" = "${mac}" ]; then
+            if [ "${mac_address}" = "${mac}" ] && [ "${mac_prev}" != "${mac}" ] ; then
                 echo $mac_name
                 mac_csv=`echo ${mac_address}|tr ":" ","`
-                n=$(( i + 1 ))
-                echo ${DATE}", "${DEVICE}${n}","${mac_csv}","${mac_name} >> $SAVETO
+                echo ${DATE}", "${DEVICE}$((i+1))","${mac_csv}","${mac_name} >> $SAVETO
+                mac_prev=$mac
+                mac_wait_time=$((SECONDS + MAC_WAIT_SEC ))
+
+                ################################
+                # ここに検出時の処理を記述する #
+                ################################
+
                 break
             fi
         done
         if [ $i -eq $MAC_NUM ]; then
             echo
         fi
+    fi
+    if [ $SECONDS -gt $mac_wait_time ]; then
+        mac_prev=""
     fi
 done
