@@ -25,7 +25,7 @@ extern "C" {
 boolean DEBUG_MAC=1;
 byte _mac_prev[6];
 unsigned int _fc_prev;
-int _mac_prev_n=0;
+volatile int _mac_prev_n=0;
 volatile int _mac_read_i=0;
 byte _recieved_mac[6];
 
@@ -107,6 +107,7 @@ static void ICACHE_FLASH_ATTR promisc_cb(uint8_t *buf, uint16_t len){
 int promiscuous_get_mac(byte *mac){
 	if(_mac_read_i==0) return 0;
 	if(DEBUG_MAC && _mac_read_i>1){
+		_mac_prev_n=0;
 		Serial.print("WARNING: dropped n=");
 		Serial.println(_mac_read_i-1);
 	}
