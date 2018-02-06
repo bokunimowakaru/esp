@@ -7,7 +7,7 @@ Example 29: MACブロードキャスト／ Amazon Dash ボタン検出
 スマートフォンやPCを自宅に持ち帰り無線LANへ自動接続するときや、Amazon Dashボタン
 が押下されたときなどに、送信するMACブロードキャストを検出します。
 
-同じ機器から同一種別のデータを連続して受信した場合は出力しません(待機時間10秒)。
+同じ機器から同種別のデータを連続して受信した場合は出力しません(待機時間0.5秒)。
 チャンネルを変更するには、シリアルから「channel=数字」と改行を入力してください。
 
                                            Copyright (c) 2017-2018 Wataru KUNINO
@@ -25,7 +25,7 @@ extern "C" {
 }
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_EN 13                           // IO 13 をLEDなどへ接続
-#define PIN_HOLD 10000                      // 検出時の保持時間を設定(10秒)
+#define PIN_HOLD 500                        // 検出時の保持時間を設定(500ms)
 int channel;                                // 無線LAN物理チャンネル
 unsigned long reset_time;                   // LED消灯時刻
 char uart[17];                              // UART受信バッファ
