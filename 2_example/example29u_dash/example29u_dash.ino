@@ -64,11 +64,11 @@ void loop(){
                 if(channel<1 || channel>12) channel=(channel%12)+1;
                 Serial.print("' adash channel=");
                 Serial.println(channel);
-                memset(uart,0,17);
-                uart_n=0;
                 promiscuous_start(channel); // プロミスキャスモードへ移行する
                 promiscuous_ready();        // 検知処理完了
             }
+            memset(uart,0,17);
+            uart_n=0;
             return;
         }
         uart[uart_n]=c;
