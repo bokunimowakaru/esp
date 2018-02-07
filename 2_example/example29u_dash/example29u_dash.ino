@@ -67,8 +67,8 @@ void loop(){
                 promiscuous_start(channel); // プロミスキャスモードへ移行する
                 promiscuous_ready();        // 検知処理完了
             }
-            if(!strncmp(uart,"filter=",6)){ // フィルタのレベル入力
-                switch(atoi(uart+6)){
+            if(!strncmp(uart,"filter=",7)){ // フィルタのレベル入力
+                switch(atoi(uart+7)){
                     case 0:
                         promiscuous_fchold(0);
                         PIN_HOLD=1;
@@ -95,11 +95,9 @@ void loop(){
                         PIN_HOLD=500;
                         break;
                 }
-                if(channel<1 || channel>12) channel=(channel%12)+1;
-                Serial.print("' adash channel=");
-                Serial.println(channel);
-                promiscuous_start(channel); // プロミスキャスモードへ移行する
-                promiscuous_ready();        // 検知処理完了
+                Serial.print("' adash filter=");
+                Serial.println(atoi(uart+7));
+                promiscuous_ready();
             }
             memset(uart,0,17);
             uart_n=0;
