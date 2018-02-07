@@ -3,6 +3,7 @@
 # Copyright (c) 2018 Wataru KUNINO
 
 WIFI_CH=1                                           # 監視対象の物理チャンネル
+FILTER=2                                            # MACスキャナの出力頻度フィルタ
 UART=""
 #UART="/dev/ttyUSB0"
 
@@ -36,37 +37,41 @@ echo "UART["${i}"]="${UART}
 stty --file ${UART} 115200 igncr
 echo > ${UART}
 echo "channel=${WIFI_CH}" > ${UART}
+echo "filter=${FILTER}" > ${UART}
 mac_prev=""
 mac_wait_time=0
 while true; do                                      # 永久に繰り返し
     UIN=`timeout 1 cat ${UART}`
-    delimiter=`echo $UIN|cut -d" " -f1`
-    mac=`echo $UIN|cut -d" " -f2`
-    if [ "${delimiter}" = "'" ] && [ -n $mac ]; then
-        DATE=`date "+%Y/%m/%d %R"`
-        echo -n ${DATE}", "${mac}" "
-        for (( i=0; i < $MAC_NUM; i++ )); do
-            mac_array=(${MAC_LIST[$i]})
-            mac_address=(${mac_array[0]})
-            mac_name=(${mac_array[1]})
-            if [ "${mac_address}" = "${mac}" ] && [ "${mac_prev}" != "${mac}" ] ; then
-                echo $mac_name
-                mac_csv=`echo ${mac_address}|tr ":" ","`
-                echo ${DATE}", "${DEVICE}$((i+1))","${mac_csv}","${mac_name} >> $SAVETO
-                mac_prev=$mac
-                mac_wait_time=$((SECONDS + MAC_WAIT_SEC ))
+#   echo $UIN
+    for (( j=0; j < 6; j+=2 )); do
+        delimiter=`echo $UIN|cut -d" " -f$((j+1))`
+        mac=`echo $UIN|cut -d" " -f$((j+2))`
+        if [ "${delimiter}" = "'" ] && [ -n $mac ]; then
+            DATE=`date "+%Y/%m/%d %R"`
+            echo -n ${DATE}", "${mac}" "
+            for (( i=0; i < $MAC_NUM; i++ )); do
+                mac_array=(${MAC_LIST[$i]})
+                mac_address=(${mac_array[0]})
+                mac_name=(${mac_array[1]})
+                if [ "${mac_address}" = "${mac}" ] && [ "${mac_prev}" != "${mac}" ] ; then
+                    echo $mac_name
+                    mac_csv=`echo ${mac_address}|tr ":" ","`
+                    echo ${DATE}", "${DEVICE}$((i+1))","${mac_csv}","${mac_name} >> $SAVETO
+                    mac_prev=$mac
+                    mac_wait_time=$((SECONDS + MAC_WAIT_SEC ))
 
-                ################################
-                # ここに検出時の処理を記述する #
-                ################################
+                    ################################
+                    # ここに検出時の処理を記述する #
+                    ################################
 
-                break
+                    break
+                fi
+            done
+            if [ $i -eq $MAC_NUM ]; then
+                echo
             fi
-        done
-        if [ $i -eq $MAC_NUM ]; then
-            echo
         fi
-    fi
+    done
     if [ $SECONDS -gt $mac_wait_time ]; then
         mac_prev=""
     fi
