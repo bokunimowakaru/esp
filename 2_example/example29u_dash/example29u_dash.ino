@@ -25,7 +25,7 @@ extern "C" {
 }
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_EN 13                           // IO 13 をLEDなどへ接続
-#define PIN_HOLD 500                        // 検出時の保持時間を設定(500ms)
+int PIN_HOLD=500;                           // 検出時の保持時間を設定(500ms)
 int channel;                                // 無線LAN物理チャンネル
 unsigned long reset_time;                   // LED消灯時刻
 char uart[17];                              // UART受信バッファ
@@ -61,6 +61,40 @@ void loop(){
             if(!strncmp(uart,"channel=",8)){// チャンネル設定コマンドの時
                 promiscuous_stop();         // プロミスキャスを停止
                 channel=atoi(uart+8);       // チャンネルを変更
+                if(channel<1 || channel>12) channel=(channel%12)+1;
+                Serial.print("' adash channel=");
+                Serial.println(channel);
+                promiscuous_start(channel); // プロミスキャスモードへ移行する
+                promiscuous_ready();        // 検知処理完了
+            }
+            if(!strncmp(uart,"filter=",6)){ // フィルタのレベル入力
+                switch(atoi(uart+6)){
+                    case 0:
+                        promiscuous_fchold(0);
+                        PIN_HOLD=1;
+                        break;
+                    case 1:
+                        promiscuous_fchold(0);
+                        PIN_HOLD=500;
+                        break;
+                    case 3:
+                        promiscuous_fchold(1);
+                        PIN_HOLD=1000;
+                        break;
+                    case 4:
+                        promiscuous_fchold(1);
+                        PIN_HOLD=3000;
+                        break;
+                    case 5:
+                        promiscuous_fchold(1);
+                        PIN_HOLD=10000;
+                        break;
+                    case 2:
+                    default:
+                        promiscuous_fchold(1);
+                        PIN_HOLD=500;
+                        break;
+                }
                 if(channel<1 || channel>12) channel=(channel%12)+1;
                 Serial.print("' adash channel=");
                 Serial.println(channel);

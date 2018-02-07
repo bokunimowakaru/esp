@@ -23,6 +23,7 @@ extern "C" {
 #define MAC_SKIP_N 64						// MAC情報表示の表示間隔(重複作動)
 
 boolean DEBUG_MAC=1;
+boolean _mac_fc_hold=0;
 byte _mac_prev[6];
 unsigned int _fc_prev;
 volatile int _mac_prev_n=0;
@@ -41,9 +42,11 @@ static void ICACHE_FLASH_ATTR promisc_cb(uint8_t *buf, uint16_t len){
 	const uint8_t broadcast[6]={0xff,0xff,0xff,0xff,0xff,0xff};
 	
 	if(memcmp(mac->addr2,mac->addr3,6)==0)return;	// ビーコンの除去
-	if(_mac_prev_n && !memcmp(_mac_prev,mac->addr2,6) && _fc_prev == mac->frameControl){
-		_mac_prev_n++;
-		if( (_mac_prev_n%MAC_SKIP_N) !=(MAC_SKIP_N-1) ) return;
+	if(_mac_prev_n && !memcmp(_mac_prev,mac->addr2,6)){
+		if( _mac_fc_hold || _fc_prev == mac->frameControl){
+			_mac_prev_n++;
+			if( (_mac_prev_n%MAC_SKIP_N) !=(MAC_SKIP_N-1) ) return;
+		}
 	}
 	memcpy(_mac_prev,mac->addr2,6);
 	_fc_prev=mac->frameControl;
@@ -141,4 +144,8 @@ int promiscuous_ready(){
 	int n=_mac_prev_n;
 	_mac_prev_n=0;
 	return n;
+}
+
+void promiscuous_fchold(boolean in){
+	_mac_fc_hold=in;
 }
