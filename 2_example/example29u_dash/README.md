@@ -14,6 +14,54 @@ Copyright (c) 2017-2018 Wataru KUNINO
 `' xx:xx:xx:xx:xx:xx`  
 `' xx:xx:xx:xx:xx:xx`  
 
+* シリアル速度は115200bps
+
+* 入力パラメータ：シリアルからコマンドを入力して変更
+    
+    ???
+        シリアル動作確認
+        
+    channel=1～12
+        検出したい Wi-Fiチャンネルを指定する
+        
+    channel?
+        Wi-Fiチャンネルを確認する
+        
+    filter=0～5
+        0: フィルタなし
+        2: (標準)0.5秒以内に検出した同じMACの出力を保留
+        5: 10秒以内の同じMACの出力を保留
+    
+    mode=0～3
+        0: (標準) MAC出力モード
+        1: adashモード(登録した5個までのAmazon Dashボタンの検出を出力する)
+        2: phoneモード(登録した5台までのスマートフォンの検出を出力する)
+        3: 1+2の混在モード
+        
+    adash=N,XX:XX:XX:XX:XX:XX
+        N: adash番号1～5
+        XX:XX:XX:XX:XX:XX: MACアドレス
+        
+    phone=N,XX:XX:XX:XX:XX:XX
+        N: phone番号1～5
+        XX:XX:XX:XX:XX:XX: MACアドレス
+        
+    phone?
+        phone=N,macで登録したMACアドレスを表示する
+        
+    adash?
+        adash=N,macで登録したMACアドレスを表示する
+        
+    time?
+        各機器の待ち時間情報を表示する
+        
+    wifi=0～1
+        0: OFF
+        1: ON
+        
+    save!
+        設定を保存する
+
 * 参考文献
 
 下記の情報およびソースコードを利用させていただきました(2017/9/16)。
