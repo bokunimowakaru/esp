@@ -76,6 +76,7 @@ extern "C" {
 #define WAIT_A 10000                        // adash用の保持時間 10 秒
 #define WAIT_P 15000000                     // phone用の保持時間 4 時間 10分
 #define FILENAME "/adash.ini"               // 設定ファイル名
+#define SPIFFS                              // SPIFFS使用時に定義する
 int PIN_HOLD=500;                           // 検出時の保持時間を設定(500ms)
 unsigned long reset_time;                   // LED消灯時刻
 char uart[33];                              // UART受信バッファ
@@ -179,6 +180,7 @@ void setup(){                               // 起動時に一度だけ実行す
     memset(phone,0,30);
     for(byte i=0;i<5;i++) adash_time[i]=0;
     for(byte i=0;i<5;i++) phone_time[i]=0;
+    #ifdef SPIFFS
     while(!SPIFFS.begin()) delay(100);      // ファイルシステムの開始
     File file = SPIFFS.open(FILENAME,"r");  // 設定ファイルを開く
     if(!file){
@@ -188,6 +190,7 @@ void setup(){                               // 起動時に一度だけ実行す
         load(&file);
         file.close();                       // ファイルを閉じる
     }
+    #endif // SPIFFS
     set_filter(filter);
     promiscuous_uart(false);                // ライブラリ側のUART出力を無効に
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
@@ -325,6 +328,7 @@ void loop(){
                 }
             }
             if(!strncmp(uart,"save!",5)){   // 設定の保存
+                #ifdef SPIFFS
                 File file = SPIFFS.open(FILENAME,"w");
                 if(file){
                     save(&file);
@@ -332,7 +336,7 @@ void loop(){
                     Serial.println(FILENAME);
                     file.close();
                 }
-
+                #endif // SPIFFS
             }
             if(!strncmp(uart,"???",3)){     // 登録済みMAC表示
                 Serial.println("' adash https://goo.gl/McJuV5");
