@@ -74,7 +74,7 @@ extern "C" {
 #include <FS.h>
 #define PIN_EN 13                           // IO 13 をLEDなどへ接続
 #define WAIT_A 10000                        // adash用の保持時間 10 秒
-#define WAIT_P 15000000                     // adash用の保持時間 4 時間 10分
+#define WAIT_P 15000000                     // phone用の保持時間 4 時間 10分
 #define FILENAME "/adash.ini"               // 設定ファイル名
 int PIN_HOLD=500;                           // 検出時の保持時間を設定(500ms)
 unsigned long reset_time;                   // LED消灯時刻

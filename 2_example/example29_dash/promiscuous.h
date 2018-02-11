@@ -1,12 +1,12 @@
 /*
-プロミスキャスモードを用いた
-ESP8266でのAmazon Dash Button
-のイベント取得
+下記の情報およびソースコードを利用させていただきました(2017/9/16)。
 
+プロミスキャスモードを用いたESP8266でのAmazon Dash Buttonのイベント取得
 http://qiita.com/kat-kai/items/3b1d5c74138d77a27c4d
-http://qiita.com/kat-kai
-*/
 
+ライセンス：Qiita利用規約に基づく
+権利者：kat-kai http://qiita.com/kat-kai (2016年12月29日～2017年01月08日)
+*/
 
 struct RxControl {
     signed rssi:8;
