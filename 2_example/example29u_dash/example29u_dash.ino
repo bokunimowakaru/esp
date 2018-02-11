@@ -113,6 +113,7 @@ boolean mac_print(byte *mac){
         if(i != 5)Serial.print(":");
     }
     Serial.println();
+    return true;
 }
 
 boolean load(File *file){
@@ -137,13 +138,42 @@ void save(File *file){
     file->write(phone[0],30);
 }
 
+byte set_filter(byte i){
+    switch(i){
+        case 0:
+            promiscuous_fchold(0);
+            PIN_HOLD=1;
+            break;
+        case 1:
+            promiscuous_fchold(0);
+            PIN_HOLD=500;
+            break;
+        case 2:
+            promiscuous_fchold(1);
+            PIN_HOLD=500;
+            break;
+        case 3:
+            promiscuous_fchold(1);
+            PIN_HOLD=1000;
+            break;
+        case 4:
+            promiscuous_fchold(1);
+            PIN_HOLD=3000;
+            break;
+        case 5:
+            promiscuous_fchold(1);
+            PIN_HOLD=10000;
+            break;
+        default: i=0xFF;
+    }
+    return i;
+}
+
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_EN,OUTPUT);                 // LEDなど用の出力
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     channel=wifi_get_channel();             // チャンネルを取得
-    promiscuous_uart(false);                // ライブラリ側のUART出力を無効に
-    promiscuous_start(channel);             // プロミスキャスモードへ移行する
     memset(uart,0,33);                      // UART受信バッファの初期化
     memset(adash,0,30);
     memset(phone,0,30);
@@ -158,6 +188,9 @@ void setup(){                               // 起動時に一度だけ実行す
         load(&file);
         file.close();                       // ファイルを閉じる
     }
+    set_filter(filter);
+    promiscuous_uart(false);                // ライブラリ側のUART出力を無効に
+    promiscuous_start(channel);             // プロミスキャスモードへ移行する
 }
 
 void loop(){
@@ -225,33 +258,7 @@ void loop(){
             }
             if(!strncmp(uart,"filter=",7)){ // フィルタのレベル入力
                 i=(byte)atoi(uart+7);
-                switch(i){
-                    case 0:
-                        promiscuous_fchold(0);
-                        PIN_HOLD=1;
-                        break;
-                    case 1:
-                        promiscuous_fchold(0);
-                        PIN_HOLD=500;
-                        break;
-                    case 2:
-                        promiscuous_fchold(1);
-                        PIN_HOLD=500;
-                        break;
-                    case 3:
-                        promiscuous_fchold(1);
-                        PIN_HOLD=1000;
-                        break;
-                    case 4:
-                        promiscuous_fchold(1);
-                        PIN_HOLD=3000;
-                        break;
-                    case 5:
-                        promiscuous_fchold(1);
-                        PIN_HOLD=10000;
-                        break;
-                    default: i=0xFF;
-                }
+                i=set_filter(i);
                 if(i<=5){
                     filter=i;
                     promiscuous_ready();
