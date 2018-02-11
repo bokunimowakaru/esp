@@ -1,8 +1,8 @@
 new
-' IchigoJam ֳ BASIC ��۸���
-1 ?"WiFi �ݻ for IchigoJam"
-2 M=0:'0:MAC, 3:���޲� Ҳ
-3 W=1:'WiFi�����
+' IchigoJam Ö³ BASIC ÌßÛ¸Þ×Ñ
+1 ?"WiFi ¾Ý» for IchigoJam"
+2 M=0:'0:MAC, 3:ÃÞÊÞ²½ Ò²
+3 W=1:'WiFiÁ¬ÝÈÙ
 100 'init
 110 uart 3
 120 ?"mode=";M
@@ -17,7 +17,7 @@ new
 300 'det
 310 if inkey() goto 310
 320 if inkey()<>asc("'") goto 320
-330 if inkey() '
+330 if inkey()<>asc(" ") goto 300
 340 I=0:C=0:N=0
 500 'get
 510 K=inkey()
@@ -30,5 +30,5 @@ new
 800 'print
 810 if C=asc("a") ?"adash ";
 820 if C=asc("p") ?"phone ";
-830 ? chr$(N);" � �ݼ�¼ϼ�
+830 ? chr$(N);" ¦ ¹Ý¼­Â¼Ï¼À
 840 goto 300
