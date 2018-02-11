@@ -70,13 +70,12 @@ Example 29: MACブロードキャスト／ Amazon Dash ボタン検出
 extern "C" {
 #include "user_interface.h"                 // ESP8266用の拡張IFライブラリ
 }
-#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <FS.h>
 #define PIN_EN 13                           // IO 13 をLEDなどへ接続
 #define WAIT_A 10000                        // adash用の保持時間 10 秒
 #define WAIT_P 15000000                     // phone用の保持時間 4 時間 10分
 #define FILENAME "/adash.ini"               // 設定ファイル名
-#define SPIFFS                              // SPIFFS使用時に定義する
+#define SPIFFS_ON                           // SPIFFS使用時に定義する
 int PIN_HOLD=500;                           // 検出時の保持時間を設定(500ms)
 unsigned long reset_time;                   // LED消灯時刻
 char uart[33];                              // UART受信バッファ
@@ -180,7 +179,7 @@ void setup(){                               // 起動時に一度だけ実行す
     memset(phone,0,30);
     for(byte i=0;i<5;i++) adash_time[i]=0;
     for(byte i=0;i<5;i++) phone_time[i]=0;
-    #ifdef SPIFFS
+    #ifdef SPIFFS_ON
     while(!SPIFFS.begin()) delay(100);      // ファイルシステムの開始
     File file = SPIFFS.open(FILENAME,"r");  // 設定ファイルを開く
     if(!file){
@@ -328,7 +327,7 @@ void loop(){
                 }
             }
             if(!strncmp(uart,"save!",5)){   // 設定の保存
-                #ifdef SPIFFS
+                #ifdef SPIFFS_ON
                 File file = SPIFFS.open(FILENAME,"w");
                 if(file){
                     save(&file);
