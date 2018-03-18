@@ -43,11 +43,11 @@ mac_wait_time=0
 while true; do                                      # 永久に繰り返し
     UIN=`timeout 1 cat ${UART}`
 #   echo $UIN
+    DATE=`date "+%Y/%m/%d %R"`
     for (( j=0; j < 6; j+=2 )); do
         delimiter=`echo $UIN|cut -d" " -f$((j+1))`
         mac=`echo $UIN|cut -d" " -f$((j+2))`
         if [ "${delimiter}" = "'" ] && [ -n $mac ]; then
-            DATE=`date "+%Y/%m/%d %R"`
             echo -n ${DATE}", "${mac}" "
             for (( i=0; i < $MAC_NUM; i++ )); do
                 mac_array=(${MAC_LIST[$i]})
