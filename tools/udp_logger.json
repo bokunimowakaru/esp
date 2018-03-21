@@ -3,9 +3,9 @@
 
 [
     {
-        "id": "30518eb3.63218a",
+        "id": "61178489.2868e",
         "type": "udp in",
-        "z": "b8f0b1a3.4f27e",
+        "z": "d560d569.692158",
         "name": "",
         "iface": "",
         "port": "1024",
@@ -17,26 +17,26 @@
         "y": 40,
         "wires": [
             [
-                "70ff5eb6.fa20ac"
+                "d059b3fb.51bed"
             ]
         ]
     },
     {
-        "id": "cc7b2714.a6faf",
+        "id": "9ac43b37.268f28",
         "type": "debug",
-        "z": "b8f0b1a3.4f27e",
+        "z": "d560d569.692158",
         "name": "",
         "active": true,
         "console": "false",
         "complete": "false",
-        "x": 350,
+        "x": 330,
         "y": 260,
         "wires": []
     },
     {
-        "id": "b2feb100.af844",
+        "id": "dcab69df.cf1e78",
         "type": "csv",
-        "z": "b8f0b1a3.4f27e",
+        "z": "d560d569.692158",
         "name": "",
         "sep": ",",
         "hdrin": "",
@@ -44,35 +44,36 @@
         "multi": "one",
         "ret": "\\n",
         "temp": "",
-        "x": 230,
-        "y": 200,
+        "skip": 0,
+        "x": 110,
+        "y": 160,
         "wires": [
             [
-                "cc7b2714.a6faf"
+                "f031bc93.6a56b"
             ]
         ]
     },
     {
-        "id": "70ff5eb6.fa20ac",
+        "id": "d059b3fb.51bed",
         "type": "function",
-        "z": "b8f0b1a3.4f27e",
+        "z": "d560d569.692158",
         "name": "add_date",
         "func": "var date   = new Date();\nvar year   = date.getFullYear();\nvar month  = ( '00' + (date.getMonth()+1) ).slice(-2);\nvar day    = ( '00' + date.getDate()      ).slice(-2);\nvar hour   = ( '00' + date.getHours()     ).slice(-2);\nvar minute = ( '00' + date.getMinutes()   ).slice(-2);\n\nvar newMsg = year + '/' + month + '/' + day + ' ';\n    newMsg = newMsg + hour + ':' + minute + ', ';\n    newMsg = {payload: newMsg + msg.payload};\n\nreturn newMsg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 140,
-        "y": 120,
+        "x": 100,
+        "y": 100,
         "wires": [
             [
-                "b2feb100.af844",
-                "1e7a3e2f.97d6c6"
+                "dcab69df.cf1e78",
+                "86ebb676.97dc98"
             ]
         ]
     },
     {
-        "id": "1e7a3e2f.97d6c6",
+        "id": "86ebb676.97dc98",
         "type": "file",
-        "z": "b8f0b1a3.4f27e",
+        "z": "d560d569.692158",
         "name": "",
         "filename": "/home/pi/log_udp.csv",
         "appendNewline": false,
@@ -81,5 +82,31 @@
         "x": 360,
         "y": 140,
         "wires": []
+    },
+    {
+        "id": "f031bc93.6a56b",
+        "type": "switch",
+        "z": "d560d569.692158",
+        "name": "grep_device",
+        "property": "payload.col2",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "regex",
+                "v": ".{5}_?",
+                "vt": "str",
+                "case": false
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "9ac43b37.268f28"
+            ]
+        ]
     }
 ]
