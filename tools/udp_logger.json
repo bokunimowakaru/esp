@@ -1,0 +1,85 @@
+// Node-RED用 UDP Logger BASIC JSON形式
+// 転送時にコメント行は自動削除されます
+
+[
+    {
+        "id": "30518eb3.63218a",
+        "type": "udp in",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "iface": "",
+        "port": "1024",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 80,
+        "y": 40,
+        "wires": [
+            [
+                "70ff5eb6.fa20ac"
+            ]
+        ]
+    },
+    {
+        "id": "cc7b2714.a6faf",
+        "type": "debug",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 350,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "b2feb100.af844",
+        "type": "csv",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "",
+        "x": 230,
+        "y": 200,
+        "wires": [
+            [
+                "cc7b2714.a6faf"
+            ]
+        ]
+    },
+    {
+        "id": "70ff5eb6.fa20ac",
+        "type": "function",
+        "z": "b8f0b1a3.4f27e",
+        "name": "add_date",
+        "func": "var date   = new Date();\nvar year   = date.getFullYear();\nvar month  = ( '00' + (date.getMonth()+1) ).slice(-2);\nvar day    = ( '00' + date.getDate()      ).slice(-2);\nvar hour   = ( '00' + date.getHours()     ).slice(-2);\nvar minute = ( '00' + date.getMinutes()   ).slice(-2);\n\nvar newMsg = year + '/' + month + '/' + day + ' ';\n    newMsg = newMsg + hour + ':' + minute + ', ';\n    newMsg = {payload: newMsg + msg.payload};\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "b2feb100.af844",
+                "1e7a3e2f.97d6c6"
+            ]
+        ]
+    },
+    {
+        "id": "1e7a3e2f.97d6c6",
+        "type": "file",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "filename": "/home/pi/log_udp.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 360,
+        "y": 140,
+        "wires": []
+    }
+]
