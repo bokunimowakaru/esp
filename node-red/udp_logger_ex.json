@@ -2,6 +2,8 @@
 // UDP Logger Example
 // 各種ESP8266/ESP32用センサからの値に応じた処理を行うサンプルです。
 //
+// https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html
+//
 //                                              Copyright (c) 2018 Wataru KUNINO
 ////////////////////////////////////////////////////////////////////////////////
 //

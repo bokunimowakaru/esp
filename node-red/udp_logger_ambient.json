@@ -5,6 +5,8 @@
 // ・Ambientノードをダブルクリックし、Channel Id とWrite Keyを入力してください。
 // ・grep_deviceノードの matches regex欄へデバイス名を設定して下さい。
 //
+// https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html
+//
 //                                              Copyright (c) 2018 Wataru KUNINO
 ////////////////////////////////////////////////////////////////////////////////
 //
