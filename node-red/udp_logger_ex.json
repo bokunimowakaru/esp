@@ -1,0 +1,249 @@
+////////////////////////////////////////////////////////////////////////////////
+// UDP Logger Example
+// 各種ESP8266/ESP32用センサからの値に応じた処理を行うサンプルです。
+//
+// https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html
+//
+//                                              Copyright (c) 2018 Wataru KUNINO
+////////////////////////////////////////////////////////////////////////////////
+//
+// Node-RED用 UDP Logger Example JSON形式
+// コメント行は転送時に自動削除されます
+//
+[
+    {
+        "id": "1e7a3e2f.97d6c6",
+        "type": "file",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "filename": "/home/pi/log_udp.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 400,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "30518eb3.63218a",
+        "type": "udp in",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "iface": "",
+        "port": "1024",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 80,
+        "y": 40,
+        "wires": [
+            [
+                "70ff5eb6.fa20ac",
+                "b2feb100.af844",
+                "dcca78ff.f00a08"
+            ]
+        ]
+    },
+    {
+        "id": "b2feb100.af844",
+        "type": "csv",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "",
+        "x": 90,
+        "y": 120,
+        "wires": [
+            [
+                "4cab7bf5.31963c"
+            ]
+        ]
+    },
+    {
+        "id": "70ff5eb6.fa20ac",
+        "type": "function",
+        "z": "b8f0b1a3.4f27e",
+        "name": "add_date",
+        "func": "var date   = new Date();\nvar year   = date.getFullYear();\nvar month  = ( '00' + (date.getMonth()+1) ).slice(-2);\nvar day    = ( '00' + date.getDate()      ).slice(-2);\nvar hour   = ( '00' + date.getHours()     ).slice(-2);\nvar minute = ( '00' + date.getMinutes()   ).slice(-2);\n\nvar newMsg = year + '/' + month + '/' + day + ' ';\n    newMsg = newMsg + hour + ':' + minute + ', ';\n    newMsg = {payload: newMsg + msg.payload};\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 280,
+        "y": 80,
+        "wires": [
+            [
+                "1e7a3e2f.97d6c6"
+            ]
+        ]
+    },
+    {
+        "id": "4cab7bf5.31963c",
+        "type": "switch",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "property": "payload.col1",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "humid_1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "meter_1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Ping",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 3,
+        "x": 90,
+        "y": 220,
+        "wires": [
+            [
+                "53db0977.3ede0c"
+            ],
+            [
+                "5f66cac7.fb434"
+            ],
+            [
+                "b2e8dfa7.07e3",
+                "dcca78ff.f00a08"
+            ]
+        ]
+    },
+    {
+        "id": "53db0977.3ede0c",
+        "type": "csv",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "sep": ",",
+        "hdrin": false,
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "col1,col2,col3",
+        "x": 270,
+        "y": 200,
+        "wires": [
+            [
+                "907a08fe.eba4b8"
+            ]
+        ]
+    },
+    {
+        "id": "907a08fe.eba4b8",
+        "type": "function",
+        "z": "b8f0b1a3.4f27e",
+        "name": "add_date",
+        "func": "var date   = new Date();\nvar year   = date.getFullYear();\nvar month  = ( '00' + (date.getMonth()+1) ).slice(-2);\nvar day    = ( '00' + date.getDate()      ).slice(-2);\nvar hour   = ( '00' + date.getHours()     ).slice(-2);\nvar minute = ( '00' + date.getMinutes()   ).slice(-2);\n\nvar newMsg = year + '/' + month + '/' + day + ' ';\n    newMsg = newMsg + hour + ':' + minute + ', ';\n    newMsg = {payload: newMsg + msg.payload};\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 360,
+        "y": 240,
+        "wires": [
+            [
+                "3b2427d2.09fc3c"
+            ]
+        ]
+    },
+    {
+        "id": "3b2427d2.09fc3c",
+        "type": "file",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "filename": "/home/pi/log_humid_1.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 410,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "5f66cac7.fb434",
+        "type": "csv",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "sep": ",",
+        "hdrin": false,
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "col1,col2",
+        "x": 270,
+        "y": 340,
+        "wires": [
+            [
+                "ff08f98e.e93598"
+            ]
+        ]
+    },
+    {
+        "id": "ff08f98e.e93598",
+        "type": "function",
+        "z": "b8f0b1a3.4f27e",
+        "name": "add_date",
+        "func": "var date   = new Date();\nvar year   = date.getFullYear();\nvar month  = ( '00' + (date.getMonth()+1) ).slice(-2);\nvar day    = ( '00' + date.getDate()      ).slice(-2);\nvar hour   = ( '00' + date.getHours()     ).slice(-2);\nvar minute = ( '00' + date.getMinutes()   ).slice(-2);\n\nvar newMsg = year + '/' + month + '/' + day + ' ';\n    newMsg = newMsg + hour + ':' + minute + ', ';\n    newMsg = {payload: newMsg + msg.payload};\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 360,
+        "y": 380,
+        "wires": [
+            [
+                "1ae8b591.ee91aa"
+            ]
+        ]
+    },
+    {
+        "id": "1ae8b591.ee91aa",
+        "type": "file",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "filename": "/home/pi/log_meter_1.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 410,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "b2e8dfa7.07e3",
+        "type": "http request",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://192.168.0.14/?TEXT=konnichiwa",
+        "tls": "",
+        "x": 290,
+        "y": 480,
+        "wires": [
+            [
+                "dcca78ff.f00a08"
+            ]
+        ]
+    },
+    {
+        "id": "dcca78ff.f00a08",
+        "type": "debug",
+        "z": "b8f0b1a3.4f27e",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 370,
+        "y": 520,
+        "wires": []
+    }
+]

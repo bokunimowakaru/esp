@@ -12,7 +12,8 @@ if [ ! -e "./aquestalkpi/AquesTalkPi" ]; then
     case $yes in
     yes)
     echo "ダウンロードを実行中です。"
-    wget http://www.a-quest.com/download/package/aquestalkpi-20130827.tgz
+    # wget http://www.a-quest.com/download/package/aquestalkpi-20130827.tgz
+    wget https://www.a-quest.com/archive/package/aquestalkpi-20130827.tgz
     echo "インストールを実行中です。"
     tar xzvf aquestalkpi-*.tgz
     echo "セットアップ完了です。"

@@ -1,0 +1,122 @@
+////////////////////////////////////////////////////////////////////////////////
+// UDP Logger BASIC
+// 各種ESP8266/ESP32用センサが送信したCSV形式のセンサ値をファイルへ保存します。
+// 保存先：/home/pi/log_udp.csv
+//
+// https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html
+//
+//                                              Copyright (c) 2018 Wataru KUNINO
+////////////////////////////////////////////////////////////////////////////////
+//
+// Node-RED用 UDP Logger BASIC JSON形式
+// コメント行は転送時に自動削除されます
+//
+[
+    {
+        "id": "61178489.2868e",
+        "type": "udp in",
+        "z": "d560d569.692158",
+        "name": "",
+        "iface": "",
+        "port": "1024",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 80,
+        "y": 40,
+        "wires": [
+            [
+                "d059b3fb.51bed"
+            ]
+        ]
+    },
+    {
+        "id": "9ac43b37.268f28",
+        "type": "debug",
+        "z": "d560d569.692158",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 330,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "dcab69df.cf1e78",
+        "type": "csv",
+        "z": "d560d569.692158",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "",
+        "skip": 0,
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "f031bc93.6a56b"
+            ]
+        ]
+    },
+    {
+        "id": "d059b3fb.51bed",
+        "type": "function",
+        "z": "d560d569.692158",
+        "name": "add_date",
+        "func": "var date   = new Date();\nvar year   = date.getFullYear();\nvar month  = ( '00' + (date.getMonth()+1) ).slice(-2);\nvar day    = ( '00' + date.getDate()      ).slice(-2);\nvar hour   = ( '00' + date.getHours()     ).slice(-2);\nvar minute = ( '00' + date.getMinutes()   ).slice(-2);\n\nvar newMsg = year + '/' + month + '/' + day + ' ';\n    newMsg = newMsg + hour + ':' + minute + ', ';\n    newMsg = {payload: newMsg + msg.payload};\n\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 100,
+        "y": 100,
+        "wires": [
+            [
+                "dcab69df.cf1e78",
+                "86ebb676.97dc98"
+            ]
+        ]
+    },
+    {
+        "id": "86ebb676.97dc98",
+        "type": "file",
+        "z": "d560d569.692158",
+        "name": "",
+        "filename": "/home/pi/log_udp.csv",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 360,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "f031bc93.6a56b",
+        "type": "switch",
+        "z": "d560d569.692158",
+        "name": "grep_device",
+        "property": "payload.col2",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "regex",
+                "v": ".{5}_?",
+                "vt": "str",
+                "case": false
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "9ac43b37.268f28"
+            ]
+        ]
+    }
+]
