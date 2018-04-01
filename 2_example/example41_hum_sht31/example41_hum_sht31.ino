@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 41 (=32+9): 湿度センサ HDC1000
+Example 41 (=32+9): 湿度センサ SENSIRION社 SHT31
 
     ESP32 Arduino IDE版のI2Cポート:
                         I2C SDAポート GPIO 21
@@ -23,7 +23,7 @@ void setup(){                               // 起動時に一度だけ実行す
     int waiting=0;                          // アクセスポイント接続待ち用
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
     digitalWrite(PIN_EN,HIGH);              // センサ用の電源をONに
-    hdcSetup();                             // 湿度センサの初期化
+    shtSetup();                             // 湿度センサの初期化
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("ESP32 eg.09 HUM");      // 「Example 09」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
