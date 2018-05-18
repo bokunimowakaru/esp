@@ -38,6 +38,7 @@ stty --file ${UART} 115200 igncr
 echo > ${UART}
 echo "channel=${WIFI_CH}" > ${UART}
 echo "filter=${FILTER}" > ${UART}
+echo "mode=0" > ${UART}
 mac_prev=""
 mac_wait_time=0
 while true; do                                      # 永久に繰り返し
