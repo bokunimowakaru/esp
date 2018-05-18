@@ -1,17 +1,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 // UDP Logger Ambient
-// ŠeŽíESP8266/ESP32—pƒZƒ“ƒT‚©‚çŽóM‚µ‚½ƒf[ƒ^‚ðAmbient‚Ö‘—M‚·‚éƒTƒ“ƒvƒ‹‚Å‚·B
+// å„ç¨®ESP8266/ESP32ç”¨ã‚»ãƒ³ã‚µã‹ã‚‰å—ä¿¡ã—ãŸãƒ‡ãƒ¼ã‚¿ã‚’Ambientã¸é€ä¿¡ã™ã‚‹ã‚µãƒ³ãƒ—ãƒ«ã§ã™ã€‚
 //
-// EAmbientƒm[ƒh‚ðƒ_ƒuƒ‹ƒNƒŠƒbƒN‚µAChannel Id ‚ÆWrite Key‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B
-// Egrep_deviceƒm[ƒh‚Ì matches regex—“‚ÖƒfƒoƒCƒX–¼‚ðÝ’è‚µ‚Ä‰º‚³‚¢B
+// ãƒ»AmbientãƒŽãƒ¼ãƒ‰ã‚’ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã—ã€Channel Id ã¨Write Keyã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚
+// ãƒ»grep_deviceãƒŽãƒ¼ãƒ‰ã® matches regexæ¬„ã¸ãƒ‡ãƒã‚¤ã‚¹åã‚’è¨­å®šã—ã¦ä¸‹ã•ã„ã€‚
 //
 // https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html
 //
 //                                              Copyright (c) 2018 Wataru KUNINO
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Node-RED—p UDP Logger Example JSONŒ`Ž®
-// ƒRƒƒ“ƒgs‚Í“]‘—Žž‚ÉŽ©“®íœ‚³‚ê‚Ü‚·
+// Node-REDç”¨ UDP Logger Example JSONå½¢å¼
+// ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã¯è»¢é€æ™‚ã«è‡ªå‹•å‰Šé™¤ã•ã‚Œã¾ã™
 //
 [
     {
