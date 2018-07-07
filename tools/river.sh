@@ -23,33 +23,32 @@
 # curl -v "http://www.river.go.jp/kawabou/ipSuiiKobetu.do?obsrvId=2206800400013&gamenId=01-1003&stgGrpKind=survOnly&fvrt=yes&timeType=10"
 # DATA=`curl -v "http://www.river.go.jp/kawabou/ipSuiiKobetu.do?obsrvId="${RIVER_SPOT_ID}"&gamenId=01-1003&stgGrpKind=survOnly&fvrt=yes&timeType=10"|tr -d "\n\r\t"|tr '<' '\n'|grep -e "td width=\"30%\" class=\"tb1td1Right\">" -e "td width=\"21%\" class=\"tb1td2Right\""|cut -d'>' -f2|tail -2|tr '\n' ' '`
 
-IP_TO="127.0.0.1"						# UDP送信先IPアドレス
-PORT_TO=1024							# UDP送信先ポート番号
-DEVICE="river_1"						# 本機デバイス名
-
-RIVER_SPOT_ID="2206800400013"			# 2206800400013 = 淀川
-RIVER_DEPTH_MAX=500             		# 氾濫水位 1cm単位の整数
-RIVER_DEPTH_ALRT=440             		# 避難水位 1cm単位の整数
-RIVER_DEPTH_WARN=380             		# 待機水位 1cm単位の整数
+RIVER_SPOT_ID="2206800400013"           # 2206800400013 = 淀川
+RIVER_DEPTH_MAX=500                     # 氾濫水位 1cm単位の整数
+RIVER_DEPTH_ALRT=440                    # 避難水位 1cm単位の整数
+RIVER_DEPTH_WARN=380                    # 待機水位 1cm単位の整数
+IP_TO="127.0.0.1"                       # UDP送信先IPアドレス
+PORT_TO=1024                            # UDP送信先ポート番号
+DEVICE="river_1"                        # 本機デバイス名
 
 while true; do
-	DATA=`curl -s "http://www.river.go.jp/kawabou/ipSuiiKobetu.do?obsrvId="${RIVER_SPOT_ID}"&gamenId=01-1003&stgGrpKind=survOnly&fvrt=yes&timeType=10"\
-		|tr -d "\n\r\t"|tr '<' '\n'\
-		|grep -e "td width=\"30%\" class=\"tb1td1Right\">" -e "td width=\"21%\" class=\"tb1td2Right\""\
-		|cut -d'>' -f2|tail -2|tr '\n' ' '`
-	DATE_NOW=`date "+%Y/%m/%d %R"`
-	DATE_DAT=`echo ${DATA}|cut -d' ' -f1-2|tr '/' ','|tr ' ' ','|tr ':' ','`
-	DEPTH=`echo ${DATA}|cut -d' ' -f3`
-	depth=`echo "${DEPTH} * 100"|bc|awk '{printf "%d",$1}'`
-	echo -E $DATE_NOW, ${DEVICE},${DATE_DAT},${depth}
-	sudo echo -E ${DEVICE},${DATE_DAT},${depth} > /dev/udp/${IP_TO}/${PORT_TO}
-	if [ $depth -ge $RIVER_DEPTH_MAX ]; then
-		sleep 59
-	elif [ $depth -ge $RIVER_DEPTH_ALRT ]; then
-		sleep 178
-	elif [ $depth -ge $RIVER_DEPTH_WARN ]; then
-		sleep 590
-	else
-		sleep 3540
-	fi
+    DATA=`curl -s "http://www.river.go.jp/kawabou/ipSuiiKobetu.do?obsrvId="${RIVER_SPOT_ID}"&gamenId=01-1003&stgGrpKind=survOnly&fvrt=yes&timeType=10"\
+        |tr -d "\n\r\t"|tr '<' '\n'\
+        |grep -e "td width=\"30%\" class=\"tb1td1Right\">" -e "td width=\"21%\" class=\"tb1td2Right\""\
+        |cut -d'>' -f2|tail -2|tr '\n' ' '`
+    DATE_NOW=`date "+%Y/%m/%d %R"`
+    DATE_DAT=`echo ${DATA}|cut -d' ' -f1-2|tr '/' ','|tr ' ' ','|tr ':' ','`
+    DEPTH=`echo ${DATA}|cut -d' ' -f3`
+    depth=`echo "${DEPTH} * 100"|bc|awk '{printf "%d",$1}'`
+    echo -E $DATE_NOW, ${DEVICE},${DATE_DAT},${depth}
+#   sudo echo -E ${DEVICE},${DATE_DAT},${depth} > /dev/udp/${IP_TO}/${PORT_TO}
+    if [ $depth -ge $RIVER_DEPTH_MAX ]; then
+        sleep 59
+    elif [ $depth -ge $RIVER_DEPTH_ALRT ]; then
+        sleep 178
+    elif [ $depth -ge $RIVER_DEPTH_WARN ]; then
+        sleep 590
+    else
+        sleep 3540
+    fi
 done
