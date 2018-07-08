@@ -40,6 +40,9 @@ while true; do
     DATE_DAT=`echo ${DATA}|cut -d' ' -f1-2|tr '/' ','|tr ' ' ','|tr ':' ','`
     DEPTH=`echo ${DATA}|cut -d' ' -f3`
     depth=`echo "${DEPTH} * 100"|bc|awk '{printf "%d",$1}'`
+    if [ -n ${depth} ]; then
+        depth=0
+    fi
     echo -E $DATE_NOW, ${DEVICE},${DATE_DAT},${depth}
 #   sudo echo -E ${DEVICE},${DATE_DAT},${depth} > /dev/udp/${IP_TO}/${PORT_TO}
     if [ $depth -ge $RIVER_DEPTH_MAX ]; then
