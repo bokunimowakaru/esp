@@ -42,8 +42,8 @@ while true; do
     DATE_DAT=`echo ${DATA}|cut -d' ' -f1-2|tr '/' ','|tr ' ' ','|tr ':' ','`
     DEPTH=`echo ${DATA}|cut -d' ' -f3`
     depth=`echo "${DEPTH} * 100"|bc|awk '{printf "%d",$1}'`
-    if [ -z ${depth} ]; then
-        if [ -n ${URL_OPTION} ]; then
+    if [ -z "${depth}" ]; then
+        if [ -n "${URL_OPTION}" ]; then
             URL_OPTION=""
             echo "ERROR: no depth in 10 min.'s data"
             continue
