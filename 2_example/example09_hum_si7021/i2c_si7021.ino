@@ -18,27 +18,27 @@ float getTemp(){
     _i2c_si7021_hum=-999.;
     Wire.beginTransmission(I2C_si7021);
     Wire.write(0xF5);
-    if( Wire.endTransmission() == 0){
-        delay(30);              // 15ms以上
-        Wire.requestFrom(I2C_si7021,2);
-        if(Wire.available()==0) return -999.;
-        hum = Wire.read();
-        hum <<= 8;
-        if(Wire.available()==0) return -999.;
-        hum += Wire.read();
-    }else return -999.;
+    if(Wire.endTransmission()) return -999.;
+    
+    delay(30);                  // 15ms以上
+    Wire.requestFrom(I2C_si7021,2);
+    if(Wire.available()!=2) return -999.;
+    hum = Wire.read();
+    hum <<= 8;
+    hum += Wire.read();
+    
     delay(18);                  // 15ms以上
     Wire.beginTransmission(I2C_si7021);
     Wire.write(0xE0);
-    if( Wire.endTransmission() == 0){
-        delay(30);              // 15ms以上
-        Wire.requestFrom(I2C_si7021,2);
-        if(Wire.available()==0) return -999.;
-        temp = Wire.read();
-        temp <<= 8;
-        if(Wire.available()==0) return -999.;
-        temp += Wire.read();
-    }else return -999.;
+    if(Wire.endTransmission()) return -989.;
+    
+    delay(30);                  // 15ms以上
+    Wire.requestFrom(I2C_si7021,2);
+    if(Wire.available()!=2) return -999.;
+    temp = Wire.read();
+    temp <<= 8;
+    temp += Wire.read();
+
     _i2c_si7021_hum = (float)hum / 65536. * 125. - 6.;
     return (float)temp / 65535. * 175.72 - 46.85;
 }
