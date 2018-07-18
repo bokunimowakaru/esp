@@ -19,26 +19,20 @@ float getTemp(){
     Wire.beginTransmission(I2C_sht);
     Wire.write(0x2C);
     Wire.write(0x06);
-    if( Wire.endTransmission() == 0){
-        delay(18);              // 15ms以上
-        Wire.requestFrom(I2C_sht,6);
-        if(Wire.available()==0) return -999.;
-        temp = Wire.read();
-        temp <<= 8;
-        if(Wire.available()==0) return -999.;
-        temp += Wire.read();
-        if(Wire.available()==0) return -999.;
-        Wire.read();
-        if(Wire.available()==0) return -999.;
-        hum = Wire.read();
-        hum <<= 8;
-        if(Wire.available()==0) return -999.;
-        hum += Wire.read();
-        if(Wire.available()==0) return -999.;
-        Wire.read();
-        _i2c_sht31_hum = (float)hum / 65535. * 100.;
-        return (float)temp / 65535. * 175. - 45.;
-    }else return -999.;
+    if(Wire.endTransmission()) return -998.;
+    delay(18);                  // 15ms以上
+    Wire.requestFrom(I2C_sht,6);
+    if(Wire.available() != 6) return -997.0;
+    temp = Wire.read();
+    temp <<= 8;
+    temp += Wire.read();
+    Wire.read();
+    hum = Wire.read();
+    hum <<= 8;
+    hum += Wire.read();
+    Wire.read();                // 未使用 not used
+    _i2c_sht31_hum = (float)hum / 65535. * 100.;
+    return (float)temp / 65535. * 175. - 45.;
 }
 
 float getHum(){
