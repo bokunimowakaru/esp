@@ -19,8 +19,8 @@ float getTemp(){
     Wire.beginTransmission(I2C_sht);
     Wire.write(0x2C);
     Wire.write(0x06);
-    delay(18);                  // 15ms以上
     if( Wire.endTransmission() == 0){
+        delay(18);              // 15ms以上
         Wire.requestFrom(I2C_sht,6);
         if(Wire.available()==0) return -999.;
         temp = Wire.read();
