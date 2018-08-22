@@ -1,7 +1,7 @@
 /*******************************************************************************
 モールス
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                           Copyright (c) 2016-2018 Wataru KUNINO
 *******************************************************************************/
 
 /*
@@ -18,7 +18,7 @@ Yoji Shidara (https://github.com/darashi)
 // #define LED 13
 // #define T 100 // speed
 
-char *morse_pattern[] = {
+char morse_pattern[26][5] = {
     "._", "_...", "_._.", "_..", ".", ".._.", "__.",
     "....", "..", ".___", "_._", "._..", "__",
     "_.", "___", ".__.", "__._", "._.", "...", "_",
@@ -37,6 +37,7 @@ void setup() {
 void morse(int output, int time, char *str) {
     int i, j, t;
     char num[6]="_____";
+    char morse_dot[7]="._._._";
     char *pattern;
 
     for (i=0; i<strlen(str); i++) {
@@ -52,28 +53,44 @@ void morse(int output, int time, char *str) {
             for(j=0;j<5;j++) if( (int)(*c - '0') >= j+6 ) num[j]='_'; else num[j]='.';
             pattern = num;
         }
-        if ( *c == '.') pattern="._._._";
+        if ( *c == '.') pattern=morse_dot;
         if(pattern){
             for (j=0; j<strlen(pattern); j++) {
                 digitalWrite(output, HIGH);
                 if(pattern[j] == '.') {
+                    ESP.wdtFeed();
                     delay(time);
-                //  Serial.print('.');
+                    Serial.print('.');
                 } 
                 else {
-                    for(t=0;t<3;t++) delay(time);
-                //  Serial.print('_');
+                    for(t=0;t<3;t++){
+                        ESP.wdtFeed();
+                        delay(time);
+                    }
+                    Serial.print('_');
                 }
                 digitalWrite(output, LOW);
+                ESP.wdtFeed();
                 delay(time);
             }
-            for(t=0;t<2;t++) delay(time);
+            for(t=0;t<2;t++){
+                ESP.wdtFeed();
+                delay(time);
+            }
         } else {
-            for(t=0;t<3;t++) delay(time);
+            for(t=0;t<3;t++){
+                ESP.wdtFeed();
+                delay(time);
+            }
         }
-    //  Serial.println();
+        Serial.print(' ');
     }
-    for(t=0;t<4;t++) delay(time);
+    Serial.println();
+    for(t=0;t<4;t++){
+        ESP.wdtFeed();
+        delay(time);
+    }
+    Serial.println("Done Morse");
 }
 
 /*
