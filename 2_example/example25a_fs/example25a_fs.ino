@@ -132,7 +132,7 @@ void loop() {
         Serial.println(&s[6]);              // シリアル出力表示
         lcdPrint2(&s[6]);                   // ファイル名またはコマンドを表示
         html(client,WiFi.localIP(),date);   // HTMLコンテンツを表示
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         return;
     }
     if(strncmp(s,"GET /?FORMAT",12)==0){    // ファイルシステム初期化コマンド
@@ -164,11 +164,11 @@ void loop() {
             }
         }
         file.close();                       // ファイルを閉じる
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         Serial.print(i);                    // ファイルサイズの表示
         Serial.println("Bytes");            // シリアル出力表示
         lcdPrintVal("Bytes",i);             // ファイルサイズを表示
         return;                             // 処理の終了・loop()の先頭へ
     }
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
 }

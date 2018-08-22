@@ -85,6 +85,6 @@ void loop(){                                // 繰り返し実行する関数
         Serial.println(s);                  // シリアルへコンテンツを出力
         client.println("</html>");          // HTML終了タグを出力(IE以外で必要)
     }
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
 }

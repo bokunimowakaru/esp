@@ -76,7 +76,7 @@ void loop(){
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
     if(strncmp(s,"GET / ",6)==0){           // コンテンツ取得命令時
         html(client,size,update,WiFi.localIP()); // コンテンツ表示
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         return;                             // 処理の終了・loop()の先頭へ
     }
     if(strncmp(s,"GET /cam.jpg",12)==0){    // 画像取得指示の場合
@@ -86,7 +86,7 @@ void loop(){
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
         size=CamGetData(client);
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         Serial.print(size);                 // ファイルサイズをシリアル出力表示
         Serial.println(" Bytes");           // シリアル出力表示
         lcdPrintVal("TX Bytes",size);       // ファイルサイズを液晶へ表示
@@ -101,6 +101,6 @@ void loop(){
     }
     for(i=6;i<strlen(s);i++) if(s[i]==' '||s[i]=='+') s[i]='\0';
     htmlMesg(client,&s[6],WiFi.localIP());  // メッセージ表示
-    client.stop();                          // クライアント切断
+//  client.stop();                          // クライアント切断
     Serial.println("Sent HTML");            // シリアル出力表示
 }

@@ -338,7 +338,7 @@ void loop(){                                    // 繰り返し実行する関�
         }
         if(!client.connected())return;
         html(client,"",rx,ip,date);             // HTMLコンテンツを出力する
-        client.stop();                          // クライアントの切断
+    //  client.stop();                          // クライアントの切断
         return;
     }else if(postF>=2 && postL>4){
         strcpy(rx,"HTTP POST データ転送");
@@ -357,13 +357,13 @@ void loop(){                                    // 繰り返し実行する関�
         }
         if(!client.connected())return;
         html(client,"",rx,ip,date);
-        client.stop();                          // クライアントの切断
+    //  client.stop();                          // クライアントの切断
         Serial.write(16);                       // IchigoJamへDLEコードを送信
         return;
     }else if(strncmp(s,"GET / ",6)==0){         // コンテンツ要求があった時
         if(!client.connected())return;          // 切断された場合はloop()の先頭へ
         html(client,"",rx,ip,date);             // HTMLコンテンツを出力する
-        client.stop();                          // クライアントの切断
+    //  client.stop();                          // クライアントの切断
         return;
     }else if(strncmp(s,"GET /",5)==0){          // コンテンツ要求時
         if(!client.connected())return;          // 切断された場合はloop()の先頭へ
@@ -394,5 +394,5 @@ void loop(){                                    // 繰り返し実行する関�
         Serial.print(i);                        // ファイルサイズの表示
         Serial.println(" Bytes");               // シリアル出力表示
     }
-    client.stop();                              // クライアントの切断
+//  client.stop();                              // クライアントの切断
 }

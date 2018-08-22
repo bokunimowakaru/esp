@@ -322,7 +322,7 @@ void loop(){                                // 繰り返し実行する関数
                             if(t>0&&client.connected())client.write((byte*)s,t);
                             file.close();                   // ファイルを閉じる
                         }
-                        client.stop();                      // クライアント切断
+                    //  client.stop();                      // クライアント切断
                         return;
                     }else if(len>6 && strncmp(s,"POST /",6)==0){
                         postF=1;            // POSTのBODY待ち状態へ
@@ -371,7 +371,7 @@ void loop(){                                // 繰り返し実行する関数
         time2txt(date,TIME+time/1000);
         Serial.print(date); Serial.println(", Done.");
     }
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
 }
 
 unsigned long getNtp(){

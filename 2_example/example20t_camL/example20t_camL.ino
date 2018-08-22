@@ -121,7 +121,7 @@ void loop() {
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
     if(strncmp(s,"GET / ",6)==0){           // コンテンツ取得命令時(撮影指示)
         html(client,size,update,WiFi.localIP()); // コンテンツ表示
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         Serial.println(" Done");
         return;                             // 処理の終了・loop()の先頭へ
     }
@@ -150,7 +150,7 @@ void loop() {
             client.println("HTTP/1.0 404 Not Found");           // Not Foundを応答
             client.println();                                   // ヘッダの終了
         }
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         Serial.println(" Done");
         return;                             // 処理の終了・loop()の先頭へ
     }
@@ -190,5 +190,5 @@ void loop() {
     for(i=6;i<strlen(s);i++) if(s[i]==' '||s[i]=='+') s[i]='\0';
     htmlMesg(client,&s[6],WiFi.localIP());  // メッセージ表示
     Serial.println(" Done");
-    client.stop();                          // クライアント切断
+//  client.stop();                          // クライアント切断
 }
