@@ -36,7 +36,7 @@ void setup(){
     server.begin();                         // サーバを起動する
     Serial.println("\nStarted");            // 起動したことをシリアル出力表示
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    morseIp0(PIN_OUT,200,WiFi.localIP());   // IPアドレス終値をモールス信号出力
+    morseIp0(PIN_OUT,100,WiFi.localIP());   // IPアドレス終値をモールス信号出力
     while(TIME==0){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
         TIME-=millis()/1000;                // 起動後の経過時間を減算
@@ -102,6 +102,6 @@ void loop(){                                // 繰り返し実行する関数
         i=digitalRead(PIN_OUT);             // リレーの状態を読み取り変数iへ代入
         html(client,i,date,TIMER_ON,TIMER_OFF,TIMER_SLEEP,WiFi.localIP());
     }                                       // 負のときは-100を掛けて出力
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
 }

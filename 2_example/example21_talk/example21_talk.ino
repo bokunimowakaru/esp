@@ -103,5 +103,5 @@ void loop(){                                // 繰り返し実行する関数
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         html(client,talk,WiFi.localIP());   // HTMLコンテンツを出力する
     }
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
 }

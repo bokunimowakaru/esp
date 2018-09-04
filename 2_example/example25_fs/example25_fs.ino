@@ -108,7 +108,7 @@ void loop() {
     if(strncmp(s,"GET / ",6)==0){           // コンテンツ要求があった時
         lcdPrint2(&s[6]);                   // ファイル名またはコマンドを表示
         html(client,WiFi.localIP());        // HTMLコンテンツを表示
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         return;
     }
     if(strncmp(s,"GET /?FORMAT",12)==0){    // ファイルシステム初期化コマンド
@@ -138,7 +138,7 @@ void loop() {
             }
         }
         file.close();                       // ファイルを閉じる
-        client.stop();                      // クライアントの切断
+    //  client.stop();                      // クライアントの切断
         lcdPrintVal("Bytes",i);             // ファイルサイズを表示
         return;                             // 処理の終了・loop()の先頭へ
     }

@@ -140,6 +140,6 @@ void loop(){
         ir_data2txt(s,96,D,D_LEN);
         html(client,s,D_LEN,IR_TYPE,WiFi.localIP());    // HTMLコンテンツを出力
     }                                       // 負のときは-100を掛けて出力
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
 }

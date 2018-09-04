@@ -23,7 +23,7 @@ NTPクライアント
 #define NTP_PACKET_SIZE 48                  // NTP時刻長48バイト
 #define DEBUG
 
-unsigned long getNTP(char* address, int port){
+unsigned long getNTP(const char* address, const int port){
 	WiFiUDP udpNtp;                             // UDP送信用のインスタンスを定義
 	byte packetBuffer[NTP_PACKET_SIZE];         // 送受信用バッファ
     int waiting=0,data;

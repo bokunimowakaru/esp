@@ -1,6 +1,6 @@
 /*******************************************************************************
 Example 28: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付き・棒グラフ機能)
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2018 Wataru KUNINO
 *******************************************************************************/
 /*
 
@@ -31,7 +31,6 @@ Example 28: LCDへ表示する(HTTP版・時刻表示機能・NTP受信機能付
     　- ESP32で使用している IPスタックlwIP(lightweight IP)の仕様です
     　- 本機でのブロードキャストの送受信は可能です
 */
-
 
 #include <FS.h>
 #include <ESP8266WiFi.h>                    // Wi-Fi機能を利用するために必要
@@ -165,11 +164,11 @@ void loop(){                                // 繰り返し実行する関数
     client = server.available();            // 接続されたTCPクライアントを生成
     if(!client){                            // TCPクライアントが無かった場合
         if(time%250 < 1){                   // 250msに一回
-		    if(time%86400000ul==0){         // 24時間に1回
-		        TIME=getNtp();              // NTP時刻を取得
-		        TIME-=millis()/1000;
-		    }
-		    time2txt(date,TIME+time/1000);  // 以下、表示用コンテンツ作成
+            if(time%86400000ul==0){         // 24時間に1回
+                TIME=getNtp();              // NTP時刻を取得
+                TIME-=millis()/1000;
+            }
+            time2txt(date,TIME+time/1000);  // 以下、表示用コンテンツ作成
             strcpy(lcd0,&date[11]); lcd0[8]=' '; lcd0[16]='\0';
             buttons=lcd.readButtons(); switch( buttons ){
                 case BUTTON_SELECT: if(disp_p>0) disp_p=-1;
@@ -209,9 +208,19 @@ void loop(){                                // 繰り返し実行する関数
             delay(1);
         }
         len = udpRx.parsePacket();          // UDP受信パケット長を変数lenに代入
-        if(len <= 8)return;                 // UDPが未受信時にloop()先頭へ
+        if(len <= 3)return;                 // UDPが未受信時にloop()先頭へ
         memset(s, 0, 65);                   // 文字列変数sの初期化(65バイト)
         udpRx.read(s, 64);                  // UDP受信データを文字列変数sへ代入
+        if(!strncmp(s,"Ping",4)){           // Pingのとき
+            strcpy(s,"p_btn_0,Ping");       // メッセージを置き換える
+            len=12;                         // 受信長を置き換える
+        }
+        if(!strncmp(s,"Pong",4)){           // Pongのとき
+            strcpy(s,"p_btn_0,Pong");       // メッセージを置き換える
+            len=12;                         // 受信長を置き換える
+        }
+        if(len <= 8)return;                 // メッセージが短い時にloop()先頭へ
+        
         if(len>64){len=64; udpRx.flush();}  // 受信データが残っている場合に破棄
         for(i=0;i<len;i++) if( !isgraph(s[i]) ) s[i]=' ';   // 特殊文字除去
         strncpy(&lcd0[9],s,8); lcd0[16]=0;  // LCD表示用(1行目)に機器名を代入
@@ -313,7 +322,7 @@ void loop(){                                // 繰り返し実行する関数
                             if(t>0&&client.connected())client.write((byte*)s,t);
                             file.close();                   // ファイルを閉じる
                         }
-                        client.stop();                      // クライアント切断
+                    //  client.stop();                      // クライアント切断
                         return;
                     }else if(len>6 && strncmp(s,"POST /",6)==0){
                         postF=1;            // POSTのBODY待ち状態へ
@@ -362,7 +371,7 @@ void loop(){                                // 繰り返し実行する関数
         time2txt(date,TIME+time/1000);
         Serial.print(date); Serial.println(", Done.");
     }
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
 }
 
 unsigned long getNtp(){

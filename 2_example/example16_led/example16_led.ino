@@ -97,6 +97,6 @@ void loop(){                                // 繰り返し実行する関数
         if(target==1) led=ledCtrl(led,1023,4);  // ゆっくりと点灯
         if(target<=0 && target>=-10) led=ledCtrl(led,-100*target,4);// 輝度変更
     }                                       // 負のときは-100を掛けて出力
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
 }

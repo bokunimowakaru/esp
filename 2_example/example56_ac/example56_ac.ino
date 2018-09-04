@@ -32,7 +32,7 @@ void setup(){
     server.begin();                         // サーバを起動する
     Serial.println("\nStarted");            // 起動したことをシリアル出力表示
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    morseIp0(PIN_OUT,200,WiFi.localIP());   // IPアドレス終値をモールス信号出力
+    morseIp0(PIN_OUT,100,WiFi.localIP());   // IPアドレス終値をモールス信号出力
     while(TIME==0){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
         TIME-=millis()/1000;                // 起動後の経過時間を減算

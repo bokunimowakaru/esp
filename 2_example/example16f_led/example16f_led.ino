@@ -161,6 +161,6 @@ void loop(){                                // 繰り返し実行する関数
         }
         html(client,target,ledR,ledG,ledB,WiFi.localIP()); // HTMLコンテンツ出力
     }                                       // 負のときは-100を掛けて出力
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
     Serial.println("Disconnected");         // シリアル出力表示
 }
