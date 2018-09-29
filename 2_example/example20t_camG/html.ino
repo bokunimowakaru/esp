@@ -1,6 +1,6 @@
 /*******************************************************************************
 防犯カメラ
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2018 Wataru KUNINO
 *******************************************************************************/
 
 #define PICT_NUM 6     // 表示枚数 3～6枚程度(6枚以上でエラーが発生しやすくなる)
@@ -22,7 +22,7 @@ void getHtml(char *html,int size) {
     snprintf(html, size,"\
     <html>\n<head>\n<title>Test Page</title>\n\
     <meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">\n\
-    <meta http-equiv=\"refresh\" content=\"%d\";URL=http://%s/\">\n</head>\n\
+    <meta http-equiv=\"refresh\" content=\"%d;URL=http://%s/\">\n</head>\n\
     <body>\n<h3>防犯カメラ STATUS</h3>\
     ",update,s_ip);
     for(i=(PICT_NUM-1);i>=0;i--){
