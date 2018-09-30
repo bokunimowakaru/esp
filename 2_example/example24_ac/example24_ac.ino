@@ -39,8 +39,8 @@ void setup(){
     morseIp0(PIN_OUT,100,WiFi.localIP());   // IPアドレス終値をモールス信号出力
     while(TIME==0){
         TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
-        TIME-=millis()/1000;                // 起動後の経過時間を減算
     }
+    TIME-=millis()/1000;                    // 起動後の経過時間を減算
 }
 
 void loop(){                                // 繰り返し実行する関数
@@ -51,19 +51,21 @@ void loop(){                                // 繰り返し実行する関数
     int len=0;                              // 文字列の長さカウント用の変数
     int t=0;                                // 待ち受け時間のカウント用の変数
     unsigned long time=millis();            // ミリ秒の取得
-    int i;
+    int i,minutes;
 
     if(time<100){
-        TIME=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得
-        if(TIME)TIME-=millis()/1000;        // 経過時間を減算
+        time=getNTP(NTP_SERVER,NTP_PORT);   // NTPを用いて時刻を取得,timeへ代入
+        if(time)TIME=time-millis()/1000;    // 取得成功時に経過時間をTIMEに保持
+        else TIME+=4294967;                 // 取得失敗時に経過時間を加算
         while(millis()<100)delay(1);        // 100ms超過待ち
+        time=millis();                      // ミリ秒の取得
     }
     time = TIME + time / 1000;              // 時刻で上書き
     time2txt(date,time);                    // 日時をテキストに変換する
-    time = (time/60)%1440;                  // 分に変更
-    if(time == TIMER_ON ) digitalWrite(PIN_OUT,HIGH);   // リレーON
-    if(time == TIMER_OFF) digitalWrite(PIN_OUT,LOW);    // リレーOFF
-    if(time == TIMER_SLEEP){                // スリープタイマー
+    minutes = (int)((time/60)%1440);        // 分に変更(0="0:00" 1439="23:59")
+    if(minutes == TIMER_ON ) digitalWrite(PIN_OUT,HIGH);   // リレーON
+    if(minutes == TIMER_OFF) digitalWrite(PIN_OUT,LOW);    // リレーOFF
+    if(minutes == TIMER_SLEEP){             // スリープタイマー
         digitalWrite(PIN_OUT,LOW);          // リレーOFF
         TIMER_SLEEP=-1;                     // スリープ解除
     }
