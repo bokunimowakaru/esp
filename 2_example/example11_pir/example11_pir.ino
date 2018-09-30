@@ -25,7 +25,7 @@ void setup(){                               // 起動時に一度だけ実行す
     pinMode(PIN_SW,INPUT_PULLUP);           // センサを接続したポートを入力に
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     pir=digitalRead(PIN_SW);                // 人感センサの状態を取得
-//  if(pir==HIGH) sleep();                  // センサが無反応だった場合は終了
+    if(pir==HIGH) sleep();                  // センサが無反応だった場合は終了
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 11 PIR SW");    // 「Example 11」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
@@ -38,6 +38,7 @@ void setup(){                               // 起動時に一度だけ実行す
         if(waiting > 300) sleep();          // 300回(30秒)を過ぎたらスリープ
     }
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
+//  if(pir==HIGH) sleep();                  // センサ無反応時に終了 ->13行前へ
 }
 
 void loop(){
