@@ -58,7 +58,7 @@ void loop(){                                // 繰り返し実行する関数
         if(time%200 < 1){
             if(time%86400000ul==0){         // 24時間に1回
                 TIME=getNtp();              // NTP時刻を取得
-                TIME-=millis()/1000;
+                if(TIME)TIME-=millis()/1000;
             }
             time2txt(date,TIME+time/1000);
             strcpy(lcd1,&date[11]);

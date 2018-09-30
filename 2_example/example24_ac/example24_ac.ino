@@ -98,7 +98,7 @@ void loop(){                                // 繰り返し実行する関数
     if(len>12 && strncmp(s,"GET /?SLEEP=",12)==0){
         i=atoi(&s[12]);                     // 変数iに入力値を代入
         if(i<0) TIMER_SLEEP=-1;             // 入力値が負だった時にスリープ切
-        else TIMER_SLEEP=(i+time)%1440;     // 現在時刻+入力スリープ時間
+        else TIMER_SLEEP=(i+minutes)%1440;  // 現在時刻+入力スリープ時間
     }
     if(client.connected()){                 // 当該クライアントの接続状態を確認
         i=digitalRead(PIN_OUT);             // リレーの状態を読み取り変数iへ代入
