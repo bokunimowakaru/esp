@@ -34,8 +34,17 @@ void setup() {
 }
 */
 
+void morse_delay(int time){
+    if(time > 10) for(int i=0;i<time/10;i++){
+        delay(10);
+        ESP.wdtFeed();
+    }
+    delay(time%10);
+    ESP.wdtFeed();
+}
+
 void morse(int output, int time, char *str) {
-    int i, j, t;
+    int i, j;
     char num[6]="_____";
     char morse_dot[7]="._._._";
     char *pattern;
@@ -56,29 +65,33 @@ void morse(int output, int time, char *str) {
         if ( *c == '.') pattern=morse_dot;
         if(pattern){
             for (j=0; j<strlen(pattern); j++) {
+            //  digitalWrite(output, HIGH);
                 if(pattern[j] == '.') {
-                //  tone(output, 800, time);
                     ledcWriteTone(0,800);           // double freq
-                    delay(time);
+                //  tone(output, 800, time);
+                    morse_delay(time);
                 //  Serial.print('.');
                 } 
                 else {
-                //  tone(output, 800, 3*time);
                     ledcWriteTone(0,800);           // double freq
-                    for(t=0;t<3;t++) delay(time);
+                //  tone(output, 800, 3*time);
+                    morse_delay(3 * time);
                 //  Serial.print('_');
                 }
-            //  noTone(output);
                 ledcWrite(0, 0);                    // uint8_t chan, uint32_t duty 0%
-                delay(time);
+            //  noTone(output);
+            //  digitalWrite(output, LOW);
+                morse_delay(time);
             }
-            for(t=0;t<2;t++) delay(time);
+            morse_delay(2 * time);
         } else {
-            for(t=0;t<3;t++) delay(time);
+            morse_delay(3 * time);
         }
-    //  Serial.println();
+    //  Serial.print(' ');
     }
-    for(t=0;t<4;t++) delay(time);
+//  Serial.println();
+    morse_delay(4 * time);
+//  Serial.println("Done Morse");
 }
 
 /*
@@ -110,4 +123,3 @@ void morseIp0(int output, int time, uint32_t ip){
     );
     morse(output, time, s);
 }
-
