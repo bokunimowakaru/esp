@@ -1,4 +1,4 @@
-rem http://www.geocities.jp/bokunimowakaru/diy/ichigojam/MixJuice_Ambient.html
+rem https://bokunimo.net/bokunimowakaru/diy/ichigojam/MixJuice_Ambient.html
 rem https://t.co/3o3ijmNQTy
 
 new
@@ -10,7 +10,7 @@ new
 6 ?"±ÅÛ¸Þ Æ­³Ø®¸ A=IN2
 7 W=3000:?"¿¸Ã² ¶Ý¶¸ W=";W
 8 ' CC BY Wataru Kunino
-rem http://www.geocities.jp/bokunimowakaru/cq/15
+rem https://bokunimo.net/bokunimowakaru/cq/15
 100 'MAIN
 110 P=#C1A
 120 A=ana(2):?"ana(2)=";A

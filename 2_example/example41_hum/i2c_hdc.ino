@@ -5,7 +5,7 @@
 I2C接続の温湿度センサの値を読み取る
 TI社 HDC1000
                                Copyright (c) 2015-2016 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 #include <Wire.h> 

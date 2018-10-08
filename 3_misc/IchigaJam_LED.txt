@@ -2,7 +2,7 @@ cls:new
 rem     Espressif ESP8266 ESP-WROOM-02 ֳ
 rem     Wireless LED for IchigoJam Version 1.2
 rem     Copyright (c) 2015-2016 Wataru KUNINO
-rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
+rem     https://bokunimo.net/bokunimowakaru/diy/ichigojam/
 
 1 'ESP Example
 2 uart 3,2:? "AT":wait 30

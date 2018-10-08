@@ -1,4 +1,4 @@
-rem http://www.geocities.jp/bokunimowakaru/diy/ichigojam/MixJuice_Ambient.html
+rem https://bokunimo.net/bokunimowakaru/diy/ichigojam/MixJuice_Ambient.html
 rem https://t.co/3o3ijmNQTy
 
 new
@@ -7,7 +7,7 @@ new
 3 'MJ POST START ambidata.io/api/v2/channels/ここにチャネルIDを書く/data
 4 '{"writeKey":"ここにライトキーを書く","d1":"#"}
 5 'MJ POST END
-rem http://www.geocities.jp/bokunimowakaru/cq/15
+rem https://bokunimo.net/bokunimowakaru/cq/15
 100 'MAIN
 110 P=#C1A
 120 A=ana(2):?"ana(2)=";A

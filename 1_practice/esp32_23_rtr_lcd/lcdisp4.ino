@@ -5,7 +5,7 @@
 LCDへの4分割表示用関数
 
                                Copyright (c) 2018 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 void lcdisp4(const char *s,int num){        // LCDへの4分割表示用関数の定義

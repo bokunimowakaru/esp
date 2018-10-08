@@ -4,13 +4,13 @@ DF ROBOT LCD Keypad Shield 用 液晶＆キーパッドドライバ
 Arduino 標準ライブラリのLiquidCrystalにDF ROBOT社Keypad用関数を
 追加しました。
 
-関連	http://www.geocities.jp/bokunimowakaru/diy/arduino/lcds.html
+関連	https://bokunimo.net/bokunimowakaru/diy/arduino/lcds.html
 
 本ソースリストおよびソフトウェアはGPL V2に基づくライセンスを有します。
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
                                Copyright (c) 2012-2013 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 #include "LiquidCrystalDFR.h"

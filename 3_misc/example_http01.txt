@@ -1,5 +1,5 @@
-AT+CIPSTART="TCP","www.geocities.jp",80
+AT+CIPSTART="TCP","www.bokunimo.net",80
 AT+CIPSEND=67
 GET /bokunimowakaru/cq/esp.txt HTTP/1.0
-Host: www.geocities.jp
+Host: www.bokunimo.net
 

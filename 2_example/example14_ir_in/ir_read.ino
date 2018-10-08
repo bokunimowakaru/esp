@@ -6,7 +6,7 @@
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
                                Copyright (c) 2009-2016 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 #define PIN_IR_IN 4                 // IO 4(10番ピン) にIRセンサを接続

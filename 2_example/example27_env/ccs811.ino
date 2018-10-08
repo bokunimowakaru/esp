@@ -3,7 +3,7 @@ Raspberry Pi用 Arduino用 ESP8266用 ESP32用
 I2C 揮発性有機化合物センサ AMS CCS811 raspi_ccs811.c ccs811.ino
 
 										Copyright (c) 2016-2017 Wataru KUNINO
-										http://www.geocities.jp/bokunimowakaru/
+										https://bokunimo.net/bokunimowakaru/
 ********************************************************************************
 
 本ソースリストおよびソフトウェアは、ライセンスフリーです。(詳細は別記)

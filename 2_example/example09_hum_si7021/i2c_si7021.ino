@@ -5,7 +5,7 @@
 I2C接続の温湿度センサの値を読み取る
 SILICON LABS社 Si7021
                                Copyright (c) 2017-2018 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 #include <Wire.h> 

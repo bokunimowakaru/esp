@@ -5,7 +5,7 @@
 UTF8の制御コードを除去します(UTF8をASCIIカナ文字へ変換するときに使用)
 
                                Copyright (c) 2014-2017 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 void utf_del_uni(char *s){

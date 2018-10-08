@@ -5,7 +5,7 @@ Arduino ESP32 用 ソフトウェアI2C ドライバ soft_i2c
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
 							 			Copyright (c) 2014-2017 Wataru KUNINO
-							 			http://www.geocities.jp/bokunimowakaru/
+							 			https://bokunimo.net/bokunimowakaru/
 *******************************************************************************/
 
 #define I2C_lcd 0x3E							// LCD の I2C アドレス 

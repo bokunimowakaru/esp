@@ -1,7 +1,7 @@
 cls:new
 rem     RasPi Trigger -Cyclic for IchigoJam Version 1.2
 rem     Copyright (c) 2016 Wataru KUNINO
-rem     http://www.geocities.jp/bokunimowakaru/diy/ichigojam/
+rem     https://bokunimo.net/bokunimowakaru/diy/ichigojam/
 
 1 cls:?"RasPi Trigger -Cyclic
 2 ?" for IchigoJam v1.2 ²º³

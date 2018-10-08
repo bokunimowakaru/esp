@@ -6,7 +6,7 @@
 個人での利用は自由に行えます。著作権表示の改変は禁止します。
 
                                Copyright (c) 2012-2016 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 /*
 赤外線リモコン信号を送信します。

@@ -7,7 +7,7 @@
 2014/01/01,12:34:56
 
                                Copyright (c) 2014-2016 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 /*

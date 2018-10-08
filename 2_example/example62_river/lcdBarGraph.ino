@@ -5,7 +5,7 @@
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
 							   Copyright (c) 2013-2017 Wataru KUNINO
-							   http://www.geocities.jp/bokunimowakaru/
+							   https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 /*
 画面設計例

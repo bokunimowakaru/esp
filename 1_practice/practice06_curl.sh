@@ -9,7 +9,7 @@ curl -s rss.weather.yahoo.co.jp/rss/days/6200.xml\
 |cut -d'<' -f17|cut -d'>' -f2|tail -1                       # 天気を取得して表示
 echo $hr                                                    # 水平線を表示
 echo "著者からのメッセージ: "                               # テキスト表示
-curl -s www.geocities.jp/bokunimowakaru/cq/esp2.txt -o tmp_boku.txt~
+curl -s www.bokunimo.net/bokunimowakaru/cq/esp2.txt -o tmp_boku.txt~
                                                             # 取得・ファイル保存
 grep '<title>' tmp_boku.txt~ |cut -f2|cut -d'<' -f1         # タイトルを抽出
 grep '<descr>' tmp_boku.txt~ |tr '<' ' '|awk '{print $2}'   # メッセージを抽出

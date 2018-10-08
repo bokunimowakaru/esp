@@ -5,7 +5,7 @@
 I2C接続の気圧センサの値を読み取る
 STマイクロ社 LPS25H
                                Copyright (c) 2016 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 #include <Wire.h> 

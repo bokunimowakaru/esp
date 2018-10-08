@@ -5,13 +5,13 @@ Arduino 標準ライブラリにLiquidCrystalにDF ROBOT社Keypad用関数を
 追加しました。
 
 関連情報
-	http://www.geocities.jp/bokunimowakaru/diy/arduino/lcds.html
+	https://bokunimo.net/bokunimowakaru/diy/arduino/lcds.html
 
 本ソースリストおよびソフトウェアはGPL V2に基づくライセンスを有します。
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
                                Copyright (c) 2012-2017 Wataru KUNINO
-                               http://www.geocities.jp/bokunimowakaru/
+                               https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 
 /*

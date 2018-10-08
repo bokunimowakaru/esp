@@ -13,7 +13,7 @@ I2C接続のセンサから測定値を取得する
 参考文献：Bosch BME280データシート・データシート上のサンプルソースコード
 
                                         Copyright (c) 2016-2017 Wataru KUNINO
-                                        http://www.geocities.jp/bokunimowakaru/
+                                        https://bokunimo.net/bokunimowakaru/
 *******************************************************************************/
 
 // usage: raspi_bme280 [address]

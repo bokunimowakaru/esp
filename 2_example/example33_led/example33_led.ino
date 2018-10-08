@@ -38,14 +38,8 @@ void loop(){                                // 繰り返し実行する関数
             Serial.write(c);                // 文字の内容をシリアルに出力(表示)
             if(c=='0'){                     // 文字変数の内容が「0」のとき
                 digitalWrite(PIN_LED,LOW);  // LEDを消灯
-                
-                /* クライアント側からの切断ができない(執筆時点)ためbreakを追加 */
-                break;
             }else if(c=='1'){               // 文字変数の内容が「1」のとき
                 digitalWrite(PIN_LED,HIGH); // LEDを点灯
-                
-                /* クライアント側からの切断ができない(執筆時点)ためbreakを追加 */
-                break;
             }
         }
     }
