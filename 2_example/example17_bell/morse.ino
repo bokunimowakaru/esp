@@ -18,7 +18,7 @@ Yoji Shidara (https://github.com/darashi)
 // #define LED 13
 // #define T 100 // speed
 
-char morse_pattern[26][5] = {
+const char morse_pattern[26][5] = {
     "._", "_...", "_._.", "_..", ".", ".._.", "__.",
     "....", "..", ".___", "_._", "._..", "__",
     "_.", "___", ".__.", "__._", "._.", "...", "_",
@@ -52,8 +52,8 @@ void morse(int output, int time, char *str) {
     for (i=0; i<strlen(str); i++) {
         char *c = str+i;
         pattern=0;
-        if ('A' <= *c && *c <= 'Z') pattern = morse_pattern[*c - 'A'];
-        if ('a' <= *c && *c <= 'z') pattern = morse_pattern[*c - 'a'];
+        if ('A' <= *c && *c <= 'Z') pattern = (char *)morse_pattern[*c - 'A'];
+        if ('a' <= *c && *c <= 'z') pattern = (char *)morse_pattern[*c - 'a'];
         if ('0' <= *c && *c <= '5'){
             for(j=0;j<5;j++) if( (int)(*c - '0') >= j+1 ) num[j]='.'; else num[j]='_';
             pattern = num;
