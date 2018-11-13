@@ -56,7 +56,7 @@ void loop(){
 }
 
 void sleep(){
-    digitalWrite(PIN_LED,LOW);              // LED(EN信号)の消灯
+    digitalWrite(PIN_LED,LOW);              // LEDの消灯
     delay(200);                             // 送信待ち時間
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理
