@@ -167,6 +167,7 @@ void loop(){
 void sleep(){
     lcdPrint("Sleepingzzz...");             // 「Sleeping」を液晶に表示
     Serial.println("Done");                 // 終了表示
+    pinMode(PIN_CAM,INPUT);                 // FETを接続したポートをオープンに
     delay(200);                             // 送信待ち時間
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理

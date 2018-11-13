@@ -97,12 +97,12 @@ int JPEGDecoder::begin(){
     is_available = 0;
     reduce = 0;
     
-    Serial.print("Initializing SD card...");
+    Serial.print("SD card...");
     if (!SD.begin()) {
         Serial.println("failed!");
         return -1;
     }
-    Serial.println("SD OK!");
+    Serial.println("OK!");
     return 0;
 }
 
