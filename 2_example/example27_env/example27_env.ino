@@ -125,6 +125,7 @@ void sleep(){
     delay(10);                              // 待ち時間
     digitalWrite(PIN_CCS_EN_,HIGH);         // DISABLE CCS811
     digitalWrite(PIN_CCS_RST,HIGH);         // リセット解除(元々HIGH)
+    digitalWrite(PIN_LED,LOW);              // LEDの消灯
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理
         delay(100);                         // 100msの待ち時間処理
