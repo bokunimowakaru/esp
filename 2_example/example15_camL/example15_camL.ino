@@ -139,7 +139,7 @@ void loop(){
         if(t>0 && client.connected()) client.write((byte *)s,t);
         file.close();                       // ファイルを閉じる
     }
-    client.stop();                          // クライアントの切断
+//  client.stop();                          // クライアントの切断
     Serial.print(size);                     // ファイルサイズをシリアル出力表示
     Serial.println(" Bytes");               // シリアル出力表示
     sleep();                                // sleep()へ
