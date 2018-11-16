@@ -28,7 +28,6 @@ TFTPサーバの起動と停止
     $ chmod 644 /srv/tftp/tftpc_1.ini
     $ cat /srv/tftp/tftpc_1.ini
     ; Hello! This is from RasPi
-    ADC_PIN=32
     SLEEP_SEC=50
 
 【注意事項】
