@@ -1,36 +1,37 @@
 Example 58(=32+26):
-# �Z���T�f�o�C�X�p TFTP�N���C�A���g �ݒ�
+# センサデバイス用 TFTPクライアント 設定
 
-TFTP�T�[�o�ォ��ݒ�t�@�C�����_�E�����[�h���A���W���[�����̐ݒ��ύX���܂��B  
-�{�T���v���ł�ESP32-WROOM-32��ADC�̓��̓s���ƃf�B�[�v�X���[�v���Ԃ�ݒ肷�邱�Ƃ��o���܂��B
+TFTPサーバ上から設定ファイルをダウンロードし、モジュール内の設定を変更します。  
+本サンプルではESP32-WROOM-32のADCの入力ピンとディープスリープ時間を設定することが出来ます。
 
-## TFTP�Ƃ�
+## TFTPとは
 
-TFTP�̓l�b�g���[�N�@��Ȃǂ̐ݒ�t�@�C����t�@�[���E�F�A��]������Ƃ��Ɏg�p�����f�[�^�]���v���g�R���ł��B  
-�g�����肪�ȒP�ŁA�v���g�R�����ȒP�Ȃ̂ŁA�@��̃����e�i���X�Ɍ����Ă��܂��B�ʏ�A�F�؂�Í����Ƃ��������Ƃ͍s�킸�A�]�����̂ݗL���ɂ���A�������͕ύX����Ă����̖����p�r�ŗ��p���܂��B
+TFTPはネットワーク機器などの設定ファイルやファームウェアを転送するときなどに使用されているデータ転送プロトコルです。  
+使い勝手が簡単で、プロトコルも簡単なので、機器のメンテナンスに向いています。  
+認証や暗号化は行わないので、転送時のみ有効にする、もしくは侵入・ファイル転送されても問題の無い用途で利用します。
 
-## �{�T���v���̎d�l
+## 本サンプルの仕様
 
-TFTP�ŁuADC_PIN=�s���ԍ��v�𑗐M����ƁAESP���W���[����ADC���̓s����ύX���邱�Ƃ��o���܂��B�܂��A�uSLEEP_SEC=���ԁi�b�j�v�𑗐M����ƁAESP���W���[���̃X���[�v�Ԋu��ύX���邱�Ƃ��o���܂��B
+「ADC_PIN=ピン番号」をTFTPで受信すると、ESPモジュールのADC入力ピンを変更することが出来ます。また、「SLEEP_SEC=時間（秒）」を受信すると、ESPモジュールのスリープ間隔を変更することも出来ます。  
 
-## Raspberry Pi�ւ�TFTP�T�[�o�̃C���X�g�[�����@
+## Raspberry PiへのTFTPサーバのインストール方法
 
     $ sudo apt-get install tftpd-hpa
     
-## �ݒ�t�@�C��(/etc/default/tftpd-hpa) �̗�
+## 設定ファイル(/etc/default/tftpd-hpa) の例
 
     # /etc/default/tftpd-hpa
     TFTP_USERNAME="tftp"
     TFTP_DIRECTORY="/srv/tftp"
     TFTP_ADDRESS="0.0.0.0:69"
 
-## TFTP�T�[�o�̋N���ƒ�~
+## TFTPサーバの起動と停止
 
     $ chmod 755 /srv/tftp
     $ sudo /etc/init.d/tftpd-hpa start
     $ sudo /etc/init.d/tftpd-hpa stop
 
-## �]���p�̃t�@�C����ۑ�
+## 転送用のファイルを保存
 
     $ echo "; Hello! This is from RasPi" > /srv/tftp/tftpc_1.ini
     $ echo "ADC_PIN=32" >> /srv/tftp/tftpc_1.ini
@@ -41,13 +42,13 @@ TFTP�ŁuADC_PIN=�s���ԍ��v�𑗐M����ƁAESP���W���[����ADC���̓s����ύX���邱��
     ADC_PIN=32
     SLEEP_SEC=50
 
-## ���ӎ���
+## 注意事項
 
-* TFTP�N���C�A���g(ESP��)��TFTP�T�[�o(PC��Raspberry Pi��)�N������ƁA�e�@�킪�Z�L�����e�B�̋��Ђɂ��炳�ꂽ��ԂƂȂ�܂��B
-* �܂��A�E�B���X�⃏�[�����N������ƁA�����l�b�g���[�N��̑S�Ă̋@��֊������鋰�ꂪ���܂�܂��B
-* �C���^�[�l�b�g�ɐڑ�����ƊO������̐N�������ꍇ������܂��B
-* TFTP�N���C�A���g�͏��Ȃ��Ƃ����[�J���l�b�g���݂̂œ��삳����悤�ɂ��ĉ������B
-* TFTP���s�K�v�ȂƂ��́A��~�����Ă��������B
+* TFTPクライアント(ESP側)やTFTPサーバ(PCやRaspberry Pi側)起動すると、各機器がセキュリティの脅威にさらされた状態となります。
+* また、ウィルスやワームが侵入すると、同じネットワーク上の全ての機器へ感染する恐れが高まります。
+* インターネットに接続すると外部からの侵入される場合があります。
+* TFTPクライアントは少なくともローカルネット内のみで動作させるようにして下さい。
+* TFTPが不必要なときは、停止させてください。
 
-Copyright (c) 2016-2018 Wataru KUNINO
-https://bokunimo.net/
+Copyright (c) 2016-2018 Wataru KUNINO  
+<https://bokunimo.net/>

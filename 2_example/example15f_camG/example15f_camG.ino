@@ -7,6 +7,9 @@ Example 15: 監視カメラ for SeeedStudio Grove Serial Camera Kit [FTP送信�
 　ラズベリーパイへ、FTPサーバをセットアップするには下記を実行してください。
 　~/esp/tools/ftp_setup.sh
 
+　実験を終えたら Raspberry Pi の電源を切っておく、もしくはftp_uninstall.shを
+　実行してvsftpdを削除してください。（FTPによる不正アクセスを防止するため）
+
 ※FTPでは、ユーザ名やパスワード、データーが平文で転送されます。
 　インターネット上で扱う場合は、セキュリティに対する配慮が必要です。
 
