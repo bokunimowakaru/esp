@@ -8,80 +8,135 @@
 
 IoT機器用のサンプル・プログラムが含まれているフォルダです。
 
-### 1-1 Wi-Fiインジケータ
+### 1-1 Wi-Fi インジケータ
 
-	example01_led
-	example33_led
+LEDをWi-Fi経由で制御することが出来ます。
 
-### 1-2 Wi-Fiスイッチャ
+	ESP-WROOM-02用　：example01_led
+	ESP32-WROOM-32用：example33_led
+	
+	a:TELNET版
+	b:HTTP版
+	d:ソフトウェア無線AP版
+	s:IPアドレス固定版
+
+### 1-2 Wi-Fi スイッチャ
+
+スイッチ状態を送信します。
 
 	ESP-WROOM-02用　：example02_sw 
 	ESP32-WROOM-32用：example34_sw
 
-### 1-3 Wi-Fiレコーダ
+### 1-3 Wi-Fi レコーダ
+
+アナログ入力値を送信します。
 
 	ESP-WROOM-02用　：example03_adc
 	ESP32-WROOM-32用：example35_adc
 
 ### ケチケチ運転術
 
+乾電池などで動作するIoTセンサ用の基本形です。スケッチを把握しやすいように機能を絞り込みました。
+
 	ESP-WROOM-02用　：example04_le 
 	ESP32-WROOM-32用：example36_le
+	
+	a:Wi-Fi接続タイムアウト機能つき
+	c:クラウドサービスAmbientへの送信機能つき
+	m:取得値が近いときは送信しない節約機能つき
 
 ### 1-4 Wi-Fi LCD
 
+Wi-Fi スイッチャや各種IoTセンサが送信したデータを液晶ディスプレイ（LCD）へ表示する基本形です。スケッチを把握しやすいように機能を絞り込みました。
+
 	ESP-WROOM-02用　：example05_lcd
 	ESP32-WROOM-32用：example37_lcd
+	
+	-:UDP版
+	a:TCP版（aの無いものが通常のUDP版）
 
 ### 2-1 IoTセンサ Wi-Fi 照度計
+
+照度値を送信するIoTセンサです。センサを手で遮るなど、簡単にセンサ値を変化させることが出来るので、センサの初期実験に便利です。
 
 	ESP-WROOM-02用　：example06_lum
 	ESP32-WROOM-32用：example38_lum
 
 ### 2-2 IoTセンサ Wi-Fi 温度計
 
+温度値を送信するIoTセンサです。センサネットワークで収集するときの代表的なセンサのひとつです。
+
 	ESP-WROOM-02用　：example07_temp 
 	ESP32-WROOM-32用：example39_temp
 
 ### 2-3 IoTセンサ Wi-Fi ドア開閉モニタ
+
+ドアや窓が開いたとき（または閉まったとき）に開閉状態を送信するIoTセンサです。防犯や家庭内の空気の出入りなどを把握します。
 
 	ESP-WROOM-02用　：example08_sw 
 	ESP32-WROOM-32用：example40_sw
 
 ### 2-4 IoTセンサ Wi-Fi 温湿度計
 
+温湿度を送信するIoTセンサです。デジタルのI2Cインタフェースをもつセンサを使用することで、アナログ回路やセンサ値の補正が不要となり、正確な値を手軽に得ることが出来ます。
+
 	ESP-WROOM-02用　：example09_hum_sht31
 	ESP32-WROOM-32用：example41_hum_sht31
+	
+	表示なし:TI製 HDC1000 版
+	sht31　 :SENSIRION製 SHT31 版
+	si7021　:SILICON LABS製 Si7021 版
 
 ### 2-5 IoTセンサ Wi-Fi 気圧計
 
+気圧と温度を送信するIoTセンサです。天候状態を予想したり、換気扇による室内の圧力の低下を検出することが出来ます。
+
 	ESP-WROOM-02用　：example10_hpa
 	ESP32-WROOM-32用：example42_hpa
+	
+	表示なし：STマイクロ製 LPS25H 版
+	bme280　：Bosch製 BME280 版
 
 ### 2-6 IoTセンサ Wi-Fi 人感センサ
+
+人体などの動きを検出したときに送信するIoTセンサです。在室情報を把握することが出来ます。
 
 	ESP-WROOM-02用　：example11_pir
 	ESP32-WROOM-32用：example43_pir
 
 ### 2-7 IoTセンサ Wi-Fi 3軸加速度センサ
 
+加速度の変化を検出したときに送信するIoTセンサです。ドアや窓の開閉や傾きの変化などを検出することが出来ます。
+
 	ESP-WROOM-02用　：example12_acm
 	ESP32-WROOM-32用：example44_acm
 
-### 2-8 IoTセンサ NTP時刻データ転送機
+### 2-8 NTP時刻データ転送機
+
+インターネットから現在時刻を取得して送信する機器です。時刻センサのような動作を行います。センサネットワークでは時刻を扱うことが多いので、参考になるでしょう。
 
 	ESP-WROOM-02用　：example13_ntp
 	ESP32-WROOM-32用：example45_ntp
+	
+	c:クラウドサービスAmbientへの送信機能つき
 
 ### 2-9 IoTセンサ Wi-Fi リモコン赤外線レシーバ
+
+赤外線リモコン信号を受信し、受信データをWi-Fi送信します。家電などの操作情報を検出することが出来ます。
 
 	ESP-WROOM-02用　：example14_ir_in
 	ESP32-WROOM-32用：example46_ir_in
 
 ### 2-10 IoTセンサ Wi-Fi カメラ
 
+定期的にカメラ撮影を行い、撮影後に通知を送信します。通知を受けたサーバはHTTPで写真を取得することが出来ます。写真をFTPで送信するFTP版も収録しました。
+
 	ESP-WROOM-02用　：example15_camG
 	ESP32-WROOM-32用：example47_camG
+	
+	camG:SeeedStudio Grove Serial Camera Kit用
+	camL:SparkFun SEN-11610 LynkSprite JPEG Color Camera TTL用
+	f:FTP版
 
 ### 3-1 Wi-Fi コンシェルジェ 照明担当
 
