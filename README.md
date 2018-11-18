@@ -364,12 +364,11 @@ server01_bell と server06_hvac.shserver06_hvac を組み合わせたホーム�
 
 server01_bell と server06_hvac.sh と server09_ifttt.sh を組み合わせたホーム・オートメーション・システムです。本書で製作するホーム・オートメーション・システムの完成例です。
 
-
-
 ## node-red
 
 Node-RED 用のサンプル・フローです。
-各IoT機器用のゲートウェイを簡単に製作することができます。
+各IoT機器用のゲートウェイを簡単に製作することができます。  
+使用方法は下記のブログを参考にしてください。
 <https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html>
 
 ## tools
@@ -380,14 +379,15 @@ Node-RED 用のサンプル・フローです。
 
 ラズベリー・パイやCygwinから下記のコマンドを入力することで、最新版のサンプル・プログラムをダウンロードすることが出来ます。
 
+	$ cd ~
 	$ git clone http://github.com/bokunimowakaru/esp.git
 	$ git clone http://github.com/bokunimowakaru/RaspberryPi.git
 
 上記のgitコマンドでダウンロードした場合、今後は下記のコマンドで差分だけをダウンロードすることが出来ます。
 
-	$ cd ～/esp
+	$ cd ~/esp
 	$ git pull
-	$ cd ～/RaspberryPi
+	$ cd ~/RaspberryPi
 	$ git pull
 
 # サポートページ  
