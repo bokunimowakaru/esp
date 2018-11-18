@@ -14,7 +14,7 @@ WiFiServer server(23);                      // Wi-Fiサーバ(ポート23=TELNET
 void setup(){                               // 起動時に一度だけ実行する関数
     lcdSetup();                             // 液晶の初期化
     lcdPrint("Example 05a LCD");            // 「Example 05a」をLCDに表示する
-    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定(将来用)
+    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ

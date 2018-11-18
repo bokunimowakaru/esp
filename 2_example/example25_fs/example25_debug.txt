@@ -24,8 +24,9 @@ unsigned long TIME;                         // 1970年からmillis()＝0まで�
 void setup(){
     while(!SPIFFS.begin())delay(1000);      // ファイルシステムの開始
     lcdSetup(8,2);                          // 8桁×2行のI2C液晶の準備
+    Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
+    Serial.println("eg.25 FS");       // 「Example 25」をシリアル出力表示
 //  wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
-//  ↑設定解除中 ∵SPIFFSとの組み合わせ動作不安定 esp8266 Ver.2.4.2 + LwIP v1.4
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -80,6 +81,7 @@ void loop() {
         if(file==0)return;                  // ファイルを開けれなければ戻る
         for(i=8;i<64;i++) if(s[i]=='\r'||s[i]=='\n') s[i]='\0';
         lcdPrint(s);                        // 液晶に表示する
+        Serial.println(s); //////////////////////////////////
         time2txt(date,TIME+time/1000);      // 日時をテキストに変換する
         file.print(date);                   // 日時を出力する
         file.print(',');                    // 「,」カンマをファイル出力
@@ -88,6 +90,7 @@ void loop() {
         return;                             // loop()の先頭に戻る
     }
     lcdPrint("Connect");                    // 接続されたことを表示
+        Serial.println("Connect"); //////////////////////////////////
     LCD_EN=10;                              // 表示期間を10秒に設定
     len=0;
     while(client.connected()){              // 当該クライアントの接続状態を確認
@@ -110,7 +113,9 @@ void loop() {
     if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
     if(strncmp(s,"GET / ",6)==0){           // コンテンツ要求があった時
         lcdPrint2(&s[6]);                   // ファイル名またはコマンドを表示
+        Serial.println(&s[6]); //////////////////////////////////
         html(client,WiFi.localIP());        // HTMLコンテンツを表示
+        client.flush();                     // ERR_CONNECTION_RESET対策
     //  client.stop();                      // クライアントの切断
         return;
     }
@@ -126,6 +131,7 @@ void loop() {
             }
         }
         lcdPrint2(&s[5]);                               // ファイル名を表示
+        Serial.println(&s[5]); //////////////////////////////////
         client.println("HTTP/1.1 200 OK");              // HTTP OKを応答
         client.println("Content-Type: text/plain");     // テキスト・コンテンツ
         client.println("Connection: close");            // 応答終了後に切断
@@ -141,8 +147,11 @@ void loop() {
             }
         }
         file.close();                       // ファイルを閉じる
+        client.flush();                     // ERR_CONNECTION_RESET対策
     //  client.stop();                      // クライアントの切断
         lcdPrintVal("Bytes",i);             // ファイルサイズを表示
+        Serial.print("Bytes,"); //////////////////////////////////
+        Serial.println(i); //////////////////////////////////
         return;                             // 処理の終了・loop()の先頭へ
     }
 }

@@ -100,7 +100,8 @@ void setup(){                               // 起動時に一度だけ実行す
         lcd.print("ERROR: NO FILES"); Serial.println("ERROR: NO FILES");
         delay(3000);
     }
-    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モード設定
+//  wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
+//  ↑設定解除中 ∵SPIFFSとの組み合わせ動作不安定 esp8266 Ver.2.4.2 + LwIP v1.4
     WiFi.mode(WIFI_STA);                    // 無線LANを【STA】モードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     lcd.setCursor(0,1);                     // カーソル位置を液晶の左下へ

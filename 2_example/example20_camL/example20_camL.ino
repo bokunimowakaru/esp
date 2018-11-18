@@ -28,7 +28,8 @@ void setup(){
     digitalWrite(PIN_CAM,0);                // FETをLOW(ON)にする
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 20 cam");       // 「Example 20」をシリアル出力表示
-    wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
+//  wifi_set_sleep_type(LIGHT_SLEEP_T);     // 省電力モードに設定する
+//  ↑設定解除中 ∵SPIFFSとの組み合わせ動作不安定 esp8266 Ver.2.4.2 + LwIP v1.4
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     delay(100);                             // カメラの起動待ち
