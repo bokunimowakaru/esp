@@ -147,6 +147,8 @@ Wi-Fi コンシェルジェ 照明担当が制御するLEDは、状態や情報�
 
 	ESP-WROOM-02用　：example16_led
 	ESP32-WROOM-32用：example48_led
+	
+	f:フルカラーLED版
 
 ### 3-2 Wi-Fi コンシェルジェ チャイム担当
 
@@ -161,6 +163,9 @@ Wi-Fi コンシェルジェ 照明担当が制御するLEDは、状態や情報�
 
 	ESP-WROOM-02用　：example18_lcd
 	ESP32-WROOM-32用：example50_lcd
+	
+	t　　:時刻表示対応版（NTP時刻データ転送機対応）
+	t_ntp:NTP機能つき
 
 ### 3-4 Wi-Fi コンシェルジェ リモコン担当
 
@@ -179,6 +184,7 @@ Wi-Fi コンシェルジェ 照明担当が制御するLEDは、状態や情報�
 	
 	camG:SeeedStudio Grove Serial Camera Kit用
 	camL:SparkFun SEN-11610 LynkSprite JPEG Color Camera TTL用
+	t:写真の一覧表示対応版
 
 ### 3-6 Wi-Fi コンシェルジェ アナウンス担当
 
@@ -193,6 +199,8 @@ IoTセンサ機器が送信するセンサ値情報を、テレビへ表示す�
 
 	ESP-WROOM-02用　：example22_jam
 	ESP32-WROOM-32用：example54_jam
+	
+	a:FTPサーバ対応版（試作品・評価未完了）
 
 ### 3-8 Wi-Fi コンシェルジェ コンピュータ担当
 
@@ -215,8 +223,94 @@ AC100V 制御が可能なリレー・モジュールを用いることで、AC�
 
 	ESP-WROOM-02用　：example25_fs
 	ESP32-WROOM-32用：example57_fs
+	
+	a:FTPサーバ対応版（試作品・評価未完了）
 
-上記に記載していないサンプルについては、各フォルダ内のREADME.mdファイルなどを参照してください。
+### 4-1 TFTP クライアント 設定
+
+TFTPサーバ上から設定ファイルをダウンロードし、モジュール内の設定を変更します。
+本サンプルではディープスリープ時間を設定することが出来ます。
+
+	ESP-WROOM-02用　：example26_tftp
+	ESP32-WROOM-32用：example58_tftp
+
+### 4-2 (IoTセンサ) 乾電池駆動可能なCO2センサ
+
+二酸化炭素や有機ガスなどによる室内の空気環境状態を測定するガスセンサams製CCS811と温度・湿度・気圧を測定する環境センサ Bosch製 BME280を使った、乾電池駆動が可能なワイヤレスCO2センサです。 
+
+	ESP-WROOM-02用　：example27_env
+
+### 4-3 Arduino用 LCD Keypad 対応 Wi-Fi コンシェルジェ 掲示板担当
+
+ESP-WROOM-02を搭載した ESPduino または WEMOS D1 、ESP32-WROOM-32を搭載した IoT Express 、DOIT ESPduino 32、 WEMOS D1 R3へ、DF Robot製または、SainSmart製、D1 ROBOT製のArduino 用 LCD Keypadを接続した液晶表示付きIoT端末の製作例です。
+
+	対応マイコンボード
+	ESPduino (ESP-WROOM-02)
+	WEMOS D1 (ESP-WROOM-02)
+	IoT Express (ESP32-WROOM-32)
+	DOIT ESPduino 32 (ESP32-WROOM-32)
+	WEMOS D1 R3 (ESP32-WROOM-32) IO12にプルダウン抵抗10kΩを追加する
+
+	対応シールド
+	DF Robot製 Arduino 用 LCD Keypad Shield V1.1
+	SainSmart製 LCD Keypad Shield
+	D1 ROBOT製 LCD Keypad Shield など
+
+	ESP-WROOM-02用　：example28_lcdkey
+	ESP32-WROOM-32用：example60_lcdkey
+
+### 4-4 (IoTセンサ) 無線LAN プロミスキャス センサ
+
+スマートフォンやPCが自宅の無線LANへ自動接続したときや、Amazon Dashボタンが押下されたときなどに、送信するMACブロードキャストを検出します。検出時にWi-Fi送信を行うWi-Fi版とシリアルUART出力を行うUART版を作成しました。
+
+	ESP-WROOM-02用　：example29_dash
+	
+	u:UART版
+
+### 4-5 (IoTセンサ) 無線LAN プロミスキャス センサ
+
+ESP32 デモ用のスケッチです。ESP32内に内蔵されているホール効果素子センサと、タッチセンサの検出値をスマホのウェブブラウザへ表示します。
+
+	ESP32-WROOM-32用：example31_demo
+
+### 4-6 ESP32-WROOM-32用 スイッチ早押し
+
+2016年11月時点では、 Arduino core for ESP32 WiFi Chip のWi-Fi機能が限られていました。その範囲内で作成したWi-Fi動作検証用のサンプルです。開発環境の更新時に発生するデグレ状態でも実行できる場合が多いので、動作確認用として利用できるでしょう。  
+起動後、ボタン（BOOT GPIO2）を2回押したときの速度をAmbientへ送信します。
+
+	ESP32-WROOM-32用：example32_test
+
+### 4-7 河川の水位情報をLCDへ表示する River Water Lev
+
+国土交通省「川の防災情報」から河川の水位を取得し、液晶シールド(LCD Keypad)へ表示します。
+
+	ESP32-WROOM-32用：example62_river
+
+### 4-8 河川の水位情報をLCDへ表示する River Water Lev
+
+Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad)へ表示します。
+
+	ESP32-WROOM-32用：example62_weather
+
+### 4-9 Google カレンダー(予定表) から予定を取得
+
+Google カレンダー(予定表) に登録した予定を取得し、液晶シールド(LCD Keypad)へ表示します。
+
+	ESP32-WROOM-32用：example63_google
+
+### 4-10 Wi-Fi コンシェルジェ フォトフレーム＆カメラ画像表示端末
+
+有機ELディスプレイ（SSD1331ドライバ搭載品）または、M5 Stackの液晶ディスプレイをフォトフレーム端末として使用しつつ、Wi-Fi カメラ（2-10）が撮影した写真を表示します。
+
+	ESP32-WROOM-32用：example64_photo
+	
+	m5: M5 Stack用
+
+### 4-11 (IoTセンサ) 音声送信機
+
+アナログ入力ポートから録音した音声を送信します。
+
+	ESP32-WROOM-32用：example65_mic
 
 ## 3_misc
 
