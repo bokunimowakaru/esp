@@ -365,9 +365,7 @@ server01_bell と server06_hvac.shserver06_hvac を組み合わせたホーム�
 
 クラウド連携サービスIFTTTへ通知を送信するスクリプトの例です。
 
-### server10_home クラウド連携サービスIFTTT
-
-クラウド連携サービスIFTTTへ通知を送信するスクリプトの例です。
+### server10_home ホーム・オートメーション・システム
 
 server01_bell と server06_hvac.sh と server09_ifttt.sh を組み合わせたホーム・オートメーション・システムです。本書で製作するホーム・オートメーション・システムの完成例です。
 
@@ -375,7 +373,7 @@ server01_bell と server06_hvac.sh と server09_ifttt.sh を組み合わせた�
 
 Node-RED 用のサンプル・フローです。
 各IoT機器用のゲートウェイを簡単に製作することができます。  
-使用方法は下記のブログを参考にしてください。
+使用方法は下記のブログを参考にしてください。  
 <https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html>
 
 ## tools
