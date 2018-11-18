@@ -280,13 +280,13 @@ ESP32 デモ用のスケッチです。ESP32内に内蔵されているホール
 
 	ESP32-WROOM-32用：example32_test
 
-### 4-7 河川の水位情報をLCDへ表示する River Water Lev
+### 4-7 河川の水位情報をLCDへ表示する IoT情報端末
 
 国土交通省「川の防災情報」から河川の水位を取得し、液晶シールド(LCD Keypad)へ表示します。
 
 	ESP32-WROOM-32用：example62_river
 
-### 4-8 河川の水位情報をLCDへ表示する River Water Lev
+### 4-8 天気情報をLCDへ表示する IoT情報端末
 
 Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad)へ表示します。
 
@@ -379,7 +379,7 @@ Node-RED 用のサンプル・フローです。
 
 ラズベリー・パイやCygwinから下記のコマンドを入力することで、最新版のサンプル・プログラムをダウンロードすることが出来ます。
 
-	$ cd ~
+	$ cd
 	$ git clone http://github.com/bokunimowakaru/esp.git
 	$ git clone http://github.com/bokunimowakaru/RaspberryPi.git
 
