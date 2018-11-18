@@ -320,16 +320,6 @@ Google カレンダー(予定表) に登録した予定を取得し、液晶シ�
 
 各IoT機器をRaspberry Piで制御するためのサンプル・スクリプトです。
 
-## node-red
-
-Node-RED 用のサンプル・フローです。
-各IoT機器用のゲートウェイを簡単に製作することができます。
-<https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html>
-
-## tools
-
-各IoTセンサのデータを収集することができるudp_logger.shなどの関連ツールです。
-
 ### server01_bell 単機能の呼鈴システム
 
 Wi-Fi スイッチャ（1-2）、Wi-Fi ドア開閉モニタ（2-3）、Wi-Fi 人感センサ（2-6）のいずれかと、Wi-Fi コンシェルジェ チャイム担当（3-2）に対応した呼鈴システムのサンプルスクリプトです。
@@ -374,6 +364,17 @@ server01_bell と server06_hvac.shserver06_hvac を組み合わせたホーム�
 
 server01_bell と server06_hvac.sh と server09_ifttt.sh を組み合わせたホーム・オートメーション・システムです。本書で製作するホーム・オートメーション・システムの完成例です。
 
+
+
+## node-red
+
+Node-RED 用のサンプル・フローです。
+各IoT機器用のゲートウェイを簡単に製作することができます。
+<https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html>
+
+## tools
+
+各IoTセンサのデータを収集することができるudp_logger.shなどの関連ツールです。
 
 # 最新版のダウンロード方法
 
