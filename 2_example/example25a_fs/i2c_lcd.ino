@@ -49,7 +49,7 @@ void lcdOut(byte y,byte *lcd){
 	}
 }
 
-void lcdPrint(char *s){
+void lcdPrint(const char *s){
 	byte i,j;
 	char str[65];
 	byte lcd[21];
@@ -74,7 +74,7 @@ void lcdPrint(char *s){
 	}
 }
 
-void lcdPrint2(char *s){
+void lcdPrint2(const char *s){
 	byte i;
 	char str[65];
 	byte lcd[21];
@@ -129,7 +129,7 @@ void lcdPrintIp2(uint32_t ip){
 	else lcdPrint(lcd);
 }
 
-void lcdPrintVal(char *s,int in){
+void lcdPrintVal(const char *s,int in){
 	char lcd[21];
 	sprintf(lcd,"%d",in);
 	lcdPrint(s);

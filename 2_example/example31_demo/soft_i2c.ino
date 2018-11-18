@@ -502,11 +502,11 @@ void lcdOut(byte y,byte *lcd){
 	i2c_lcd_out(y,lcd);
 }
 
-void lcdPrint(char *s){
+void lcdPrint(const char *s){
 	i2c_lcd_print(s);
 }
 
-void lcdPrint2(char *s){
+void lcdPrint2(const char *s){
 	i2c_lcd_print2(s);
 }
 
@@ -518,7 +518,7 @@ void lcdPrintIp2(uint32_t ip){
 	i2c_lcd_print_ip2(ip);
 }
 
-void lcdPrintVal(char *s,int in){
+void lcdPrintVal(const char *s,int in){
 	i2c_lcd_print_val(s,in);
 }
 

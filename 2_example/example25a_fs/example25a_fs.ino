@@ -4,6 +4,11 @@ Example 25a: センサ受信データ・ファイルシステム [FTPサーバ�
 Arduino IDE Version 1.6.8以上を推奨（Version 1.6.5ではコンパイルできない）
 esp8266 by esp8266 Community Version 2.3.0以上を推奨
 
+Windowsのエクスプローラ（ファイル表示機能）へ以下を入力するとアクセスできます。
+（192.168.0.XXXの部分はLCDへ表示される本機のIPアドレス）
+
+    ftp://cqpub:bokunimowakaru@192.168.0.XXX/
+
                                             Copyright (c) 2016 Wataru KUNINO
 *******************************************************************************/
 
