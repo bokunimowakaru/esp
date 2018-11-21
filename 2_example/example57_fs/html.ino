@@ -1,6 +1,6 @@
 /*******************************************************************************
 HTMLコンテンツ センサ受信データ・ファイルシステム
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void listDir(WiFiClient &client, char *s_ip, fs::FS &fs, const char * dirname, uint8_t levels) {

@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ LEDの輝度制御
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void html(WiFiClient &client, int target, int R, int G, int B, uint32_t ip){

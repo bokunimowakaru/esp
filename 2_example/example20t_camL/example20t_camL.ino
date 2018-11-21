@@ -1,9 +1,10 @@
 /*******************************************************************************
-Example 20: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
+Example 20t: Wi-Fi コンシェルジェ カメラ担当 画像一覧表示機能付き版
+ for SparkFun SEN-11610 ・ LynkSprite JPEG Color Camera TTL
+Webサーバ機能を使って、カメラのシャッターを制御し、撮影した写真を表示します。
+[ESP8266WebServerライブラリ使用]
 
-画像一覧表示バージョン [ESP8266WebServerライブラリ使用・完成版]
-
-                                           Copyright (c) 2016-2018 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 /*
 表示可能な写真の枚数について：

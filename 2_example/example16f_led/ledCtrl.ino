@@ -9,7 +9,7 @@ int end		制御後の輝度（0～1023）
 int speed	制御速度	(1～100程度・1で約1秒、10で約0.1秒)
 int 戻り値	制御後の輝度
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 int ledCtrl(int pin,int start,int end,int speed){   // ledのアナログ制御用の関数

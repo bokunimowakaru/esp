@@ -1,10 +1,18 @@
 /*******************************************************************************
-Example 22a: IchigoJam をつかった情報表示器 i.My.espJam
+Example 22a: Wi-Fi コンシェルジェ マイコン担当 IchigoJam情報表示 i.My.espJam
+IoTセンサ機器が送信するセンサ値情報を、テレビへ表示することが可能なIoT機器です。
+
+Windows エクスプローラ（ファイル表示機能）へ以下を入力すると、本機内のファイルの
+一覧を表示し、ファイルをデスクトップなどにコピーすることも可能です。
+
+	ftp://cqpub:bokunimowakaru@192.168.0.XXX/
+	（192.168.0.XXXの部分はLCDへ表示される本機のIPアドレス）
 
 Arduino IDE Version 1.6.8以上を推奨（Version 1.6.5ではコンパイルできない）
 esp8266 by esp8266 Community Version 2.3.0以上を推奨
 IchigoJam Firmware 1.2以上を推奨
-                                            Copyright (c) 2016 Wataru KUNINO
+
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <ESP8266WiFi.h>                        // Wi-Fi機能を利用するために必要

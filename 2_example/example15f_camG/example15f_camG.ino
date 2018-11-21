@@ -1,5 +1,7 @@
 /*******************************************************************************
-Example 15: 監視カメラ for SeeedStudio Grove Serial Camera Kit [FTP送信機能付き]
+Example 15f:(IoTセンサ) Wi-Fi カメラ SeeedStudio Grove Serial Camera Kit用 FTP版
+定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
+撮影した写真をFTPで転送します。
 
 ※本スケッチ内define部のFTP_TO、FTP_USER、FTP_PASS、FTP_DIRを設定して下さい。
 
@@ -16,7 +18,7 @@ Example 15: 監視カメラ for SeeedStudio Grove Serial Camera Kit [FTP送信�
 ※FTPサーバ側の処理速度などに応じてftp.inoを修正する必要が生じる可能性があります
 　一例として、example25a_fsのFTPサーバ機能への送信は行えません。
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <SoftwareSerial.h>

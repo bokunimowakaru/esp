@@ -1,6 +1,9 @@
 /*******************************************************************************
-Example 23: Raspberry Pi を制御する
-                                            Copyright (c) 2016 Wataru KUNINO
+Example 23: Wi-Fi コンシェルジェ コンピュータ担当（Raspberry Piの電源制御）
+Raspberry Piの電源が入っていないときに電源投入を行うことが可能なIoT機器です。
+簡単なコマンドをRaspberry Piへ送ったり、応答結果を確認することも出来ます。
+
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <SoftwareSerial.h>

@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ LEDの輝度制御
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void html(
@@ -26,7 +26,7 @@ void html(
     client.println("Connection: close");            // 応答終了後にセッションを閉じる
     client.println();
     client.println("<html>");
-    client.println("<head><title>Test Page</title>");
+    client.println("<head><title>Wi-Fi コンシェルジェ 電源設備担当</title>");
     client.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">");
     client.print("<meta http-equiv=\"refresh\" content=\"20;URL=http://");
     client.print(s_ip);

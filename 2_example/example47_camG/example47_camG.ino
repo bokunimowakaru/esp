@@ -12,7 +12,7 @@ Example 47 (=32+15): 監視カメラ for SeeedStudio Grove Serial Camera Kit
 
 ※今後、esp-idfや上記ライブラリを基にしたものが公式サポートされると思います。
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <SPIFFS.h>

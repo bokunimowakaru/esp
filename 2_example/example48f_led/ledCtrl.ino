@@ -12,7 +12,7 @@ int 戻り値  制御後の輝度
 https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-ledc.c
 https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/AnalogOut/LEDCSoftwareFade/LEDCSoftwareFade.ino
 
-                                            Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 /* for LEDC */

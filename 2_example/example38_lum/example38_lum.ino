@@ -4,7 +4,7 @@ Example 38(=32+6): 照度センサ NJL7502L
 負荷抵抗1kΩの場合、ESP32内蔵ADCの特性上、0.1V(300 lx)以下の検出が出来ません。
 より感度を高めるには負荷抵抗を大きくして下さい。
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ

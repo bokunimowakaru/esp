@@ -5,7 +5,7 @@ Example 48f (=32+16f):  フルカラーLEDの製作
         GPIO 26(11番ピン)に緑色LEDを接続する
         GPIO 27(12番ピン)に青色LEDを接続する
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

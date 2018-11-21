@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ Raspberry Pi
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void html(WiFiClient &client, char *tx, char *rx, uint32_t ip){

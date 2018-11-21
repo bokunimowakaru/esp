@@ -3,7 +3,7 @@ Example 46 (=32+14): 赤外線リモコン受信機
 
     GPIO 4(26番ピン)へIRセンサを接続
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

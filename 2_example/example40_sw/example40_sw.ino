@@ -9,7 +9,7 @@ Example 40=(32+8): リードスイッチ・ドアスイッチ・呼鈴
 　　　　開/閉の片方にしたい場合はesp_sleep_enable_ext0_wakeupの第2引数に
 　　　　0または1を指定してください。
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

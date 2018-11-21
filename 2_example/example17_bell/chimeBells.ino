@@ -9,7 +9,7 @@ int 戻り値  count-1（0以上）
 
 処理時間：約1秒
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 int chimeBells(int output, int count) {

@@ -7,7 +7,7 @@ Example 52 (=32+20): 監視カメラ for SeeedStudio Grove Serial Camera Kit
 
     GPIO 2(24番ピン)にPch-FETを接続
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

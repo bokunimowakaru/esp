@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ AquesTalk
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void html(WiFiClient &client, char *talk, uint32_t ip){

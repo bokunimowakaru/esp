@@ -4,7 +4,7 @@ Example 21: AquosTalkを使った音声出力器(HTTP版)
     AquosTalk接続用
     TXD0(35番ピン U0TXD)、AquosTalk側はRXD端子(2番ピン)
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

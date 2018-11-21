@@ -6,7 +6,7 @@ Example 55 (=32+23): Raspberry Pi を制御する
     GPIO17(28番ピン) U2TXD Raspberry Pi側はRXD端子(10番ピン)
     GPIO 2(24番ピン) に電源制御回路(RUN端子制御)
     
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

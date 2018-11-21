@@ -1,7 +1,9 @@
 /*******************************************************************************
-Example 20: 監視カメラ for SeeedStudio Grove Serial Camera Kit 
+Example 20: Wi-Fi コンシェルジェ カメラ担当
+ for SeeedStudio Grove Serial Camera Kit 
+Webサーバ機能を使って、カメラのシャッターを制御し、撮影した写真を表示します。
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <SoftwareSerial.h>

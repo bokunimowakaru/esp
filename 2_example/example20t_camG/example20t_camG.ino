@@ -1,7 +1,8 @@
 /*******************************************************************************
-Example 20t: 監視カメラ for SeeedStudio Grove Serial Camera Kit
-
-画像一覧表示バージョン [ESP8266WebServerライブラリ使用・完成版]
+Example 20t: Wi-Fi コンシェルジェ カメラ担当 画像一覧表示機能付き版
+ for SeeedStudio Grove Serial Camera Kit 
+Webサーバ機能を使って、カメラのシャッターを制御し、撮影した写真を表示します。
+[ESP8266WebServerライブラリ使用]
 
                                           Copyright (c) 2016-2017 Wataru KUNINO
 *******************************************************************************/

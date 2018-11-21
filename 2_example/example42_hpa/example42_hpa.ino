@@ -5,7 +5,7 @@ Example 42 (=32+10): 気圧センサ LPS25H
                         I2C SDAポート GPIO 21
                         I2C SCLポート GPIO 22
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

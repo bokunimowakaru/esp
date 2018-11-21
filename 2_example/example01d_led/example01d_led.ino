@@ -1,8 +1,10 @@
 /*******************************************************************************
-Example 1D: LEDを点滅させる
+Example 1d: Wi-Fi インジケータ HTTP版＆ソフトウェア無線AP版
 デモ用：展示会などでPCやスマホから直接ESPモジュールへ接続する場合のサンプル
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
+
 #include <ESP8266WiFi.h>                    // Wi-Fi機能を利用するために必要
 #define PIN_LED 13                          // IO 13(5番ピン)にLEDを接続する
 #define SSID_AP "ESP_SoftAP"                // 無線LANアクセスポイントのSSID

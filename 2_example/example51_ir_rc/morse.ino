@@ -1,7 +1,7 @@
 /*******************************************************************************
 モールス
 
-                                           Copyright (c) 2016-2018 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 /*
@@ -37,10 +37,10 @@ void setup() {
 void morse_delay(int time){
     if(time > 10) for(int i=0;i<time/10;i++){
         delay(10);
-        ESP.wdtFeed();
+    //  ESP.wdtFeed();
     }
     delay(time%10);
-    ESP.wdtFeed();
+//  ESP.wdtFeed();
 }
 
 void morse(int output, int time, char *str) {

@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ IRリモコン
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 #ifndef AEHA
 #define AEHA		0
@@ -26,7 +26,7 @@ void html(WiFiClient &client, char *txt, int len, int type, uint32_t ip){
     client.println("Connection: close");            // 応答終了後にセッションを閉じる
     client.println();
     client.println("<html>");
-    client.println("<head><title>Test Page</title>");
+    client.println("<head><title>Wi-Fi コンシェルジェ リモコン担当</title>");
     client.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">");
     client.println("</head>");
     client.println("<body>");

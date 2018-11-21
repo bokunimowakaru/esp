@@ -1,6 +1,6 @@
 /*******************************************************************************
 防犯カメラ
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void html(WiFiClient &client, int size, int update, uint32_t ip){
@@ -17,7 +17,7 @@ void html(WiFiClient &client, int size, int update, uint32_t ip){
     client.println("Connection: close");            // 応答終了後にセッションを閉じる
     client.println();
     client.println("<html>");
-    client.println("<head><title>Test Page</title>");
+    client.println("<head><title>Wi-Fi コンシェルジェ カメラ担当</title>");
     client.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">");
     if(update){
         client.print("<meta http-equiv=\"refresh\" content=\"");

@@ -1,7 +1,7 @@
 /*******************************************************************************
 HTMLコンテンツ IchigoJam
 
-                                            Copyright (c) 2016 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 void html(WiFiClient &client, char *tx, char *rx, uint32_t ip){
@@ -18,7 +18,7 @@ void html(WiFiClient &client, char *tx, char *rx, uint32_t ip){
     client.println("Connection: close");            // 応答終了後にセッションを閉じる
     client.println();
     client.println("<html>");
-    client.println("<head><title>Test Page</title>");
+    client.println("<head><title>Wi-Fi コンシェルジェ マイコン担当</title>");
     client.println("<meta http-equiv=\"Content-type\" content=\"text/html; charset=UTF-8\">");
     client.println("</head>");
     client.println("<body>");
