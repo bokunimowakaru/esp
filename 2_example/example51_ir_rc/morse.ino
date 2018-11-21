@@ -43,14 +43,14 @@ void morse_delay(int time){
 //  ESP.wdtFeed();
 }
 
-void morse(int output, int time, char *str) {
+void morse(int output, int time, const char *str) {
     int i, j;
     char num[6]="_____";
     char morse_dot[7]="._._._";
     char *pattern;
 
     for (i=0; i<strlen(str); i++) {
-        char *c = str+i;
+        char *c = (char *)str+i;
         pattern=0;
         if ('A' <= *c && *c <= 'Z') pattern = (char *)morse_pattern[*c - 'A'];
         if ('a' <= *c && *c <= 'z') pattern = (char *)morse_pattern[*c - 'a'];

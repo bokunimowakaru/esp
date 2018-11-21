@@ -44,11 +44,12 @@ void setup(){                               // 起動時に一度だけ実行す
         digitalWrite(PIN_LED,!digitalRead(PIN_LED));    // LEDの点滅
         delay(500);                         // 待ち時間処理
     }
+    morseIp0(PIN_LED,50,WiFi.localIP());    // IPアドレス終値をモールス信号出力
+    ledSetup();                             // LED用セットアップ
     server.on("/", handleRoot);             // HTTP接続時のコールバック先を設定
     server.begin();                         // Web サーバを起動する
     Serial.println("\nStarted");            // 起動したことをシリアル出力表示
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    morseIp0(PIN_LED,50,WiFi.localIP());    // IPアドレス終値をモールス信号出力
 }
 
 void loop(){                                // 繰り返し実行する関数

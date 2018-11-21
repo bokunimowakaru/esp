@@ -153,7 +153,7 @@ Wi-Fi コンシェルジェ 照明担当が制御するLEDは、状態や情報�
 	ESP32-WROOM-32用：example48_led
 	
 	f:フルカラーLED版
-	w:ESP8266WebServer版（Webサーバ機能にライブラリを使用）
+	w:WebServer版（Webサーバ機能にライブラリを使用）
 
 ### 3-2 Wi-Fi コンシェルジェ チャイム担当（ブザー制御）
 
