@@ -1,4 +1,6 @@
-# ESP8266モジュール用スケッチ・最新ESP32用スケッチ
+# ボクにもわかる IoTモジュール ESP-WROOM-02 ESP-WROOM-32
+
+Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。
 
 ## 1_practice
 
@@ -245,12 +247,16 @@ TFTPサーバ上から設定ファイルをダウンロードし、モジュー�
 
 	ESP-WROOM-02用　：example26_tftp
 	ESP32-WROOM-32用：example58_tftp
+	
+	※書籍に説明はありません。<2_example/example26_tftp/README.md>をご覧ください。
 
 ### 4-2 (IoTセンサ) 乾電池駆動可能なCO2センサ
 
 二酸化炭素や有機ガスなどによる室内の空気環境状態を測定するガスセンサams製CCS811と温度・湿度・気圧を測定する環境センサ Bosch製 BME280を使った、乾電池駆動が可能なワイヤレスCO2センサです。 
 
 	ESP-WROOM-02用　：example27_env
+	
+	※書籍に説明はありません。<2_example/example27_env/README.md>をご覧ください。
 
 ### 4-3 Arduino用 LCD Keypad 対応 Wi-Fi コンシェルジェ 掲示板担当
 
@@ -262,14 +268,16 @@ ESP-WROOM-02を搭載した ESPduino または WEMOS D1 、ESP32-WROOM-32を搭�
 	IoT Express (ESP32-WROOM-32)
 	DOIT ESPduino 32 (ESP32-WROOM-32)
 	WEMOS D1 R3 (ESP32-WROOM-32) IO12にプルダウン抵抗10kΩを追加する
-
+	
 	対応シールド
 	DF Robot製 Arduino 用 LCD Keypad Shield V1.1
 	SainSmart製 LCD Keypad Shield
 	D1 ROBOT製 LCD Keypad Shield など
-
+	
 	ESP-WROOM-02用　：example28_lcdkey
 	ESP32-WROOM-32用：example60_lcdkey
+	
+	※書籍に説明はありません。<2_example/example28_lcdkey/README.md>をご覧ください。
 
 ### 4-4 (IoTセンサ) 無線LAN プロミスキャス センサ
 
@@ -278,8 +286,10 @@ ESP-WROOM-02を搭載した ESPduino または WEMOS D1 、ESP32-WROOM-32を搭�
 	ESP-WROOM-02用　：example29_dash
 	
 	u:UART版
+	
+	※書籍に説明はありません。<2_example/example29_dash/README.md>をご覧ください。
 
-### 4-5 (IoTセンサ) 無線LAN プロミスキャス センサ
+### 4-5 (IoTセンサ) 内蔵ホール効果素子センサ＆タッチセンサ
 
 ESP32 デモ用のスケッチです。ESP32内に内蔵されているホール効果素子センサと、タッチセンサの検出値をスマホのウェブブラウザへ表示します。
 
@@ -297,32 +307,44 @@ ESP32 デモ用のスケッチです。ESP32内に内蔵されているホール
 国土交通省「川の防災情報」から河川の水位を取得し、液晶シールド(LCD Keypad)へ表示します。
 
 	ESP32-WROOM-32用：example62_river
+	
+	※書籍に説明はありません。<2_example/example62_river/README.md>をご覧ください。
 
 ### 4-8 天気情報をLCDへ表示する IoT情報端末
 
 Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad)へ表示します。
 
 	ESP32-WROOM-32用：example62_weather
+	
+	※書籍に説明はありません。<2_example/example62_weather/README.md>をご覧ください。
 
 ### 4-9 Google カレンダー(予定表) から予定を取得
 
 Google カレンダー(予定表) に登録した予定を取得し、液晶シールド(LCD Keypad)へ表示します。
 
 	ESP32-WROOM-32用：example63_google
+	
+	※書籍に説明はありません。<2_example/example63_google/README.md>をご覧ください。
 
 ### 4-10 Wi-Fi コンシェルジェ フォトフレーム＆カメラ画像表示端末
 
 有機ELディスプレイ（SSD1331ドライバ搭載品）または、M5 Stackの液晶ディスプレイをフォトフレーム端末として使用しつつ、Wi-Fi カメラ（2-10）が撮影した写真を表示します。
 
 	ESP32-WROOM-32用：example64_photo
+	<2_example/example64_photo/README.md>をご覧ください。
 	
 	m5: M5 Stack用
+	<2_example/example64_photo_m5/README.md>をご覧ください。
+	
+	※書籍に説明はありません。
 
 ### 4-11 (IoTセンサ) 音声送信機
 
 アナログ入力ポートから録音した音声を送信します。
 
 	ESP32-WROOM-32用：example65_mic
+	
+	※書籍に説明はありません
 
 ## 3_misc
 
