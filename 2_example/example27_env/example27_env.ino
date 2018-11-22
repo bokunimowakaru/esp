@@ -2,11 +2,6 @@
 Example 27:
 乾電池駆動可能なCO2センサ AMS CCS811＋温度・湿度・気圧センサ Bosch BME280
 
-ディープスリープが動作しない場合は、スリープ時間を35分以下にする、もしくは、
-ESP8266ライブラリのバージョンを2.3.0に変更してください。
-Arduino IDEの[ツール]→[ボード]→[ボードマネージャ]で表示されるリストの中から、
-「esp8266 by ESP8266 Community」を選択するとバージョンの変更が行えます。
-
                                            Copyright (c) 2017-2019 Wataru KUNINO
 
 二酸化炭素や有機ガスなどによる室内の空気環境状態を測定するガスセンサams製CCS811と
@@ -89,7 +84,7 @@ Copyright (c) 2017-2019 Wataru KUNINO
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 59*60*1000000               // スリープ時間 59分(uint32_t)
+#define SLEEP_P 59*60*1000000ul             // スリープ時間 59分(uint32_t)
 #define DEVICE "e_co2_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define BME280_ADDR 0x76                    // BME280:76(SDO=low), 77(SDO=high)
 #define WAIT_MS 10000                       // 起動待ち時間(最大)

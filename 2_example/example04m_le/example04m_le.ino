@@ -15,7 +15,7 @@ extern "C" {
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 59*1000000                  // スリープ時間 59秒(uint32_t)
+#define SLEEP_P 59*1000000ul                // スリープ時間 59秒(uint32_t)
 #define SLEEP_N 30                          // 最長スリープ時間 SLEEP_P×SLEEP_N
 void sleep();
 

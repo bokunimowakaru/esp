@@ -20,7 +20,7 @@ Google カレンダー(予定表) から予定を取得する
 #define GScriptId "★ここにGoogle Apps Scriptのトークンを記入してください★"
 
 #define TIMEOUT 7000                        // タイムアウト 7秒
-#define SLEEP_P 1*60*1000000                // スリープ時間 1分(uint32_t)
+#define SLEEP_P 1*60*1000000ul              // スリープ時間 1分(uint32_t)
 #define HTTPTO "script.google.com"          // HTTPSアクセス先
 #define HTRED "script.googleusercontent.com"// HTTPSリダイレクト先
 

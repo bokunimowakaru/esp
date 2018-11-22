@@ -26,7 +26,7 @@ Example 65: ESP32 (IoTセンサ) 音声送信機
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 1*60*1000000                // スリープ時間 1分(uint32_t)
+#define SLEEP_P 1*60*1000000ul              // スリープ時間 1分(uint32_t)
 #define DEVICE "sound_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/sound.wav"               // 音声ファイル名(ダウンロード用)
 #define SOUND_LEN 3*8000                    // 音声長 8000=約1秒

@@ -3,11 +3,6 @@ Example 15:(IoTセンサ) Wi-Fi カメラ SeeedStudio Grove Serial Camera Kit用
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真はHTTPで取得することが出来ます。
 
-ディープスリープが動作しない場合は、スリープ時間を35分以下にする、もしくは、
-ESP8266ライブラリのバージョンを2.3.0に変更してください。
-Arduino IDEの[ツール]→[ボード]→[ボードマネージャ]で表示されるリストの中から、
-「esp8266 by ESP8266 Community」を選択するとバージョンの変更が行えます。
-
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 /*
@@ -29,7 +24,7 @@ Arduino IDEの[ツール]→[ボード]→[ボードマネージャ]で表示さ
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 59*60*1000000               // スリープ時間 59分(uint32_t)
+#define SLEEP_P 59*60*1000000ul             // スリープ時間 59分(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
 void sleep();

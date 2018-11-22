@@ -14,7 +14,7 @@ Example 39(=32+7): ESP32 (IoTセンサ) Wi-Fi 温度計
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 290*1000000                 // スリープ時間 290秒(約5分)
+#define SLEEP_P 290*1000000ul               // スリープ時間 290秒(約5分)
 #define DEVICE "temp._1,"                   // デバイス名(5文字+"_"+番号+",")
 #define TEMP_OFFSET -60.0                   // LM61CIZ専用
 

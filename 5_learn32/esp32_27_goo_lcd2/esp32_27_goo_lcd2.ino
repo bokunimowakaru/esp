@@ -22,7 +22,7 @@ Google カレンダー(予定表) から予定を取得する
 #define PIN_BUZZER 12                       // GPIO 12にスピーカを接続
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
 #define TIMEOUT 7000                        // タイムアウト 7秒
-#define SLEEP_P 10*60*1000000               // スリープ時間 10分(uint32_t)
+#define SLEEP_P 10*60*1000000ul             // スリープ時間 10分(uint32_t)
 #define HTTPTO "script.google.com"          // HTTPSアクセス先
 #define HTRED "script.googleusercontent.com"// HTTPSリダイレクト先
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス

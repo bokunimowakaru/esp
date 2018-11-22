@@ -15,7 +15,7 @@ extern "C" {
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 290*1000000                 // スリープ時間 290秒(約5分)
+#define SLEEP_P 290*1000000ul               // スリープ時間 290秒(約5分)
 #define DEVICE "temp._1,"                   // デバイス名(5文字+"_"+番号+",")
 #define TEMP_OFFSET -50.0                   // LM61CIZの場合は-60.0に変更する
 void sleep();

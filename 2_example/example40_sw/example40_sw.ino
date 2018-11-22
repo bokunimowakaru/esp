@@ -24,7 +24,7 @@ Example 40=(32+8): ESP32 (IoTセンサ) Wi-Fi ドア開閉モニタ リードス
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 3550*1000000                // スリープ時間 3550秒(約60分)
+#define SLEEP_P 3550*1000000ul              // スリープ時間 3550秒(約60分)
 #define DEVICE "rd_sw_1,"                   // デバイス名(5文字+"_"+番号+",")
 
 int reed;                                   // リードスイッチの状態用

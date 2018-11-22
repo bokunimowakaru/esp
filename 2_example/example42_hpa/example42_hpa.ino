@@ -17,7 +17,7 @@ STマイクロ製 LPS25Hから取得した気圧と温度を送信するIoTセ�
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 29*60*1000000               // スリープ時間 29分(uint32_t)
+#define SLEEP_P 29*60*1000000ul             // スリープ時間 29分(uint32_t)
 #define DEVICE "press_1,"                   // デバイス名(5文字+"_"+番号+",")
 
 void setup(){                               // 起動時に一度だけ実行する関数

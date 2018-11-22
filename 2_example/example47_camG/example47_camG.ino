@@ -28,7 +28,7 @@ SeeedStudio Grove Serial Camera Kit用 HTTP版
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 1*60*1000000                // スリープ時間 1分(uint32_t)
+#define SLEEP_P 1*60*1000000ul              // スリープ時間 1分(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
 

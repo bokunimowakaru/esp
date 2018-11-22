@@ -21,7 +21,7 @@ extern "C" {
 #define AmbientWriteKey "0123456789abcdef"  // ライトキー(16桁の16進数)
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 20*60*1000000               // スリープ時間 20分(uint32_t)
+#define SLEEP_P 20*60*1000000ul             // スリープ時間 20分(uint32_t)
 #define SLEEP_N 36                          // 最長スリープ時間 SLEEP_P×SLEEP_N
 #define DEADZONE 0.3                        // 前回値との相違に対する閾値(℃)
 #define DEVICE "humid_3,"                   // デバイス名(5文字+"_"+番号+",")

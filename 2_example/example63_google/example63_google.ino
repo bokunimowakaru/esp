@@ -58,7 +58,7 @@ Google Apps Script(https://script.google.com/)へアクセスし、GoogleCalenda
 #endif
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
 #define TIMEOUT 6000                        // タイムアウト 6秒
-#define SLEEP_P 50*1000000                  // スリープ時間 50秒(uint32_t)
+#define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define HTTPTO "script.google.com"          // HTTPSアクセス先
 #define HTRED "script.googleusercontent.com"// HTTPSリダイレクト先
 #define PORT 443                            // HTTPSポート番号
