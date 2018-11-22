@@ -4,6 +4,10 @@ SparkFun SEN-11610・LynkSprite JPEG Color Camera TTL用 FTP版
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真をFTPで転送します。
 
+消費電力が大きい場合は、ESP8266ライブラリのバージョンを2.3.0に変更してください。
+Arduino IDEの[ツール]→[ボード]→[ボードマネージャ]で表示されるリストの中から、
+「esp8266 by ESP8266 Community」を選択するとバージョンの変更が行えます。
+
 Example 15: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
  [FTP送信機能付き]
 

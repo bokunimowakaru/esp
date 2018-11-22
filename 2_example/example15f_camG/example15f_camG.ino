@@ -3,6 +3,10 @@ Example 15f:(IoTセンサ) Wi-Fi カメラ SeeedStudio Grove Serial Camera Kit�
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真をFTPで転送します。
 
+消費電力が大きい場合は、ESP8266ライブラリのバージョンを2.3.0に変更してください。
+Arduino IDEの[ツール]→[ボード]→[ボードマネージャ]で表示されるリストの中から、
+「esp8266 by ESP8266 Community」を選択するとバージョンの変更が行えます。
+
 ※本スケッチ内define部のFTP_TO、FTP_USER、FTP_PASS、FTP_DIRを設定して下さい。
 
 ※FTPサーバが必要です。
