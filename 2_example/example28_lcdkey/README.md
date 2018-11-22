@@ -42,5 +42,5 @@ ESP-WROOM-02を搭載した ESPduino または WEMOS D1 へ、Arduino 用 LCD Ke
 ** ESP32で使用している IPスタックlwIP(lightweight IP)の仕様です
 ** 本機でのブロードキャストの送受信は可能です
 
-Copyright (c) 2016-2018 Wataru KUNINO  
+Copyright (c) 2016-2019 Wataru KUNINO  
 <https://bokunimo.net/>

@@ -5,7 +5,7 @@
 UTF8の制御コードを除去して(UTF8をASCIIカナ文字へ変換するときに使用)
 LCD(16文字2桁)へ表示します
 
-                               Copyright (c) 2014-2018 Wataru KUNINO
+                               Copyright (c) 2014-2019 Wataru KUNINO
                                https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 

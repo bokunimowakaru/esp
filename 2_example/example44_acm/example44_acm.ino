@@ -1,11 +1,12 @@
 /*******************************************************************************
-Example 44 (=32+12): 加速度センサ ADXL345
+Example 44 (=32+12): ESP32 (IoTセンサ) Wi-Fi 3軸加速度センサ ADXL345
 
-初回起動時は重力加速度の測定結果を送信する
-以降、重力加速度を減算した値(相対加速値)を送信する
+加速度の変化を検出したときに送信するIoTセンサです。
+ドアや窓の開閉や傾きの変化などを検出することが出来ます。
 
-ADXL345のINT1端子をESP32へ接続する前にファームウェアを書き込んでおく
-（ファームの書き込み後に起動しないため）
+・初回起動時は重力加速度の測定結果を送信します。
+・その後は、重力加速度を減算した値(相対加速値)を送信します。
+・ADXL345のINT1端子をESP32のGPIO 4(26番ピン)へ接続してください。
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
@@ -13,7 +14,7 @@ ADXL345のINT1端子をESP32へ接続する前にファームウェアを書き�
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
-#define PIN_INT 4                           // GPIO 4(26番ピン)にスイッチを接続
+#define PIN_INT 4                           // GPIO 4(26番ピン)にINT1を接続
 #define PIN_INT_GPIO_NUM GPIO_NUM_4         // GPIO 4をスリープ解除信号へ設定
 #define BUTTON_PIN_BITMASK 0x000000010      // 2^(PIN_SW+1) in hex
 #define PIN_LED 2                           // GPIO 2(24番ピン)にLEDを接続
@@ -30,7 +31,7 @@ void setup(){                               // 起動時に一度だけ実行す
     int waiting=0;                          // アクセスポイント接続待ち用
     int start,i;
     
-    pinMode(PIN_INT,INPUT_PULLUP);          // センサを接続したポートを入力に
+    pinMode(PIN_INT,INPUT_PULLUP);          // INT1を接続したポートを入力に
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     start=adxlSetup(0);                     // 加速度センサの初期化と結果取得
     for(i=0;i<3;i++) acm[i]=getAcm(i);      // 3軸の加速度を取得し変数acmへ代入

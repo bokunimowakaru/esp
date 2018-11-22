@@ -3,7 +3,7 @@ Practice 35(Practice 3+32): スイッチ入力
 
 GPIO 0 へ スイッチを、
 GPIO 2 へ LEDを接続してください。
-                                          Copyright (c) 2016-2018 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #define PIN_SW 0                        // IO 0にスイッチを接続

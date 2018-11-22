@@ -5,7 +5,7 @@ Practice esp32 11 led PWM 【Wi-Fi インジケータ親機 UDP版】
 ・電流制限抵抗が1kΩの時は、#define LED_MAXを8000に修正してください
 　（LED_MAXはPWMの変更幅で、上限は8191です。高いほど点灯時の輝度が上がります）
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ

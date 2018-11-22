@@ -2,7 +2,7 @@
 ################################################################################
 # Server Example 10: ホームネットワーク
 # server01_bell + server06_hvac.sh + server09_ifttt.sh
-#                                          Copyright (c) 2016-2017 Wataru KUNINO
+#                                          Copyright (c) 2016-2019 Wataru KUNINO
 ################################################################################
 
 # IFTTTのKeyを(https://ifttt.com/maker_webhooks)から取得し、変数KEYへ代入する

@@ -240,7 +240,7 @@ FTPサーバ対応版では、Windowsのエクスプローラ（ファイル表�
 
 ダブルクリックで内容を表示したり、ファイルをデスクトップなどにコピーすることも可能です。ファイルサイズは100kB以下を推奨します。ファイル転送中は他の処理が出来なくなります。また、ファイル転送中にハングアップする場合があります。
 
-### 4-1 TFTP クライアント 設定
+### 4-1 センサデバイス用 TFTP クライアント 設定
 
 TFTPサーバ上から設定ファイルをダウンロードし、モジュール内の設定を変更します。
 本サンプルではディープスリープ時間を設定することが出来ます。
@@ -248,7 +248,7 @@ TFTPサーバ上から設定ファイルをダウンロードし、モジュー�
 	ESP-WROOM-02用　：example26_tftp
 	ESP32-WROOM-32用：example58_tftp
 	
-	※書籍に説明はありません。<2_example/example26_tftp/README.md>をご覧ください。
+	※書籍内に説明はありません。2_example/example26_tftp/README.md をご覧ください。
 
 ### 4-2 (IoTセンサ) 乾電池駆動可能なCO2センサ
 
@@ -256,7 +256,7 @@ TFTPサーバ上から設定ファイルをダウンロードし、モジュー�
 
 	ESP-WROOM-02用　：example27_env
 	
-	※書籍に説明はありません。<2_example/example27_env/README.md>をご覧ください。
+	※書籍内に説明はありません。<2_example/example27_env/README.md>をご覧ください。
 
 ### 4-3 Arduino用 LCD Keypad 対応 Wi-Fi コンシェルジェ 掲示板担当
 
@@ -277,17 +277,17 @@ ESP-WROOM-02を搭載した ESPduino または WEMOS D1 、ESP32-WROOM-32を搭�
 	ESP-WROOM-02用　：example28_lcdkey
 	ESP32-WROOM-32用：example60_lcdkey
 	
-	※書籍に説明はありません。<2_example/example28_lcdkey/README.md>をご覧ください。
+	※書籍内に説明はありません。2_example/example28_lcdkey/README.md をご覧ください。
 
 ### 4-4 (IoTセンサ) 無線LAN プロミスキャス センサ
 
-スマートフォンやPCが自宅の無線LANへ自動接続したときや、Amazon Dashボタンが押下されたときなどに、送信するMACブロードキャストを検出します。検出時にWi-Fi送信を行うWi-Fi版とシリアルUART出力を行うUART版を作成しました。
+スマートフォンやPCが自宅の無線LANへ自動接続したときや、Amazon Dashボタンが押下されたときなどに、送信するMACブロードキャストを検出します。検出時にWi-Fi送信を行うWi-Fi送信版とシリアルUART出力を行うUART出力版を作成しました。
 
 	ESP-WROOM-02用　：example29_dash
 	
-	u:UART版
+	u:UART出力版
 	
-	※書籍に説明はありません。<2_example/example29_dash/README.md>をご覧ください。
+	※書籍内に説明はありません。2_example/example29_dash/README.md をご覧ください。
 
 ### 4-5 (IoTセンサ) 内蔵ホール効果素子センサ＆タッチセンサ
 
@@ -308,7 +308,7 @@ ESP32 デモ用のスケッチです。ESP32内に内蔵されているホール
 
 	ESP32-WROOM-32用：example62_river
 	
-	※書籍に説明はありません。<2_example/example62_river/README.md>をご覧ください。
+	※書籍内に説明はありません。スケッチ内の説明をご覧ください。
 
 ### 4-8 天気情報をLCDへ表示する IoT情報端末
 
@@ -316,27 +316,25 @@ Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Key
 
 	ESP32-WROOM-32用：example62_weather
 	
-	※書籍に説明はありません。<2_example/example62_weather/README.md>をご覧ください。
+	※書籍内に説明はありません。スケッチ内の説明をご覧ください。
 
-### 4-9 Google カレンダー(予定表) から予定を取得
+### 4-9 Google カレンダー(予定表) から予定を取得する IoT情報端末
 
 Google カレンダー(予定表) に登録した予定を取得し、液晶シールド(LCD Keypad)へ表示します。
 
 	ESP32-WROOM-32用：example63_google
 	
-	※書籍に説明はありません。<2_example/example63_google/README.md>をご覧ください。
+	※書籍内に説明はありません。スケッチ内の説明をご覧ください。
 
 ### 4-10 Wi-Fi コンシェルジェ フォトフレーム＆カメラ画像表示端末
 
 有機ELディスプレイ（SSD1331ドライバ搭載品）または、M5 Stackの液晶ディスプレイをフォトフレーム端末として使用しつつ、Wi-Fi カメラ（2-10）が撮影した写真を表示します。
 
 	ESP32-WROOM-32用：example64_photo
-	<2_example/example64_photo/README.md>をご覧ください。
 	
 	m5: M5 Stack用
-	<2_example/example64_photo_m5/README.md>をご覧ください。
 	
-	※書籍に説明はありません。
+	※書籍内に説明はありません。スケッチ内の説明をご覧ください。
 
 ### 4-11 (IoTセンサ) 音声送信機
 
@@ -344,7 +342,7 @@ Google カレンダー(予定表) に登録した予定を取得し、液晶シ�
 
 	ESP32-WROOM-32用：example65_mic
 	
-	※書籍に説明はありません
+	※書籍内に説明はありません。スケッチ内の説明をご覧ください。
 
 ## 3_misc
 
@@ -399,7 +397,7 @@ server01_bell と server06_hvac.sh と server09_ifttt.sh を組み合わせた�
 ## node-red
 
 Node-RED 用のサンプル・フローです。
-各IoT機器用のゲートウェイを簡単に製作することができます。  
+各種IoT機器用のゲートウェイを簡単に製作することができます。  
 使用方法は下記のブログを参考にしてください。  
 <https://blogs.yahoo.co.jp/bokunimowakaru/56073151.html>
 
@@ -422,6 +420,8 @@ Node-RED 用のサンプル・フローです。
 	$ cd ~/RaspberryPi
 	$ git pull
 
+差分と同じ場所を変更していた場合、競合が発生します。競合を自分で解決できない場合は、フォルダ名「esp」を他の名前に書き換えて、git clone で新たにダウンロードする方法が簡単で、しかも安全です。
+
 # サポートページ  
 <https://bokunimo.net/bokunimowakaru/cq/esp/>
 
@@ -431,5 +431,5 @@ Node-RED 用のサンプル・フローです。
 使用・変更・配布は可能ですが、権利表示を残してください。  
 また、提供情報や配布ソフトの使用によって生じた被害については、一切、補償いたしません。  
 
-Copyright (c) 2016-2018 Wataru KUNINO  
+Copyright (c) 2016-2019 Wataru KUNINO  
 <https://bokunimo.net/>

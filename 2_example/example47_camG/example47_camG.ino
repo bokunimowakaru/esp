@@ -1,5 +1,9 @@
 /*******************************************************************************
-Example 47 (=32+15): 監視カメラ for SeeedStudio Grove Serial Camera Kit 
+Example 47 (=32+15): ESP32 (IoTセンサ) Wi-Fi カメラ
+SeeedStudio Grove Serial Camera Kit用 HTTP版
+
+定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
+撮影した写真はHTTPで取得することが出来ます。
 
     カメラ接続用
     GPIO16(27番ピン) U2RXD カメラ側はTXD端子(黄色)

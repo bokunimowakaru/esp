@@ -11,7 +11,7 @@ Practice esp32 19 cam 【カメラ for SeeedStudio Grove Serial Camera Kit】
     GPIO 21(33番ピン) I2C SDAポート 
     GPIO 22(36番ピン) I2C SCLポート
 
-                                           Copyright (c) 2016-2018 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <SPIFFS.h>                         // 内蔵FLASH用ファイルシステム

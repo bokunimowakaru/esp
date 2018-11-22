@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 60 LCDへ表示する
+Example 60: ESP32 Arduino用 LCD Keypad 対応 Wi-Fi コンシェルジェ 掲示板担当
 (HTTP版・時刻表示機能・NTP受信機能・棒グラフ機能・ログ保存機能・Ambient送信機能)
 
                                           Copyright (c) 2016-2019 Wataru KUNINO

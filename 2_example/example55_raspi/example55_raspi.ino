@@ -1,5 +1,7 @@
 /*******************************************************************************
-Example 55 (=32+23): Raspberry Pi を制御する
+Example 55 (=32+23): ESP32 Wi-Fi コンシェルジェ コンピュータ担当（Raspberry Pi）
+Raspberry Piの電源が入っていないときに電源投入を行うことが可能なIoT機器です。
+簡単なコマンドをRaspberry Piへ送ったり、応答結果を確認することも出来ます。
 
     Raspberry Pi接続用
     GPIO16(27番ピン) U2RXD Raspberry Pi側はTXD端子(8番ピン)

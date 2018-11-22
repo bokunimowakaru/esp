@@ -1,7 +1,8 @@
 /*******************************************************************************
-Example 41 (=32+9): 湿度センサ SENSIRION社 SHT31
+Example 41 (=32+9): ESP32 (IoTセンサ) Wi-Fi 温湿度計 SENSIRION製 SHT31 版
+デジタルI2Cインタフェース搭載センサから取得した温湿度を送信するIoTセンサです。
 
-    ESP32 Arduino IDE版のI2Cポート:
+    ESP32 のI2Cポート:
                         I2C SDAポート GPIO 21
                         I2C SCLポート GPIO 22
 

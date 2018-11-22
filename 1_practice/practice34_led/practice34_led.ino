@@ -2,7 +2,7 @@
 Practice 34(Practice 2+32): LEDを点滅させる
 
 GPIO 2 へ LEDを接続してください。
-                                  Copyright (c) 2016-2018 Wataru KUNINO
+                                  Copyright (c) 2016-2019 Wataru KUNINO
 ***********************************************************************/
 
 #define PIN_LED 2               // IO 2にLEDを接続

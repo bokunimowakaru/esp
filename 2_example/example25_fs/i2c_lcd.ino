@@ -4,7 +4,7 @@
 
 I2C接続の小型液晶に文字を表示する[機能拡張版]
 
-                               Copyright (c) 2014-2017 Wataru KUNINO
+                               Copyright (c) 2014-2019 Wataru KUNINO
                                https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 

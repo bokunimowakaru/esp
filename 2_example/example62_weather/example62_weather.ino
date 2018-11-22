@@ -1,5 +1,5 @@
 /*******************************************************************************
-Example 62 天気情報をLCDへ表示する
+Example 62: ESP32 天気情報をLCDへ表示する IoT情報端末
 
 主要機能：
     ・Yahoo!天気・災害から天気情報を取得し、液晶シールド(LCD Keypad)へ表示
@@ -31,7 +31,7 @@ Example 62 天気情報をLCDへ表示する
             http://toragi.cqpub.co.jp/tabid/848/Default.aspx#1
     ・ESPduino 32 や WEMOS D1 32で使用する場合、#define CQ_PUB_IOT_EXPRESSを削除
 
-                                                Copyright (c) 2017 Wataru KUNINO
+                                      Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #define CQ_PUB_IOT_EXPRESS                  // CQ出版 IoT Express 用

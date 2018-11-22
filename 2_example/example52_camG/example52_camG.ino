@@ -1,5 +1,7 @@
 /*******************************************************************************
-Example 52 (=32+20): 監視カメラ for SeeedStudio Grove Serial Camera Kit 
+Example 52 (=32+20): ESP32 Wi-Fi コンシェルジェ カメラ担当
+ for SeeedStudio Grove Serial Camera Kit 
+Webサーバ機能を使って、カメラのシャッターを制御し、撮影した写真を表示します。
 
     カメラ接続用
     GPIO16(27番ピン) U2RXD カメラ側はTXD端子(黄色)

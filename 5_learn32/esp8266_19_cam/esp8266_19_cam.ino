@@ -1,7 +1,7 @@
 /*******************************************************************************
 Practice esp8266 19 cam 【カメラ for SeeedStudio Grove Serial Camera Kit】
 
-                                           Copyright (c) 2016-2018 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 /*
 ご注意

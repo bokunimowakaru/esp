@@ -4,7 +4,7 @@
 
 I2C接続の加速度センサの値を読み取る
 Analog Devices 社 ADXL345
-                               Copyright (c) 2016 Wataru KUNINO
+                               Copyright (c) 2016-2019 Wataru KUNINO
                                https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 

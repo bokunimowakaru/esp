@@ -3,7 +3,7 @@
 # ~/.maclist.txtにMACアドレスとデバイス名(タブ区切り)の対応表を保存しておく
 # 類似の方法として nbtscan も便利
 # 
-# Copyright (c) 2016-2018 Wataru KUNINO
+# Copyright (c) 2016-2019 Wataru KUNINO
 
 IP=`hostname -I|tr " " "\n"|grep -Eo '([0-9]*\.){3}[0-9]*'|grep -v "127.0."|head -1|cut -d. -f1-3`
 OS=`uname`

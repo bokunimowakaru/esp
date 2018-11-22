@@ -1,7 +1,7 @@
 /*******************************************************************************
 Practice esp32 12 sw 【Wi-Fi スイッチャ子機 UDP版 IFTTT対応版】
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ

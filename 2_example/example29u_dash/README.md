@@ -97,5 +97,5 @@ Example 29u
 
 * プロミスキャスモードはESPモジュール内でWi-Fiで受信可能な全てのパケットを処理します。ネットセキュリティ上の脆弱性の十分に注意して利用してください。
 
-Copyright (c) 2017-2018 Wataru KUNINO  
+Copyright (c) 2017-2019 Wataru KUNINO  
 <https://bokunimo.net/>

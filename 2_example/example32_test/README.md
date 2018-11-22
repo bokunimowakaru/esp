@@ -23,5 +23,5 @@ Example 32
 
 各開発ボードのBOOTボタンで早押しが行えます。
 
-Copyright (c) 2016-2018 Wataru KUNINO  
+Copyright (c) 2016-2019 Wataru KUNINO  
 <https://bokunimo.net/>

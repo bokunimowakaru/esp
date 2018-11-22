@@ -1,6 +1,6 @@
 #!/bin/bash
 # マイクからの音声データを取得する
-# Copyright (c) 2016-2017 Wataru KUNINO
+# Copyright (c) 2016-2019 Wataru KUNINO
 
 DEVICE="sound_1"                                    # 配信デバイス名(必須)
 PORT=1024                                           # UDPポート番号を1024に

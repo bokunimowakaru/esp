@@ -1,7 +1,7 @@
 /*******************************************************************************
 監視カメラ用ドライバ grove_cam.ino for SeeedStudio Grove Serial Camera Kit 
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 
 作成にあたり下記のソースコードを利用しました。
 https://github.com/Seeed-Studio/Grove_Serial_Camera_Kit

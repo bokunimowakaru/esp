@@ -11,7 +11,7 @@ HTMLコンテンツ取得
     ・Yahoo!サービスの利用規約にしたがって利用ください。
             https://about.yahoo.co.jp/docs/info/terms/
 
-                                          Copyright (c) 2016-2018 Wataru KUNINO
+                                          Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 /*
 # http://rss.weather.yahoo.co.jp/rss/days/7.xml     福島県（福島市）

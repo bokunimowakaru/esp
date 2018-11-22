@@ -7,7 +7,7 @@ Google カレンダー(予定表) から予定を取得する
 予め本フォルダ内のGoogleCalendar.jsを https://script.google.com/ へ転送し、
 ウェブアプリケーションを公開しておく必要があります。
 
-                                           Copyright (c) 2017-2018 Wataru KUNINO
+                                           Copyright (c) 2017-2019 Wataru KUNINO
 ********************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ

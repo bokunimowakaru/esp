@@ -29,5 +29,5 @@ Wi-Fiモジュール使ったデモでは、ネットワークを組んだり、
 スマホ側のIP アドレスはESP モジュール側のDHCP サーバが自動的に割り振りふります。  
 ESPモジュール側のIPアドレスは固定（192.168.1.2）です。二次元バーコードなどから簡単にアクセスできるでしょう。
 
-Copyright (c) 2016-2018 Wataru KUNINO  
+Copyright (c) 2016-2019 Wataru KUNINO  
 <https://bokunimo.net/>

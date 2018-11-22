@@ -4,7 +4,7 @@ INIファイル解析
 ・開発時に下記ライブラリを使用しました(現在はESP32ライブラリに含まれています。)
 　https://github.com/copercini/arduino-esp32-SPIFFS
 
-                                               Copyright (c) 2017 Wataru KUNINO
+                                     Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #define SPIFFS_FILENAME "/esp.ini" 			// TFTP受信ファイル名

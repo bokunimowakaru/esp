@@ -10,7 +10,7 @@ Arduino 標準ライブラリにLiquidCrystalにDF ROBOT社Keypad用関数を
 本ソースリストおよびソフトウェアはGPL V2に基づくライセンスを有します。
 利用、編集、再配布等が自由に行えますが、著作権表示の改変は禁止します。
 
-                               Copyright (c) 2012-2017 Wataru KUNINO
+                               Copyright (c) 2012-2019 Wataru KUNINO
                                https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 

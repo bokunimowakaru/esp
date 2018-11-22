@@ -3,7 +3,7 @@ esp32 26 photof
 
 有機ELディスプレイ フォトフレーム SSD1331ドライバ用
 
-                                           Copyright (c) 2017-2018 Wataru KUNINO
+                                           Copyright (c) 2017-2019 Wataru KUNINO
 
 ・Wi-Fiカメラ子機が撮影した画像を表示します
 ・SDカード内の画像ファイル(JPEGとBMP)を表示するフォトフレーム機能も搭載

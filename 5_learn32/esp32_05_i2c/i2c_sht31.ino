@@ -4,7 +4,7 @@
 
 I2C接続の温湿度センサの値を読み取る
 SENSIRION社 SHT31
-                               Copyright (c) 2017-2018 Wataru KUNINO
+                               Copyright (c) 2017-2019 Wataru KUNINO
                                https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 

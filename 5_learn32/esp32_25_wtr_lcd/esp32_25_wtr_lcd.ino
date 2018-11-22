@@ -1,6 +1,6 @@
 /*******************************************************************************
 Practice esp32 25 wtr lcd
-                                                Copyright (c) 2017 Wataru KUNINO
+                                      Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <LiquidCrystal.h>                  // LCDへの表示を行うライブラリ

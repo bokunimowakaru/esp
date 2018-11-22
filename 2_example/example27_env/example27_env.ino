@@ -2,7 +2,7 @@
 Example 27:
 乾電池駆動可能なCO2センサ AMS CCS811＋温度・湿度・気圧センサ Bosch BME280
 
-                                           Copyright (c) 2017-2018 Wataru KUNINO
+                                           Copyright (c) 2017-2019 Wataru KUNINO
 
 二酸化炭素や有機ガスなどによる室内の空気環境状態を測定するガスセンサams製CCS811と
 温度・湿度・気圧を測定する環境センサ Bosch製 BME280を使った、乾電池駆動が可能な
@@ -71,7 +71,7 @@ Example 27:
 　約3.7分以上のときに省エネ効果があります。約4分以下の間隔で測定したい場合は、
 　CCS811の電源を入れっぱなしにした方が良いでしょう。
 
-Copyright (c) 2017-2018 Wataru KUNINO  
+Copyright (c) 2017-2019 Wataru KUNINO  
 *******************************************************************************/
 
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ

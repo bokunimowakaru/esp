@@ -6,7 +6,7 @@
 0123456789012345678
 2014/01/01,12:34:56
 
-                               Copyright (c) 2014-2016 Wataru KUNINO
+                               Copyright (c) 2014-2019 Wataru KUNINO
                                https://bokunimo.net/bokunimowakaru/
 *********************************************************************/
 

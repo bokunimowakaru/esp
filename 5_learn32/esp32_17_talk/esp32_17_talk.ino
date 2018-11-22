@@ -4,7 +4,7 @@ Practice esp32 17 talk 【Wi-Fi 音声アナウンス親機・子機】
     AquosTalk接続用
     TXD0(35番ピン U0TXD)、AquosTalk側はRXD端子(2番ピン)
 
-                                           Copyright (c) 2016-2017 Wataru KUNINO
+                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
