@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 # UDPを受信する
-# Copyright (c) 2018 Wataru KUNINO
+# Copyright (c) 2018-2019 Wataru KUNINO
 
 from __future__ import print_function
 import sys
@@ -22,9 +22,12 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # ソケットを作成
 if sock:                                                # 作成に成功したとき
     sock.bind(('', port))                               # ソケットに接続
     while sock:                                         # 永遠に繰り返す
-        udp=sock.recv(buf_n)                            # UDPパケットを取得
-        udp=udp.replace('\r','').replace('\n',' ')      # 改行を削除
+        udp=sock.recv(buf_n).decode()                   # UDPパケットを取得
+        str=''                                          # 表示用の文字列変数str
+        for c in udp:                                   # UDPパケット内
+            if ord(c) >= ord(' '):                      # 表示可能文字
+                str += c                                # 文字列strへ追加
         date=datetime.datetime.today()                  # 日付を取得
         print(date.strftime('%Y/%m/%d %H:%M'), end='')  # 日付を出力
-        print(', '+udp)                                 # 受信データを出力
+        print(', '+str)                                 # 受信データを出力
     sock.close()                                        # ソケットの切断
