@@ -58,6 +58,7 @@ int httpGet(char *url,int max_size){
     client.print(to);                       // 相手先ホスト名
     client.println();                       // ホスト名の指定を終了
     client.println("Connection: close");    // セッションの都度切断を指定
+    client.println();
     
     // 以下の処理はデータの受信完了まで終了しないので、その間に届いたデータを
     // 損失してしまう場合があります。
