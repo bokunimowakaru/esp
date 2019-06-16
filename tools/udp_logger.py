@@ -19,6 +19,7 @@ else:
     port = 1024
 print('Listening UDP port', port, '...')                # ポート番号表示
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # ソケットを作成
+sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)# オプション設定
 if sock:                                                # 作成に成功したとき
     sock.bind(('', port))                               # ソケットに接続
     while sock:                                         # 永遠に繰り返す
