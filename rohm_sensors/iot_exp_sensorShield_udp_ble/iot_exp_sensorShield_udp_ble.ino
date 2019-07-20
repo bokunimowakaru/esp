@@ -46,8 +46,8 @@ IPAddress IP_BC;                            // ブロードキャストIPアド�
 BLEAdvertising *pAdvertising;
 boolean wifi_enable = true;
 
-#define VAL_N 8                             // 送信データ項目数
-#define DAT_N 32                            // 送信バイト数
+#define VAL_N 14                            // 送信データ項目数
+#define DAT_N 18                            // 送信データ用バイト数
 
 RTC_DATA_ATTR byte SEQ_N = 0;               // 送信番号
 
@@ -88,17 +88,20 @@ void setup(){                               // 起動時に一度だけ実行す
 }
 
 int d_append(byte *array,int i, byte d){
+    if(i >= DAT_N) return i;
     array[i]=d;
     return i+1;
 }
 
 int d_append_int16(byte *array,int i, int16_t d){
+    if(i+1 >= DAT_N) return i;
     array[i] = (byte)(d & 0xFF); 
     array[i+1] = (byte)(d >> 8);
     return i+2;
 }
 
 int d_append_int24(byte *array,int i, int32_t d){
+    if(i+2 >= DAT_N) return i;
     array[i] = (byte)(d & 0xFF); 
     array[i+1] = (byte)((d >>8)&0xFF);
     array[i+2] = (byte)((d >>16)&0xFF);
@@ -110,25 +113,43 @@ void sensors_log(float *val){
     Serial.print(val[0]);
     Serial.println(" [degrees Celsius]");
     Serial.print("Pressure        = ");
-    Serial.print(val[1]);
-    Serial.println(" [hPa]");
-    Serial.write("Accelerometer X = ");
+    Serial.println(val[1]);
+    
+    Serial.print("Illuminance     = ");
     Serial.print(val[2]);
+    Serial.println(" [lx]");
+    Serial.print("Proximity       = ");
+    Serial.print(val[3],0);
+    Serial.println(" [count]");
+    Serial.print("Color (RED)     = ");
+    Serial.println(val[4],1);
+    Serial.print("Color (GREEN)   = ");
+    Serial.println(val[5],1);
+    Serial.print("Color (BLUE)    = ");
+    Serial.println(val[6],1);
+    Serial.print("Color (IR)      = ");
+    Serial.println(val[7],1);
+//  Serial.print("Color (GREEN2)  = ");
+//  Serial.println(val[8],0);
+    
+    Serial.print("Accelerometer X = ");
+    Serial.print(val[8]);
     Serial.println(" [g]");
-    Serial.write("Accelerometer Y = ");
-    Serial.print(val[3]);
+    Serial.print("Accelerometer Y = ");
+    Serial.print(val[9]);
     Serial.println(" [g]");
-    Serial.write("Accelerometer Z = ");
-    Serial.print(val[4]);
+    Serial.print("Accelerometer Z = ");
+    Serial.print(val[10]);
     Serial.println(" [g]");
+    
     Serial.print("Geomagnetic X   = ");
-    Serial.print(val[5], 3);
+    Serial.print(val[11], 3);
     Serial.println("[uT]");
     Serial.print("Geomagnetic Y   = ");
-    Serial.print(val[6], 3);
+    Serial.print(val[12], 3);
     Serial.println("[uT]");
     Serial.print("Geomagnetic Z   = ");
-    Serial.print(val[7], 3);
+    Serial.print(val[13], 3);
     Serial.println("[uT]");
 }
 
@@ -140,25 +161,55 @@ void loop() {
     int l=0;
 
     bm1383aglv.get_val(&val[1],val);        // 気圧と温度を取得
-    v=(long)((val[0] + 45.) * 374.5);       // 温度
+    
+    v=(long)((val[0] + 15.) * 4.);          // 温度
+    if( v > 255 ) v = 255;
+    if( v < 0 ) v = 0;
+    l=d_append(d,l,(byte)v);
+//  v=(long)((val[0] + 45.) * 374.5);
+//  l=d_append_int16(d,l,v);
+    v=(long)(val[1] - 1027.);
+    if( v > 127 ) v = 127;
+    if( v < -128 ) v = -128;
+    l=d_append(d,l,(char)((int)v));
+//  v=(long)(val[1]);
+//  l=d_append_int24(d,l,v);                // 気圧
+    
+    unsigned short ps;
+    rpr0521rs.get_psalsval(&ps,&val[2]);    // 距離、照度を取得
+    val[3] = (float)ps;
+    if(ps > 255) ps = 255;
+    v=(long)(val[2] * 1.2);
     l=d_append_int16(d,l,v);
-    v=(long)(val[1] * 2048);
-    l=d_append_int24(d,l,v);                // 気圧
+    l=d_append(d,l,(byte)ps);
+    
+    unsigned short color[5];
+    long color_n = 0;
+    bh1749nuc.get_val(color);
+    for(int i=0;i<4;i++) color_n += color[i];
+    for(int i=0;i<4;i++){
+        val[4+i] = (float)color[i] / (float)color_n * 100.;
+        if(i<3)l=d_append(d,l,(byte)(val[4+i] * 256. / 100.));
+    }
+    
+    kx224.get_val(&val[8]);                 // 加速度を取得
+    for(int i=0;i<3;i++){
+        v=(long)(val[8+i] * 64);
+        if(v>127) v=127;
+        if(v<-128) v=-128;
+        l=d_append(d,l,(char)((int)v));
+    }
+    
+    bm1422agmv.get_val(&val[11]);           // 地磁気を取得
+    for(int i=0;i<3;i++){
+        v=(long)(val[11+i]);
+        if(v>127) v=127;
+        if(v<-128) v=-128;
+        l=d_append(d,l,(char)((int)v));
+    }
     
     l=d_append(d,l,SEQ_N);                  // 送信番号
-    
-    kx224.get_val(&val[2]);                 // 加速度を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[2+i] * 4096);
-        l=d_append_int16(d,l,v);
-    }
-    
-    bm1422agmv.get_val(&val[5]);            // 地磁気を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[5+i] * 10);
-        l=d_append_int16(d,l,v);
-    }
-    
+
     sensors_log(val);
     
     // UDP
@@ -209,6 +260,6 @@ void setBleAdvData(byte *data, int data_n){
     if(len != (int)(strServiceData[0]) + 1 || len < 2) Serial.println("ERROR: BLE length");
     for(int i=2;i<len;i++) Serial.printf("%02x ",(char)(strServiceData[i]));
     Serial.println();
-    Serial.print("data length     = ");
-    Serial.println(len - 2);
+    Serial.print("data length     = 2 + ");
+    Serial.printf("%d = %d (%d)\n",data_n,len-2,22-strlen(BLE_DEVICE)-data_n);
 }
