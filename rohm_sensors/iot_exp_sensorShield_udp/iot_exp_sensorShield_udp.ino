@@ -9,14 +9,10 @@ IoT SensorShield EVK UDP+BLE
 
 乾電池などで動作するIoTセンサです
 
-※フラッシュを約1.5MB消費しますので、アプリ用に2MB程度を割り当ててください
-
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-#include <BLEDevice.h>
-#include <BLEServer.h>
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_EN 2                            // GPIO 2 にLEDを接続
 #define PIN_BUZZER 12                       // GPIO 12 にスピーカを接続
@@ -26,7 +22,6 @@ IoT SensorShield EVK UDP+BLE
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define DEVICE "rohme_1,"                   // デバイス名(5文字+"_"+番号+",")
-#define BLE_DEVICE "esp_"                   // BLE用デバイス名
 
 #include <Wire.h>
 #include "BM1383AGLV.h"
@@ -43,13 +38,7 @@ BH1749NUC   bh1749nuc(0x39);
 IPAddress IP;                               // 本機IPアドレス
 IPAddress IP_BC;                            // ブロードキャストIPアドレス
 
-BLEAdvertising *pAdvertising;
-boolean wifi_enable = true;
-
-#define VAL_N 8                             // 送信データ項目数
-#define DAT_N 32                            // 送信バイト数
-
-RTC_DATA_ATTR byte SEQ_N = 0;               // 送信番号
+#define VAL_N 14                            // 送信データ項目数
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
@@ -59,7 +48,6 @@ void setup(){                               // 起動時に一度だけ実行す
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("IoT SensorShield EVK"); // 「IoT SensorShield EVK」を表示
     int wake = TimerWakeUp_init();
-    BLEDevice::init(BLE_DEVICE);            // Create the BLE Device
     Wire.begin();
     bm1383aglv.init();                      // 気圧センサの初期化
     kx224.init();                           // 加速度センサの初期化
@@ -76,10 +64,7 @@ void setup(){                               // 起動時に一度だけ実行す
         ledcWrite(0, 0);
         delay(450);                         // 待ち時間処理
         waiting++;                          // 待ち時間カウンタを1加算する
-        if(waiting > 30){
-            wifi_enable = false;
-            return;                          // 30回(15秒)を過ぎたら抜ける
-        }
+        if(waiting > 60) return;            // 60回(30秒)を過ぎたら抜ける
     }
     IP = WiFi.localIP();
     IP_BC = (uint32_t)IP | ~(uint32_t)(WiFi.subnetMask());
@@ -87,95 +72,75 @@ void setup(){                               // 起動時に一度だけ実行す
     if(wake<3) morseIp0(PIN_BUZZER,50,IP);  // IPアドレス終値をモールス信号出力
 }
 
-int d_append(byte *array,int i, byte d){
-    array[i]=d;
-    return i+1;
-}
-
-int d_append_int16(byte *array,int i, int16_t d){
-    array[i] = (byte)(d & 0xFF); 
-    array[i+1] = (byte)(d >> 8);
-    return i+2;
-}
-
-int d_append_int24(byte *array,int i, int32_t d){
-    array[i] = (byte)(d & 0xFF); 
-    array[i+1] = (byte)((d >>8)&0xFF);
-    array[i+2] = (byte)((d >>16)&0xFF);
-    return i+3;
-}
-
 void sensors_log(float *val){
     Serial.print("Temperature    =  ");
     Serial.print(val[0]);
     Serial.println(" [degrees Celsius]");
     Serial.print("Pressure        = ");
-    Serial.print(val[1]);
-    Serial.println(" [hPa]");
-    Serial.write("Accelerometer X = ");
+    Serial.println(val[1]);
+    
+    Serial.print("Illuminance     = ");
     Serial.print(val[2]);
+    Serial.println(" [lx]");
+    Serial.print("Proximity       = ");
+    Serial.print(val[3],0);
+    Serial.println(" [count]");
+    Serial.print("Color (RED)     = ");
+    Serial.println(val[4],1);
+    Serial.print("Color (GREEN)   = ");
+    Serial.println(val[5],1);
+    Serial.print("Color (BLUE)    = ");
+    Serial.println(val[6],1);
+    Serial.print("Color (IR)      = ");
+    Serial.println(val[7],1);
+    Serial.print("Accelerometer X = ");
+    Serial.print(val[8]);
     Serial.println(" [g]");
-    Serial.write("Accelerometer Y = ");
-    Serial.print(val[3]);
+    Serial.print("Accelerometer Y = ");
+    Serial.print(val[9]);
     Serial.println(" [g]");
-    Serial.write("Accelerometer Z = ");
-    Serial.print(val[4]);
+    Serial.print("Accelerometer Z = ");
+    Serial.print(val[10]);
     Serial.println(" [g]");
+    
     Serial.print("Geomagnetic X   = ");
-    Serial.print(val[5], 3);
+    Serial.print(val[11], 3);
     Serial.println("[uT]");
     Serial.print("Geomagnetic Y   = ");
-    Serial.print(val[6], 3);
+    Serial.print(val[12], 3);
     Serial.println("[uT]");
     Serial.print("Geomagnetic Z   = ");
-    Serial.print(val[7], 3);
+    Serial.print(val[13], 3);
     Serial.println("[uT]");
 }
 
 void loop() {
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
-    byte d[DAT_N]; 
     float val[VAL_N];                       // センサ用の浮動小数点数型変数
     long v;
     int l=0;
 
     bm1383aglv.get_val(&val[1],val);        // 気圧と温度を取得
-    v=(long)((val[0] + 45.) * 374.5);       // 温度
-    l=d_append_int16(d,l,v);
-    v=(long)(val[1] * 2048);
-    l=d_append_int24(d,l,v);                // 気圧
-    
-    l=d_append(d,l,SEQ_N);                  // 送信番号
-    
-    kx224.get_val(&val[2]);                 // 加速度を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[2+i] * 4096);
-        l=d_append_int16(d,l,v);
-    }
-    
-    bm1422agmv.get_val(&val[5]);            // 地磁気を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[5+i] * 10);
-        l=d_append_int16(d,l,v);
-    }
-    
+    unsigned short ps;
+    rpr0521rs.get_psalsval(&ps,&val[2]);    // 距離、照度を取得
+    val[3] = (float)ps;
+    unsigned short color[5];
+    long color_n = 0;
+    bh1749nuc.get_val(color);
+    for(int i=0;i<4;i++) color_n += color[i];
+    for(int i=0;i<4;i++) val[4+i] = (float)color[i] / (float)color_n * 100.;
+    kx224.get_val(&val[8]);                 // 加速度を取得
+    bm1422agmv.get_val(&val[11]);           // 地磁気を取得
+
     sensors_log(val);
     
-    // UDP
-    if(wifi_enable){
-        udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
-        udp.print(DEVICE);                  // デバイス名を送信
-        for(int i=0; i<VAL_N; i++){
-            udp.print(val[i],0);            // 変数tempの値を送信
-            if(i < VAL_N-1)udp.print(", "); // 「,」カンマを送信
-        }
-        udp.endPacket();                    // UDP送信の終了(実際に送信する)
+    udp.beginPacket(IP_BC, PORT);           // UDP送信先を設定
+    udp.print(DEVICE);                      // デバイス名を送信
+    for(int i=0; i<VAL_N; i++){
+        udp.print(val[i],0);                // 変数tempの値を送信
+        if(i < VAL_N-1)udp.print(", ");     // 「,」カンマを送信
     }
-    // BLE Advertizing
-    pAdvertising = BLEDevice::getAdvertising();
-    setBleAdvData(d,l);
-    pAdvertising->start();                  // Start advertising
-    SEQ_N++;
+    udp.endPacket();                        // UDP送信の終了(実際に送信する)
     sleep();
 }
 
@@ -183,32 +148,5 @@ void sleep(){
     ledcWriteNote(0,NOTE_D,8);              // 送信中の音
     delay(200);                             // 送信待ち時間
     ledcWrite(0, 0);
-    pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
-}
-
-void setBleAdvData(byte *data, int data_n){
-    BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
-    BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
-    oAdvertisementData.setName(BLE_DEVICE);
-    oAdvertisementData.setFlags(0x06);      // LE General Discoverable Mode | BR_EDR_NOT_SUPPORTED
-    
-    std::string strServiceData = "";
-    strServiceData += (char)(data_n+3);     // Len
-    strServiceData += (char)0xFF;           // Manufacturer specific data
-    strServiceData += (char)0x01;           // Company Identifier(2 Octet)
-    strServiceData += (char)0x00;
-    for(int i=0;i<data_n;i++) strServiceData += (char)(data[i]);
-
-    oAdvertisementData.addData(strServiceData);
-    pAdvertising->setAdvertisementData(oAdvertisementData);
-    pAdvertising->setScanResponseData(oScanResponseData);
-
-    Serial.print("data            = ");
-    int len=strServiceData.size();
-    if(len != (int)(strServiceData[0]) + 1 || len < 2) Serial.println("ERROR: BLE length");
-    for(int i=2;i<len;i++) Serial.printf("%02x ",(char)(strServiceData[i]));
-    Serial.println();
-    Serial.print("data length     = ");
-    Serial.println(len - 2);
 }
