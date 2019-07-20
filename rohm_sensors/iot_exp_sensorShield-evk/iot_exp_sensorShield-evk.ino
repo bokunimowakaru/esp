@@ -27,7 +27,7 @@ IoT SensorShield EVK UDP+BLE
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define DEVICE "rohme_1,"                   // デバイス名(5文字+"_"+番号+",")
-#define BLE_DEVICE "esp_rohme_1"            // BLE用デバイス名
+#define BLE_DEVICE "esp"                    // BLE用デバイス名
 
 #include <Wire.h>
 #include "BM1383AGLV.h"
@@ -156,12 +156,6 @@ void loop() {
     
     sensors_log(val);
     
-    Serial.print("data            = ");
-    for(int i=0;i<l;i++) Serial.printf("%02x ",d[i]);
-	Serial.println();
-    Serial.print("data length     = ");
-    Serial.println(l);
-
     if(wifi_enable){
 	    udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
 	    udp.print(DEVICE);                  // デバイス名を送信
@@ -184,7 +178,7 @@ void sleep(){
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }
 
-void setBleAdvData(byte data, int data_n){
+void setBleAdvData(byte *data, int data_n){
     BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
     BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
     oAdvertisementData.setName(BLE_DEVICE);
