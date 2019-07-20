@@ -48,7 +48,7 @@ boolean wifi_enable = true;
 #define VAL_N 8                             // 送信データ項目数
 #define DAT_N 32                            // 送信バイト数
 
-RTC_DATA_ATTR byte SEQ_N = 0;				// 送信番号
+RTC_DATA_ATTR byte SEQ_N = 0;               // 送信番号
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
@@ -134,41 +134,41 @@ void loop() {
     long v;
     int l=0;
 
-	bm1383aglv.get_val(&val[1],val);		// 気圧と温度を取得
-	v=(long)((val[0] + 45.) * 374.5);       // 温度
-	l=d_append_int16(d,l,v);
-	v=(long)(val[1] * 2048);
-	l=d_append_int24(d,l,v);				// 気圧
-	
-    l=d_append(d,l,SEQ_N);					// 送信番号
+    bm1383aglv.get_val(&val[1],val);        // 気圧と温度を取得
+    v=(long)((val[0] + 45.) * 374.5);       // 温度
+    l=d_append_int16(d,l,v);
+    v=(long)(val[1] * 2048);
+    l=d_append_int24(d,l,v);                // 気圧
     
-	kx224.get_val(&val[2]);					// 加速度を取得
-	for(int i=0;i<3;i++){
-	    v=(long)(val[2+i] * 4096);
-		l=d_append_int16(d,l,v);
-	}
+    l=d_append(d,l,SEQ_N);                  // 送信番号
     
-	bm1422agmv.get_val(&val[5]);			// 地磁気を取得
-	for(int i=0;i<3;i++){
-	    v=(long)(val[5+i] * 10);
-		l=d_append_int16(d,l,v);
-	}
+    kx224.get_val(&val[2]);                 // 加速度を取得
+    for(int i=0;i<3;i++){
+        v=(long)(val[2+i] * 4096);
+        l=d_append_int16(d,l,v);
+    }
+    
+    bm1422agmv.get_val(&val[5]);            // 地磁気を取得
+    for(int i=0;i<3;i++){
+        v=(long)(val[5+i] * 10);
+        l=d_append_int16(d,l,v);
+    }
     
     sensors_log(val);
     
     if(wifi_enable){
-	    udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
-	    udp.print(DEVICE);                  // デバイス名を送信
-		for(int i=0; i<VAL_N; i++){
-	        udp.print(val[i],0);            // 変数tempの値を送信
-	        if(i < VAL_N-1)udp.print(", "); // 「,」カンマを送信
-	    }
-	    udp.endPacket();                    // UDP送信の終了(実際に送信する)
-	}
+        udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
+        udp.print(DEVICE);                  // デバイス名を送信
+        for(int i=0; i<VAL_N; i++){
+            udp.print(val[i],0);            // 変数tempの値を送信
+            if(i < VAL_N-1)udp.print(", "); // 「,」カンマを送信
+        }
+        udp.endPacket();                    // UDP送信の終了(実際に送信する)
+    }
     // BLE Advertizing
     pAdvertising = BLEDevice::getAdvertising();
     setBleAdvData(d,l);
-    pAdvertising->start();              	// Start advertising
+    pAdvertising->start();                  // Start advertising
     SEQ_N++;
     sleep();
 }
@@ -199,7 +199,7 @@ void setBleAdvData(byte *data, int data_n){
     int len=strServiceData.size();
     if(len != (int)(strServiceData[0]) + 1 || len < 2) Serial.println("ERROR: BLE length");
     for(int i=2;i<len;i++) Serial.printf("%02x ",(char)(strServiceData[i]));
-	Serial.println();
+    Serial.println();
     Serial.print("data length     = ");
     Serial.println(len - 2);
 }

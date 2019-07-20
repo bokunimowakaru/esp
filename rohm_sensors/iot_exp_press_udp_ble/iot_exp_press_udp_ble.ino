@@ -15,12 +15,10 @@ ROHM BM1383AGLV
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
-#include "pitches.h"
 #define PIN_EN 2                            // GPIO 2 にLEDを接続
 #define PIN_BUZZER 12                       // GPIO 12 にスピーカを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
-#define SENDTO "255.255.255.255"            // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define DEVICE "press_1,"                   // デバイス名(5文字+"_"+番号+",")
@@ -30,9 +28,13 @@ ROHM BM1383AGLV
 #include "BM1383AGLV.h"
 
 BM1383AGLV bm1383aglv;
+IPAddress IP;                               // 本機IPアドレス
+IPAddress IP_BC;                            // ブロードキャストIPアドレス
 
 BLEAdvertising *pAdvertising;
 boolean wifi_enable = true;
+
+RTC_DATA_ATTR byte SEQ_N = 0;				// 送信番号
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
@@ -41,6 +43,7 @@ void setup(){                               // 起動時に一度だけ実行す
     delay(10);                              // 起動待ち時間
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("IoT Press BM1383AGLV"); // 「IoT Press」をシリアル出力表示
+    int wake = TimerWakeUp_init();
     BLEDevice::init(BLE_DEVICE);            // Create the BLE Device
     Wire.begin();
     bm1383aglv.init();                      // 気圧センサの初期化
@@ -56,11 +59,13 @@ void setup(){                               // 起動時に一度だけ実行す
         waiting++;                          // 待ち時間カウンタを1加算する
         if(waiting > 30){
             wifi_enable = false;
-            return;                          // 30回(15秒)を過ぎたら抜ける
+            return;                         // 30回(15秒)を過ぎたら抜ける
         }
     }
-    Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    morseIp0(PIN_BUZZER,50,WiFi.localIP()); // IPアドレス終値をモールス信号出力
+    IP = WiFi.localIP();
+    IP_BC = (uint32_t)IP | ~(uint32_t)(WiFi.subnetMask());
+    Serial.println(IP);                     // 本機のIPアドレスをシリアル出力
+    if(wake<3) morseIp0(PIN_BUZZER,50,IP);  // IPアドレス終値をモールス信号出力
 }
 
 void setBleAdvData(float temp, float press){
@@ -72,7 +77,7 @@ void setBleAdvData(float temp, float press){
     oAdvertisementData.setFlags(0x06);      // LE General Discoverable Mode | BR_EDR_NOT_SUPPORTED
     
     std::string strServiceData = "";
-    strServiceData += (char)8;              // Len
+    strServiceData += (char)9;              // Len
     strServiceData += (char)0xFF;           // Manufacturer specific data
     strServiceData += (char)0x01;           // Company Identifier(2 Octet)
     strServiceData += (char)0x00;
@@ -83,6 +88,7 @@ void setBleAdvData(float temp, float press){
     strServiceData += (char)(val & 0xFF);   // 気圧 下位1バイト目
     strServiceData += (char)(val >> 8);     // 気圧 下位2バイト目
     strServiceData += (char)(val >> 16);    // 気圧 最上位バイト
+    strServiceData += (char)(SEQ_N);        // 送信番号
 
     oAdvertisementData.addData(strServiceData);
     pAdvertising->setAdvertisementData(oAdvertisementData);
@@ -94,36 +100,39 @@ void setBleAdvData(float temp, float press){
     for(int i=2;i<len;i++) Serial.printf("%02x ",(char)(strServiceData[i]));
 	Serial.println();
     Serial.print("data length     = ");
-    Serial.println(len - 2);
+    Serial.println(len-2);
 }
 
 void loop() {
     WiFiUDP udp;                            // UDP通信用のインスタンスを定義
     float temp,press;                       // センサ用の浮動小数点数型変数
 
-    if(!bm1383aglv.get_val(&press,&temp)){  // 気圧と温度を取得して変数へ代入
-        // UDP
-        if(wifi_enable){
-            udp.beginPacket(SENDTO, PORT);  // UDP送信先を設定
-            udp.print(DEVICE);              // デバイス名を送信
-            udp.print(temp,0);              // 変数tempの値を送信
-            Serial.print(temp,2);           // シリアル出力表示
-            udp.print(", ");                // 「,」カンマを送信
-            Serial.print(", ");             // シリアル出力表示
-            udp.println(press,0);           // 変数pressの値を送信
-            Serial.println(press,2);        // シリアル出力表示
-            udp.endPacket();                // UDP送信の終了(実際に送信する)
-        }
-        // BLE Advertizing
-        pAdvertising = BLEDevice::getAdvertising();
-        setBleAdvData(temp,press);
-        pAdvertising->start();              // Start advertising
+    int rc=bm1383aglv.get_val(&press,&temp);// 気圧と温度を取得して各変数へ代入
+    if(rc) sleep();                         // 取得失敗時はsleepへ
+    // UDP
+    if(wifi_enable){
+        udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
+        udp.print(DEVICE);                  // デバイス名を送信
+        udp.print(temp,0);                  // 変数tempの値を送信
+        Serial.print(temp,2);               // シリアル出力表示
+        udp.print(", ");                    // 「,」カンマを送信
+        Serial.print(", ");                 // シリアル出力表示
+        udp.println(press,0);               // 変数pressの値を送信
+        Serial.println(press,2);            // シリアル出力表示
+        udp.endPacket();                    // UDP送信の終了(実際に送信する)
     }
+    // BLE Advertizing
+    pAdvertising = BLEDevice::getAdvertising();
+    setBleAdvData(temp,press);
+    pAdvertising->start();                  // Start advertising
+    SEQ_N++;
     sleep();
 }
 
 void sleep(){
+    ledcWriteNote(0,NOTE_D,8);              // 送信中の音
     delay(200);                             // 送信待ち時間
+    ledcWrite(0, 0);
     pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }
