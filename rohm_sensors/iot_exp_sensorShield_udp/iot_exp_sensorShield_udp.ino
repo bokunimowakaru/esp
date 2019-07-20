@@ -18,7 +18,6 @@ IoT SensorShield EVK UDP+BLE
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
-#include "pitches.h"
 #define PIN_EN 2                            // GPIO 2 にLEDを接続
 #define PIN_BUZZER 12                       // GPIO 12 にスピーカを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
@@ -27,7 +26,7 @@ IoT SensorShield EVK UDP+BLE
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define DEVICE "rohme_1,"                   // デバイス名(5文字+"_"+番号+",")
-#define BLE_DEVICE "esp"                    // BLE用デバイス名
+#define BLE_DEVICE "esp_"                   // BLE用デバイス名
 
 #include <Wire.h>
 #include "BM1383AGLV.h"
@@ -41,6 +40,8 @@ KX224       kx224(0x1E);
 BM1422AGMV  bm1422agmv(0x0E);
 RPR0521RS   rpr0521rs;
 BH1749NUC   bh1749nuc(0x39);
+IPAddress IP;                               // 本機IPアドレス
+IPAddress IP_BC;                            // ブロードキャストIPアドレス
 
 BLEAdvertising *pAdvertising;
 boolean wifi_enable = true;
@@ -53,9 +54,11 @@ RTC_DATA_ATTR byte SEQ_N = 0;               // 送信番号
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
     pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
+    pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
     delay(10);                              // 起動待ち時間
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("IoT SensorShield EVK"); // 「IoT SensorShield EVK」を表示
+    int wake = TimerWakeUp_init();
     BLEDevice::init(BLE_DEVICE);            // Create the BLE Device
     Wire.begin();
     bm1383aglv.init();                      // 気圧センサの初期化
@@ -78,8 +81,10 @@ void setup(){                               // 起動時に一度だけ実行す
             return;                          // 30回(15秒)を過ぎたら抜ける
         }
     }
-    Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    morseIp0(PIN_BUZZER,50,WiFi.localIP()); // IPアドレス終値をモールス信号出力
+    IP = WiFi.localIP();
+    IP_BC = (uint32_t)IP | ~(uint32_t)(WiFi.subnetMask());
+    Serial.println(IP);                     // 本機のIPアドレスをシリアル出力
+    if(wake<3) morseIp0(PIN_BUZZER,50,IP);  // IPアドレス終値をモールス信号出力
 }
 
 int d_append(byte *array,int i, byte d){
@@ -156,8 +161,9 @@ void loop() {
     
     sensors_log(val);
     
+    // UDP
     if(wifi_enable){
-        udp.beginPacket(SENDTO, PORT);      // UDP送信先を設定
+        udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
         udp.print(DEVICE);                  // デバイス名を送信
         for(int i=0; i<VAL_N; i++){
             udp.print(val[i],0);            // 変数tempの値を送信
@@ -174,7 +180,10 @@ void loop() {
 }
 
 void sleep(){
+    ledcWriteNote(0,NOTE_D,8);              // 送信中の音
     delay(200);                             // 送信待ち時間
+    ledcWrite(0, 0);
+    pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }
 
