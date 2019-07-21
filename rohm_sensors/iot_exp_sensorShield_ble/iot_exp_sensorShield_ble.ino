@@ -89,7 +89,8 @@ void sensors_log(float *val){
     Serial.print(val[0]);
     Serial.println(" [degrees Celsius]");
     Serial.print("Pressure        = ");
-    Serial.println(val[1]);
+    Serial.print(val[1]);
+    Serial.println(" [hPa]");
     
     Serial.print("Illuminance     = ");
     Serial.print(val[2]);
