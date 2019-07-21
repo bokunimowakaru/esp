@@ -2,8 +2,8 @@
 # coding: utf-8
 
 ################################################################################
-# BLE Logger for Rohm SensorMedal-EVK-002
-# Raspberry Piを使って、センサメダルのセンサ情報を表示します。
+# BLE Logger for iot_exp_sensorShield_ble_rh
+# Raspberry Piを使って、iot_exp_sensorShield_ble_rhのセンサ情報を表示します。
 #
 #                                               Copyright (c) 2019 Wataru KUNINO
 ################################################################################
@@ -18,7 +18,7 @@
 #
 #【実行方法】
 #   実行するときは sudoを付与してください
-#       sudo ./ble_logger_SensorMedal2.py &
+#       sudo ./ble_logger_sens_scan_rh.py &
 #
 #【参考文献】
 #   本プログラムを作成するにあたり下記を参考にしました
@@ -65,14 +65,14 @@ while True:
         sensors = dict()
         for (adtype, desc, val) in dev.getScanData():
             print("  %s = %s" % (desc, val))
-            if desc == 'Short Local Name' and val == 'R':
+            if desc == 'Complete Local Name' and val == 'R':
                 isRohmMedal = True
             if isRohmMedal and desc == 'Manufacturer':
 
                 # センサ値を辞書型変数sensorsへ代入
                 sensors['ID'] = hex(payval(2,2))
                 sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
-                sensors['Humidity'] = 100 * payval(6,2) / 65536
+                sensors['Illuminance'] = payval(6,2) / 1.2
                 sensors['SEQ'] = payval(8)
                 sensors['Condition Flags'] = bin(int(val[16:18],16))
                 sensors['Accelerometer X'] = payval(10,2,True) / 4096
@@ -88,17 +88,12 @@ while True:
                                          + sensors['Geomagnetic Y'] ** 2\
                                          + sensors['Geomagnetic Z'] ** 2) ** 0.5
                 sensors['Pressure'] = payval(22,3) / 2048
-                sensors['Illuminance'] = payval(25,2) / 1.2
-                sensors['Magnetic'] = hex(payval(27))
-                sensors['Steps'] = payval(28,2)
-                sensors['Battery Level'] = payval(30)
                 sensors['RSSI'] = dev.rssi
 
                 # 画面へ表示
                 print('    ID            =',sensors['ID'])
                 print('    SEQ           =',sensors['SEQ'])
                 print('    Temperature   =',round(sensors['Temperature'],2),'℃')
-                print('    Humidity      =',round(sensors['Humidity'],2),'%')
                 print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
                 print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
                 print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
@@ -109,9 +104,6 @@ while True:
                                             round(sensors['Geomagnetic X'],1),\
                                             round(sensors['Geomagnetic Y'],1),\
                                             round(sensors['Geomagnetic Z'],1),'uT)')
-                print('    Magnetic      =',sensors['Magnetic'])
-                print('    Steps         =',sensors['Steps'],'歩')
-                print('    Battery Level =',sensors['Battery Level'],'%')
                 print('    RSSI          =',sensors['RSSI'],'dB')
 
                 '''
