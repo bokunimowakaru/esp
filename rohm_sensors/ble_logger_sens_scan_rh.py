@@ -112,24 +112,20 @@ while True:
                 '''
 ''' 実行結果の一例
 pi@raspberrypi:~ $ cd
-pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/SensorMedal2
-pi@raspberrypi:~ $ cd SensorMedal2
-pi@raspberrypi:~/SensorMedal2 $ sudo ./ble_logger_SensorMedal2.py
+pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/esp
+pi@raspberrypi:~ $ cd ~/esp/rohm_sensors
+pi@raspberrypi:~/esp/rohm_sensors $ sudo ./ble_logger_sens_scan_rh.py
 
-Device ff:e0:9b:XX:XX:XX (random), RSSI=-56 dB
-  Short Local Name = ROHMMedal2_9999_01.00
+Device xx:xx:xx:XX:XX:XX (public), RSSI=-56 dB
   Flags = 06
-  Incomplete 16b Services = 0000180a-0000-1000-8000-00805f9b34fb
-  Manufacturer = 01006d6f7cae7c0238ff1800680f20ff05008efd1c051f7000032c005a
+  Complete Local Name = R
+  Manufacturer = 01004c6cf10093009aff59ff0a0fc40080fee0fcdf521f
     ID            = 0x1
-    SEQ           = 124
-    Temperature   = 31.17 ℃
-    Humidity      = 68.16 %
-    Pressure      = 992.639 hPa
-    Illuminance   = 93.3 lx
-    Accelerometer = 0.92 g ( -0.049 0.006 0.963 g)
-    Geomagnetic   = -84.5 uT ( -22.4 0.5 -62.6 uT)
-    Magnetic      = 0x3
-    Steps         = 44 歩
-    Battery Level = 90 %
+    SEQ           = 147
+    Temperature   = 29.03 ℃
+    Pressure      = 1002.359 hPa
+    Illuminance   = 200.8 lx
+    Accelerometer = 0.941 g ( -0.025 -0.041 0.94 g)
+    Geomagnetic   = 90.9 uT ( 19.6 -38.4 -80.0 uT)
+    RSSI          = -69 dB
 '''
