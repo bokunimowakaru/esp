@@ -136,13 +136,13 @@ void sensors_log(float *val){
     
     Serial.print("Accelerometer X = ");
     Serial.print(val[8]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     Serial.print("Accelerometer Y = ");
     Serial.print(val[9]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     Serial.print("Accelerometer Z = ");
     Serial.print(val[10]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     
     Serial.print("Geomagnetic X   = ");
     Serial.print(val[11], 3);
@@ -162,53 +162,67 @@ void loop() {
     long v;
     int l=0;
 
-    bm1383aglv.get_val(&val[1],val);        // 気圧と温度を取得
+    for(int i=0;i<VAL_N;i++) val[i]=0.;
     
-    v=(long)((val[0] + 15.) * 4.);          // 温度
-    if( v > 255 ) v = 255;
-    if( v < 0 ) v = 0;
-    l=d_append(d,l,(byte)v);
-//  v=(long)((val[0] + 45.) * 374.5);
-//  l=d_append_int16(d,l,v);
-    v=(long)(val[1] - 1027.);
-    if( v > 127 ) v = 127;
-    if( v < -128 ) v = -128;
-    l=d_append(d,l,(char)((int)v));
-//  v=(long)(val[1]);
-//  l=d_append_int24(d,l,v);                // 気圧
-    
+    // 気圧と温度を取得
+    if(!bm1383aglv.get_val(&val[1],val)){
+        v=(long)((val[0] + 15.) * 4.);
+        if( v > 255 ) v = 255;
+        if( v < 0 ) v = 0;
+        l=d_append(d,l,(byte)v);
+        v=(long)(val[1] - 1027.);
+        if( v > 127 ) v = 127;
+        if( v < -128 ) v = -128;
+        l=d_append(d,l,(char)((int)v));
+    }else{
+        l=d_append(d,l,0);
+        l=d_append(d,l,-128);
+    }
+
+    // 距離、照度を取得
     unsigned short ps;
-    rpr0521rs.get_psalsval(&ps,&val[2]);    // 距離、照度を取得
-    val[3] = (float)ps;
-    if(ps > 255) ps = 255;
-    v=(long)(val[2] * 1.2);
-    l=d_append_int16(d,l,v);
-    l=d_append(d,l,(byte)ps);
+    if(!rpr0521rs.get_psalsval(&ps,val+2)){
+        val[3] = (float)ps;
+        if(ps > 255) ps = 255;
+        v=(long)(val[2] * 1.2);
+        l=d_append_int16(d,l,v);
+        l=d_append(d,l,(byte)ps);
+    }else{
+        l=d_append_int16(d,l,0);
+        l=d_append(d,l,0);
+    }
     
+    // 色を取得
     unsigned short color[5];
     long color_n = 0;
-    bh1749nuc.get_val(color);
-    for(int i=0;i<4;i++) color_n += color[i];
-    for(int i=0;i<4;i++){
-        val[4+i] = (float)color[i] / (float)color_n * 100.;
-        if(i<3)l=d_append(d,l,(byte)(val[4+i] * 256. / 100.));
-    }
+    if(!bh1749nuc.get_val(color)){
+        for(int i=0;i<4;i++) color_n += color[i];
+        for(int i=0;i<4;i++){
+            val[4+i] = (float)color[i] / (float)color_n * 100.;
+            if(i<3)l=d_append(d,l,(byte)(val[4+i] * 256. / 100.));
+        }
+    }else for(int i=0;i<3;i++) l=d_append(d,l,0);
     
-    kx224.get_val(&val[8]);                 // 加速度を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[8+i] * 64);
-        if(v>127) v=127;
-        if(v<-128) v=-128;
-        l=d_append(d,l,(char)((int)v));
-    }
+    // 加速度を取得
+    if(!kx224.get_val(&val[8])){
+        for(int i=0;i<3;i++){
+            v=(long)(val[8+i] * 64);
+            if(v>127) v=127;
+            if(v<-128) v=-128;
+            l=d_append(d,l,(char)((int)v));
+            val[8+i] *= 9.80665;
+        }
+    }else for(int i=0;i<3;i++) l=d_append(d,l,0);
     
-    bm1422agmv.get_val(&val[11]);           // 地磁気を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[11+i]);
-        if(v>127) v=127;
-        if(v<-128) v=-128;
-        l=d_append(d,l,(char)((int)v));
-    }
+    // 地磁気を取得
+    if(!bm1422agmv.get_val(&val[11])){
+        for(int i=0;i<3;i++){
+            v=(long)(val[11+i]);
+            if(v>127) v=127;
+            if(v<-128) v=-128;
+            l=d_append(d,l,(char)((int)v));
+        }
+    }else for(int i=0;i<3;i++) l=d_append(d,l,0);
     
     l=d_append(d,l,SEQ_N);                  // 送信番号
 
@@ -219,7 +233,7 @@ void loop() {
         udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
         udp.print(DEVICE);                  // デバイス名を送信
         for(int i=0; i<VAL_N; i++){
-            udp.print(val[i],0);            // 変数tempの値を送信
+            udp.print(round(val[i]),0);     // 変数tempの値を送信
             if(i < VAL_N-1)udp.print(", "); // 「,」カンマを送信
         }
         udp.endPacket();                    // UDP送信の終了(実際に送信する)

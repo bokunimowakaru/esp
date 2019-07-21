@@ -100,13 +100,13 @@ void sensors_log(float *val){
     
     Serial.print("Accelerometer X = ");
     Serial.print(val[8]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     Serial.print("Accelerometer Y = ");
     Serial.print(val[9]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     Serial.print("Accelerometer Z = ");
     Serial.print(val[10]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     
     Serial.print("Geomagnetic X   = ");
     Serial.print(val[11], 3);
@@ -135,6 +135,7 @@ void loop() {
     for(int i=0;i<4;i++) color_n += color[i];
     for(int i=0;i<4;i++) val[4+i] = (float)color[i] / (float)color_n * 100.;
     kx224.get_val(&val[8]);                 // 加速度を取得
+    for(int i=0;i<3;i++) val[8+i] *= 9.80665;
     bm1422agmv.get_val(&val[11]);           // 地磁気を取得
 
     sensors_log(val);
@@ -142,7 +143,7 @@ void loop() {
     udp.beginPacket(IP_BC, PORT);           // UDP送信先を設定
     udp.print(DEVICE);                      // デバイス名を送信
     for(int i=0; i<VAL_N; i++){
-        udp.print(val[i],0);                // 変数tempの値を送信
+        udp.print(round(val[i]),0);         // 変数tempの値を送信
         if(i < VAL_N-1)udp.print(", ");     // 「,」カンマを送信
     }
     udp.endPacket();                        // UDP送信の終了(実際に送信する)

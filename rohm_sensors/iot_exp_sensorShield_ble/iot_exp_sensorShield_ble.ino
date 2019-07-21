@@ -52,7 +52,7 @@ void setup(){                               // 起動時に一度だけ実行す
     BLEDevice::init(BLE_DEVICE);            // Create the BLE Device
     Wire.begin();
     if(wake<2){
-        ledcWriteNote(0,NOTE_B,8);          // 送信中の音
+        ledcWriteNote(0,NOTE_B,7);          // 初期設定中の音
         bm1383aglv.init();                  // 気圧センサの初期化
         kx224.init();                       // 加速度センサの初期化
         bh1749nuc.init();                   // カラーセンサの初期化
@@ -113,13 +113,13 @@ void sensors_log(float *val){
     
     Serial.print("Accelerometer X = ");
     Serial.print(val[8]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     Serial.print("Accelerometer Y = ");
     Serial.print(val[9]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     Serial.print("Accelerometer Z = ");
     Serial.print(val[10]);
-    Serial.println(" [g]");
+    Serial.println(" [m/s^2]");
     
     Serial.print("Geomagnetic X   = ");
     Serial.print(val[11], 3);
@@ -137,54 +137,68 @@ void loop() {
     float val[VAL_N];                       // センサ用の浮動小数点数型変数
     long v;
     int l=0;
+    
+    for(int i=0;i<VAL_N;i++) val[i]=0.;
+    
+    // 気圧と温度を取得
+    if(!bm1383aglv.get_val(&val[1],val)){
+        v=(long)((val[0] + 15.) * 4.);
+        if( v > 255 ) v = 255;
+        if( v < 0 ) v = 0;
+        l=d_append(d,l,(byte)v);
+        v=(long)(val[1] - 1027.);
+        if( v > 127 ) v = 127;
+        if( v < -128 ) v = -128;
+        l=d_append(d,l,(char)((int)v));
+    }else{
+        l=d_append(d,l,0);
+        l=d_append(d,l,-128);
+    }
 
-    bm1383aglv.get_val(&val[1],val);        // 気圧と温度を取得
-    
-    v=(long)((val[0] + 15.) * 4.);          // 温度
-    if( v > 255 ) v = 255;
-    if( v < 0 ) v = 0;
-    l=d_append(d,l,(byte)v);
-//  v=(long)((val[0] + 45.) * 374.5);
-//  l=d_append_int16(d,l,v);
-    v=(long)(val[1] - 1027.);
-    if( v > 127 ) v = 127;
-    if( v < -128 ) v = -128;
-    l=d_append(d,l,(char)((int)v));
-//  v=(long)(val[1]);
-//  l=d_append_int24(d,l,v);                // 気圧
-    
+    // 距離、照度を取得
     unsigned short ps;
-    rpr0521rs.get_psalsval(&ps,&val[2]);    // 距離、照度を取得
-    val[3] = (float)ps;
-    if(ps > 255) ps = 255;
-    v=(long)(val[2] * 1.2);
-    l=d_append_int16(d,l,v);
-    l=d_append(d,l,(byte)ps);
+    if(!rpr0521rs.get_psalsval(&ps,val+2)){
+        val[3] = (float)ps;
+        if(ps > 255) ps = 255;
+        v=(long)(val[2] * 1.2);
+        l=d_append_int16(d,l,v);
+        l=d_append(d,l,(byte)ps);
+    }else{
+        l=d_append_int16(d,l,0);
+        l=d_append(d,l,0);
+    }
     
+    // 色を取得
     unsigned short color[5];
     long color_n = 0;
-    bh1749nuc.get_val(color);
-    for(int i=0;i<4;i++) color_n += color[i];
-    for(int i=0;i<4;i++){
-        val[4+i] = (float)color[i] / (float)color_n * 100.;
-        if(i<3)l=d_append(d,l,(byte)(val[4+i] * 256. / 100.));
-    }
+    if(!bh1749nuc.get_val(color)){
+        for(int i=0;i<4;i++) color_n += color[i];
+        for(int i=0;i<4;i++){
+            val[4+i] = (float)color[i] / (float)color_n * 100.;
+            if(i<3)l=d_append(d,l,(byte)(val[4+i] * 256. / 100.));
+        }
+    }else for(int i=0;i<3;i++) l=d_append(d,l,0);
     
-    kx224.get_val(&val[8]);                 // 加速度を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[8+i] * 64);
-        if(v>127) v=127;
-        if(v<-128) v=-128;
-        l=d_append(d,l,(char)((int)v));
-    }
+    // 加速度を取得
+    if(!kx224.get_val(&val[8])){
+        for(int i=0;i<3;i++){
+            v=(long)(val[8+i] * 64);
+            if(v>127) v=127;
+            if(v<-128) v=-128;
+            l=d_append(d,l,(char)((int)v));
+            val[8+i] *= 9.80665;
+        }
+    }else for(int i=0;i<3;i++) l=d_append(d,l,0);
     
-    bm1422agmv.get_val(&val[11]);           // 地磁気を取得
-    for(int i=0;i<3;i++){
-        v=(long)(val[11+i]);
-        if(v>127) v=127;
-        if(v<-128) v=-128;
-        l=d_append(d,l,(char)((int)v));
-    }
+    // 地磁気を取得
+    if(!bm1422agmv.get_val(&val[11])){
+        for(int i=0;i<3;i++){
+            v=(long)(val[11+i]);
+            if(v>127) v=127;
+            if(v<-128) v=-128;
+            l=d_append(d,l,(char)((int)v));
+        }
+    }else for(int i=0;i<3;i++) l=d_append(d,l,0);
     
     l=d_append(d,l,SEQ_N);                  // 送信番号
 
@@ -199,7 +213,7 @@ void loop() {
 }
 
 void sleep(){
-    delay(100);                             // 送信待ち時間
+    delay(200);                             // 送信待ち時間
     ledcWrite(0, 0);
     pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
