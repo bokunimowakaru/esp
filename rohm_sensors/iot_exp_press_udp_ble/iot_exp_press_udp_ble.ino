@@ -22,7 +22,7 @@ ROHM BM1383AGLV
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define DEVICE "press_1,"                   // デバイス名(5文字+"_"+番号+",")
-#define BLE_DEVICE "esp_press_1"            // BLE用デバイス名
+#define BLE_DEVICE "espRohmPress"           // BLE用デバイス名
 
 #include <Wire.h>
 #include "BM1383AGLV.h"

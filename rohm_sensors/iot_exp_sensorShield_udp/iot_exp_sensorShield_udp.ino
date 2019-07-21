@@ -1,5 +1,5 @@
 /*******************************************************************************
-IoT SensorShield EVK UDP+BLE
+IoT SensorShield EVK UDP
 
     気圧センサ              ROHM BM1383AGLV
     加速度センサ            ROHM KX224
@@ -18,7 +18,6 @@ IoT SensorShield EVK UDP+BLE
 #define PIN_BUZZER 12                       // GPIO 12 にスピーカを接続
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
-#define SENDTO "255.255.255.255"            // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 #define SLEEP_P 50*1000000ul                // スリープ時間 50秒(uint32_t)
 #define DEVICE "rohme_1,"                   // デバイス名(5文字+"_"+番号+",")
