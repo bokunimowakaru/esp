@@ -62,7 +62,7 @@ while True:
         sensors = dict()
         for (adtype, desc, val) in dev.getScanData():
             print("  %3d %s = %s" % (adtype, desc, val))
-            if adtype == 9 and val[0:4] == 'esp_':
+            if adtype == 9 and val[0:7] == 'espRohm':
                 isRohmMedal = True
             if isRohmMedal and desc == 'Manufacturer':
                 if len(val) >= 17 * 2:
