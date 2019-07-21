@@ -152,7 +152,7 @@ void loop() {
 
 void sleep(){
     ledcWriteNote(0,NOTE_D,8);              // 送信中の音
-    delay(200);                             // 送信待ち時間
+    delay(150);                             // 送信待ち時間
     ledcWrite(0, 0);
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }

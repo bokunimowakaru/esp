@@ -213,7 +213,7 @@ void loop() {
 }
 
 void sleep(){
-    delay(200);                             // 送信待ち時間
+    delay(150);                             // 送信待ち時間
     ledcWrite(0, 0);
     pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
