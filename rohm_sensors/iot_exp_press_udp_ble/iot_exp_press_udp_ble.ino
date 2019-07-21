@@ -2,7 +2,7 @@
 IoT Press 気圧センサ UDP+BLE
 ROHM BM1383AGLV
 乾電池などで動作するIoT気圧センサです
-※フラッシュを約1.4MB消費しますので、アプリ用に2MB程度を割り当ててください
+※フラッシュを約1.4MB消費しますので、アプリ用に2MB以上を割り当ててください
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
@@ -10,6 +10,7 @@ ROHM BM1383AGLV
    Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleScan.cpp
    Ported to Arduino ESP32 by pcbreflux
 */
+
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <BLEDevice.h>
@@ -68,13 +69,48 @@ void setup(){                               // 起動時に一度だけ実行す
     if(wake<3) morseIp0(PIN_BUZZER,50,IP);  // IPアドレス終値をモールス信号出力
 }
 
+void loop() {
+    WiFiUDP udp;                            // UDP通信用のインスタンスを定義
+    float temp,press;                       // センサ用の浮動小数点数型変数
+
+    int rc=bm1383aglv.get_val(&press,&temp);// 気圧と温度を取得して各変数へ代入
+    if(rc) sleep();                         // 取得失敗時はsleepへ
+    Serial.print("Temperature    =  ");
+    Serial.print(temp,2);
+    Serial.println(" [degrees Celsius]");
+    Serial.print("Pressure        = ");
+    Serial.print(press,2);
+    Serial.println(" [hPa]");
+    // UDP
+    if(wifi_enable){
+        udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
+        udp.print(DEVICE);                  // デバイス名を送信
+        udp.print(round(temp),0);           // 変数tempの値を送信
+        udp.print(", ");                    // 「,」カンマを送信
+        udp.println(round(press),0);        // 変数pressの値を送信
+        udp.endPacket();                    // UDP送信の終了(実際に送信する)
+    }
+    // BLE Advertizing
+    pAdvertising = BLEDevice::getAdvertising();
+    setBleAdvData(temp,press);
+    pAdvertising->start();                  // Start advertising
+    SEQ_N++;
+    sleep();
+}
+
+void sleep(){
+    ledcWriteNote(0,NOTE_D,8);              // 送信中の音
+    delay(150);                             // 送信待ち時間
+    ledcWrite(0, 0);
+    pAdvertising->stop();
+    esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
+}
+
 void setBleAdvData(float temp, float press){
     long val;
     
     BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
     BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
-    oAdvertisementData.setName(BLE_DEVICE);
-    oAdvertisementData.setFlags(0x06);      // LE General Discoverable Mode | BR_EDR_NOT_SUPPORTED
     
     std::string strServiceData = "";
     strServiceData += (char)9;              // Len
@@ -91,6 +127,8 @@ void setBleAdvData(float temp, float press){
     strServiceData += (char)(SEQ_N);        // 送信番号
 
     oAdvertisementData.addData(strServiceData);
+    oAdvertisementData.setFlags(0x06);      // LE General Discoverable Mode | BR_EDR_NOT_SUPPORTED
+    oAdvertisementData.setName(BLE_DEVICE); // oAdvertisementDataは逆順に代入する
     pAdvertising->setAdvertisementData(oAdvertisementData);
     pAdvertising->setScanResponseData(oScanResponseData);
 
@@ -98,41 +136,7 @@ void setBleAdvData(float temp, float press){
     int len=strServiceData.size();
     if(len != (int)(strServiceData[0]) + 1 || len < 2) Serial.println("ERROR: BLE length");
     for(int i=2;i<len;i++) Serial.printf("%02x ",(char)(strServiceData[i]));
-	Serial.println();
-    Serial.print("data length     = ");
-    Serial.println(len-2);
-}
-
-void loop() {
-    WiFiUDP udp;                            // UDP通信用のインスタンスを定義
-    float temp,press;                       // センサ用の浮動小数点数型変数
-
-    int rc=bm1383aglv.get_val(&press,&temp);// 気圧と温度を取得して各変数へ代入
-    if(rc) sleep();                         // 取得失敗時はsleepへ
-    // UDP
-    if(wifi_enable){
-        udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
-        udp.print(DEVICE);                  // デバイス名を送信
-        udp.print(temp,0);                  // 変数tempの値を送信
-        Serial.print(temp,2);               // シリアル出力表示
-        udp.print(", ");                    // 「,」カンマを送信
-        Serial.print(", ");                 // シリアル出力表示
-        udp.println(press,0);               // 変数pressの値を送信
-        Serial.println(press,2);            // シリアル出力表示
-        udp.endPacket();                    // UDP送信の終了(実際に送信する)
-    }
-    // BLE Advertizing
-    pAdvertising = BLEDevice::getAdvertising();
-    setBleAdvData(temp,press);
-    pAdvertising->start();                  // Start advertising
-    SEQ_N++;
-    sleep();
-}
-
-void sleep(){
-    ledcWriteNote(0,NOTE_D,8);              // 送信中の音
-    delay(200);                             // 送信待ち時間
-    ledcWrite(0, 0);
-    pAdvertising->stop();
-    esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
+    Serial.println();
+    Serial.print("data length     = 2 + 6 = ");
+    Serial.printf("%d (%d)\n",len-2,22-strlen(BLE_DEVICE)-6);
 }

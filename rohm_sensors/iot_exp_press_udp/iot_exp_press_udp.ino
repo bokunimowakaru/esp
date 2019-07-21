@@ -56,14 +56,17 @@ void loop() {
     float temp,press;                       // センサ用の浮動小数点数型変数
 
     if(!bm1383aglv.get_val(&press,&temp)){  // 気圧と温度を取得して変数へ代入
+        Serial.print("Temperature    =  ");
+        Serial.print(temp,2);
+        Serial.println(" [degrees Celsius]");
+        Serial.print("Pressure        = ");
+        Serial.print(press,2);
+        Serial.println(" [hPa]");
         udp.beginPacket(IP_BC, PORT);       // UDP送信先を設定
         udp.print(DEVICE);                  // デバイス名を送信
         udp.print(temp,0);                  // 変数tempの値を送信
-        Serial.print(temp,2);               // シリアル出力表示
         udp.print(", ");                    // 「,」カンマを送信
-        Serial.print(", ");                 // シリアル出力表示
         udp.println(press,0);               // 変数pressの値を送信
-        Serial.println(press,2);            // シリアル出力表示
         udp.endPacket();                    // UDP送信の終了(実際に送信する)
     }
     sleep();

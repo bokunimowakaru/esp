@@ -9,10 +9,15 @@ IoT SensorShield EVK UDP+BLE
 
 乾電池などで動作するIoTセンサです
 
-※フラッシュを約1.5MB消費しますので、アプリ用に2MB程度を割り当ててください
+※フラッシュを約1.5MB消費しますので、アプリ用に2MB以上を割り当ててください
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
+/* 
+   Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleScan.cpp
+   Ported to Arduino ESP32 by pcbreflux
+*/
+
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #include <BLEDevice.h>
@@ -257,8 +262,6 @@ void sleep(){
 void setBleAdvData(byte *data, int data_n){
     BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
     BLEAdvertisementData oScanResponseData = BLEAdvertisementData();
-    oAdvertisementData.setName(BLE_DEVICE);
-    oAdvertisementData.setFlags(0x06);      // LE General Discoverable Mode | BR_EDR_NOT_SUPPORTED
     
     std::string strServiceData = "";
     strServiceData += (char)(data_n+3);     // Len
@@ -268,6 +271,8 @@ void setBleAdvData(byte *data, int data_n){
     for(int i=0;i<data_n;i++) strServiceData += (char)(data[i]);
 
     oAdvertisementData.addData(strServiceData);
+    oAdvertisementData.setFlags(0x06);      // LE General Discoverable Mode | BR_EDR_NOT_SUPPORTED
+    oAdvertisementData.setName(BLE_DEVICE); // oAdvertisementDataは逆順に代入する
     pAdvertising->setAdvertisementData(oAdvertisementData);
     pAdvertising->setScanResponseData(oScanResponseData);
 
