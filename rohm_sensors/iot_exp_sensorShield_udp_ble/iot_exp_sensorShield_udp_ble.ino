@@ -121,15 +121,17 @@ void sensors_log(float *val){
     Serial.print(val[3],0);
     Serial.println(" [count]");
     Serial.print("Color (RED)     = ");
-    Serial.println(val[4],1);
+    Serial.print(val[4],1);
+    Serial.println(" [%]");
     Serial.print("Color (GREEN)   = ");
-    Serial.println(val[5],1);
+    Serial.print(val[5],1);
+    Serial.println(" [%]");
     Serial.print("Color (BLUE)    = ");
-    Serial.println(val[6],1);
+    Serial.print(val[6],1);
+    Serial.println(" [%]");
     Serial.print("Color (IR)      = ");
-    Serial.println(val[7],1);
-//  Serial.print("Color (GREEN2)  = ");
-//  Serial.println(val[8],0);
+    Serial.print(val[7],1);
+    Serial.println(" [%]");
     
     Serial.print("Accelerometer X = ");
     Serial.print(val[8]);
