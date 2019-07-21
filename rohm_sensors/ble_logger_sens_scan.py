@@ -69,7 +69,7 @@ while True:
                     # センサ値を辞書型変数sensorsへ代入
                     sensors['ID'] = hex(payval(2,2))
                     sensors['Temperature'] = payval(4,1) / 4 - 15
-                    sensors['Pressure'] = payval(5,1) + 1027
+                    sensors['Pressure'] = payval(5,1,True) + 1027
                     sensors['Illuminance'] = payval(6,2) / 1.2
                     sensors['Proximity'] = payval(8,1)
                     sensors['Color R'] = payval(9,1) / 256 * 100
