@@ -4,7 +4,14 @@
 ################################################################################
 # BLE Logger
 #
-# iot_exp_press_udp_bleやiot_exp_sensorShield-evk_bleが送信するビーコンを受信し
+# for:
+#   iot_exp_press_ble
+#   iot_exp_press_udp_ble
+#   iot_exp_sensorShield_ble
+#   iot_exp_sensorShield_ble_rh
+#   iot_exp_sensorShield_udp_ble
+#
+# iot_exp_press_ble や iot_exp_sensorShield_ble が送信するビーコンを受信し
 # ビーコンに含まれる、温度センサ値と気圧センサ値を表示します。
 #
 #                                               Copyright (c) 2019 Wataru KUNINO
@@ -21,13 +28,37 @@
 #【参考文献】
 #   本プログラムを作成するにあたり下記を参考にしました
 #   https://ianharvey.github.io/bluepy-doc/scanner.html
+#   https://www.rohm.co.jp/documents/11401/3946483/sensormedal-evk-002_ug-j.pdf
 
-interval = 1.01 # 動作間隔
+ambient_chid='0000'                 # ここにAmbientで取得したチャネルIDを入力
+ambient_wkey='0123456789abcdef'     # ここにはライトキーを入力
+ambient_interval = 30               # Ambientへの送信間隔
+interval = 1.01                     # 動作間隔
+savedata = True                    # ファイル保存の要否
+username = 'pi'                     # ファイル保存時の所有者名
 
 from bluepy import btle
 from sys import argv
 import getpass
+from shutil import chown
 from time import sleep
+import urllib.request                           # HTTP通信ライブラリを組み込む
+import json                                     # JSON変換ライブラリを組み込む
+import datetime
+
+url_s = 'https://ambidata.io/api/v2/channels/'+ambient_chid+'/data' # アクセス先
+head_dict = {'Content-Type':'application/json'} # ヘッダを変数head_dictへ
+body_dict = {'writeKey':ambient_wkey, \
+            'd1':0, 'd2':0, 'd3':0, 'd4':0, 'd5':0, 'd6':0, 'd7':0, 'd8':0}
+
+def save(filename, data):
+    try:
+        fp = open(filename, mode='a')                   # 書込用ファイルを開く
+    except Exception as e:                              # 例外処理発生時
+        print(e)                                        # エラー内容を表示
+    fp.write(data + '\n')                               # dataをファイルへ
+    fp.close()                                          # ファイルを閉じる
+    chown(filename, username, username)                 # 所有者をpiユーザへ
 
 def payval(num, bytes=1, sign=False):
     global val
@@ -43,6 +74,12 @@ def payval(num, bytes=1, sign=False):
     return a
 
 scanner = btle.Scanner()
+time = 999
+isMedalAvail = False
+sensors = dict()
+if ambient_interval < 30:
+    ambient_interval = 30
+
 while True:
     # BLE受信処理
     try:
@@ -58,75 +95,241 @@ while True:
     # 受信データについてBLEデバイス毎の処理
     for dev in devices:
         print("\nDevice %s (%s), RSSI=%d dB, Connectable=%s" % (dev.addr, dev.addrType, dev.rssi, dev.connectable))
-        isRohmMedal = False
-        sensors = dict()
-        for (adtype, desc, val) in dev.getScanData():
-            print("  %3d %s = %s" % (adtype, desc, val))
-            if adtype == 9 and val[0:7] == 'espRohm':
-                isRohmMedal = True
-            if isRohmMedal and desc == 'Manufacturer':
-                if len(val) >= 17 * 2:
-                    # センサ値を辞書型変数sensorsへ代入
-                    sensors['ID'] = hex(payval(2,2))
-                    sensors['Temperature'] = payval(4,1) / 4 - 15
-                    sensors['Pressure'] = payval(5,1,True) + 1027
-                    sensors['Illuminance'] = payval(6,2) / 1.2
-                    sensors['Proximity'] = payval(8,1)
-                    sensors['Color R'] = payval(9,1) / 256 * 100
-                    sensors['Color B'] = payval(10,1) / 256 * 100
-                    sensors['Color G'] = payval(11,1) / 256 * 100
-                    sensors['Color IR'] = 100 - sensors['Color R']\
-                                              - sensors['Color G']\
-                                              - sensors['Color B']
-                    if sensors['Color IR'] < 0:
-                        sensors['Color IR'] = 0
-                    sensors['Accelerometer X'] = payval(12,1,True) / 64
-                    sensors['Accelerometer Y'] = payval(13,1,True) / 64
-                    sensors['Accelerometer Z'] = payval(14,1,True) / 64
-                    sensors['Accelerometer'] = (sensors['Accelerometer X'] ** 2\
-                                              + sensors['Accelerometer Y'] ** 2\
-                                              + sensors['Accelerometer Z'] ** 2) ** 0.5
-                    sensors['Geomagnetic X'] = payval(15,1,True)
-                    sensors['Geomagnetic Y'] = payval(16,1,True)
-                    sensors['Geomagnetic Z'] = payval(17,1,True)
-                    sensors['Geomagnetic']  = (sensors['Geomagnetic X'] ** 2\
-                                             + sensors['Geomagnetic Y'] ** 2\
-                                             + sensors['Geomagnetic Z'] ** 2) ** 0.5
+        isRohmMedal = ''
+        val = ''
+        for (adtype, desc, value) in dev.getScanData():
+            print("  %3d %s = %s" % (adtype, desc, value))
+            if desc == 'Short Local Name' and value[0:10] == 'ROHMMedal2':
+                isRohmMedal = 'Sensor Medal'
+            if adtype == 9 and value[0:7] == 'espRohm':
+                isRohmMedal = 'Sensor Kit espRohm'
+            if desc == 'Complete Local Name' and value == 'R':
+                isRohmMedal = 'Sensor Kit RH'
+            if desc == 'Manufacturer':
+                val = value
+            if isRohmMedal == '' or val == '':
+                continue
+            sensors = dict()
+            print('    isRohmMedal   =',isRohmMedal)
 
-                    sensors['SEQ'] = payval(18)
-                    sensors['RSSI'] = dev.rssi
+            if isRohmMedal == 'Sensor Medal':
+                # センサ値を辞書型変数sensorsへ代入
+                sensors['ID'] = hex(payval(2,2))
+                sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
+                sensors['Humidity'] = 100 * payval(6,2) / 65536
+                sensors['SEQ'] = payval(8)
+                sensors['Condition Flags'] = bin(int(val[16:18],16))
+                sensors['Accelerometer X'] = payval(10,2,True) / 4096
+                sensors['Accelerometer Y'] = payval(12,2,True) / 4096
+                sensors['Accelerometer Z'] = payval(14,2,True) / 4096
+                sensors['Accelerometer'] = sensors['Accelerometer X']\
+                                         + sensors['Accelerometer Y']\
+                                         + sensors['Accelerometer Z']
+                sensors['Geomagnetic X'] = payval(16,2,True) / 10
+                sensors['Geomagnetic Y'] = payval(18,2,True) / 10
+                sensors['Geomagnetic Z'] = payval(20,2,True) / 10
+                sensors['Geomagnetic']   = sensors['Geomagnetic X']\
+                                         + sensors['Geomagnetic Y']\
+                                         + sensors['Geomagnetic Z']
+                sensors['Pressure'] = payval(22,3) / 2048
+                sensors['Illuminance'] = payval(25,2) / 1.2
+                sensors['Magnetic'] = hex(payval(27))
+                sensors['Steps'] = payval(28,2)
+                sensors['Battery Level'] = payval(30)
 
-                    # 画面へ表示
-                    print('    ID            =',sensors['ID'])
-                    print('    SEQ           =',sensors['SEQ'])
-                    print('    Temperature   =',round(sensors['Temperature'],1),'℃')
-                    print('    Pressure      =',round(sensors['Pressure']),'hPa')
-                    print('    Proximity     =',round(sensors['Proximity']),'count')
-                    print('    Illuminance   =',round(sensors['Illuminance']),'lx')
-                    print('    Color RGB     =',round(sensors['Color R']),\
-                                                round(sensors['Color G']),\
-                                                round(sensors['Color B']),'%')
-                    print('    Color IR      =',round(sensors['Color IR']),'%')
-                    print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
-                                                round(sensors['Accelerometer X'],3),\
-                                                round(sensors['Accelerometer Y'],3),\
-                                                round(sensors['Accelerometer Z'],3),'g)')
-                    print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
-                                                round(sensors['Geomagnetic X']),\
-                                                round(sensors['Geomagnetic Y']),\
-                                                round(sensors['Geomagnetic Z']),'uT)')
-                    print('    RSSI          =',sensors['RSSI'],'dB')
-                else:
-                    # センサ値を辞書型変数sensorsへ代入
-                    sensors['ID'] = hex(payval(2,2))
-                    sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
-                    sensors['Pressure'] = payval(6,3) / 2048
-                    sensors['SEQ'] = payval(9)
-                    sensors['RSSI'] = dev.rssi
+                # 画面へ表示
+                print('    ID            =',sensors['ID'])
+                print('    SEQ           =',sensors['SEQ'])
+                print('    Temperature   =',round(sensors['Temperature'],2),'℃')
+                print('    Humidity      =',round(sensors['Humidity'],2),'%')
+                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
+                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
+                print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
+                                            round(sensors['Accelerometer X'],3),\
+                                            round(sensors['Accelerometer Y'],3),\
+                                            round(sensors['Accelerometer Z'],3),'g)')
+                print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
+                                            round(sensors['Geomagnetic X'],1),\
+                                            round(sensors['Geomagnetic Y'],1),\
+                                            round(sensors['Geomagnetic Z'],1),'uT)')
+                print('    Magnetic      =',sensors['Magnetic'])
+                print('    Steps         =',sensors['Steps'],'歩')
+                print('    Battery Level =',sensors['Battery Level'],'%')
+                continue
 
-                    # 画面へ表示
-                    print('    ID            =',sensors['ID'])
-                    print('    SEQ           =',sensors['SEQ'])
-                    print('    Temperature   =',round(sensors['Temperature'],2),'℃')
-                    print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
-                    print('    RSSI          =',sensors['RSSI'],'dB')
+            if isRohmMedal == 'Sensor Kit espRohm' and len(val) < 17 * 2:
+                sensors['ID'] = hex(payval(2,2))
+                sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
+                sensors['Pressure'] = payval(6,3) / 2048
+                sensors['SEQ'] = payval(9)
+                sensors['RSSI'] = dev.rssi
+                print('    ID            =',sensors['ID'])
+                print('    SEQ           =',sensors['SEQ'])
+                print('    Temperature   =',round(sensors['Temperature'],2),'℃')
+                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
+                print('    RSSI          =',sensors['RSSI'],'dB')
+                continue
+
+            if isRohmMedal == 'Sensor Kit espRohm':
+                sensors['ID'] = hex(payval(2,2))
+                sensors['Temperature'] = payval(4,1) / 4 - 15
+                sensors['Pressure'] = payval(5,1,True) + 1027
+                sensors['Illuminance'] = payval(6,2) / 1.2
+                sensors['Proximity'] = payval(8,1)
+                sensors['Color R'] = payval(9,1) / 256 * 100
+                sensors['Color B'] = payval(10,1) / 256 * 100
+                sensors['Color G'] = payval(11,1) / 256 * 100
+                sensors['Color IR'] = 100 - sensors['Color R']\
+                                          - sensors['Color G']\
+                                          - sensors['Color B']
+                if sensors['Color IR'] < 0:
+                    sensors['Color IR'] = 0
+                sensors['Accelerometer X'] = payval(12,1,True) / 64
+                sensors['Accelerometer Y'] = payval(13,1,True) / 64
+                sensors['Accelerometer Z'] = payval(14,1,True) / 64
+                sensors['Accelerometer'] = (sensors['Accelerometer X'] ** 2\
+                                          + sensors['Accelerometer Y'] ** 2\
+                                          + sensors['Accelerometer Z'] ** 2) ** 0.5
+                sensors['Geomagnetic X'] = payval(15,1,True)
+                sensors['Geomagnetic Y'] = payval(16,1,True)
+                sensors['Geomagnetic Z'] = payval(17,1,True)
+                sensors['Geomagnetic']  = (sensors['Geomagnetic X'] ** 2\
+                                         + sensors['Geomagnetic Y'] ** 2\
+                                         + sensors['Geomagnetic Z'] ** 2) ** 0.5
+                sensors['SEQ'] = payval(18)
+                sensors['RSSI'] = dev.rssi
+                print('    ID            =',sensors['ID'])
+                print('    SEQ           =',sensors['SEQ'])
+                print('    Temperature   =',round(sensors['Temperature'],1),'℃')
+                print('    Pressure      =',round(sensors['Pressure']),'hPa')
+                print('    Proximity     =',round(sensors['Proximity']),'count')
+                print('    Illuminance   =',round(sensors['Illuminance']),'lx')
+                print('    Color RGB     =',round(sensors['Color R']),\
+                                            round(sensors['Color G']),\
+                                            round(sensors['Color B']),'%')
+                print('    Color IR      =',round(sensors['Color IR']),'%')
+                print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
+                                            round(sensors['Accelerometer X'],3),\
+                                            round(sensors['Accelerometer Y'],3),\
+                                            round(sensors['Accelerometer Z'],3),'g)')
+                print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
+                                            round(sensors['Geomagnetic X']),\
+                                            round(sensors['Geomagnetic Y']),\
+                                            round(sensors['Geomagnetic Z']),'uT)')
+                print('    RSSI          =',sensors['RSSI'],'dB')
+                continue
+
+            if isRohmMedal == 'Sensor Kit RH':
+                sensors['ID'] = hex(payval(2,2))
+                sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
+                sensors['Illuminance'] = payval(6,2) / 1.2
+                sensors['SEQ'] = payval(8)
+                sensors['Condition Flags'] = bin(int(val[16:18],16))
+                sensors['Accelerometer X'] = payval(10,2,True) / 4096
+                sensors['Accelerometer Y'] = payval(12,2,True) / 4096
+                sensors['Accelerometer Z'] = payval(14,2,True) / 4096
+                sensors['Accelerometer'] = (sensors['Accelerometer X'] ** 2\
+                                          + sensors['Accelerometer Y'] ** 2\
+                                          + sensors['Accelerometer Z'] ** 2) ** 0.5
+                sensors['Geomagnetic X'] = payval(16,2,True) / 10
+                sensors['Geomagnetic Y'] = payval(18,2,True) / 10
+                sensors['Geomagnetic Z'] = payval(20,2,True) / 10
+                sensors['Geomagnetic']  = (sensors['Geomagnetic X'] ** 2\
+                                         + sensors['Geomagnetic Y'] ** 2\
+                                         + sensors['Geomagnetic Z'] ** 2) ** 0.5
+                sensors['Pressure'] = payval(22,3) / 2048
+                sensors['RSSI'] = dev.rssi
+                print('    ID            =',sensors['ID'])
+                print('    SEQ           =',sensors['SEQ'])
+                print('    Temperature   =',round(sensors['Temperature'],2),'℃')
+                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
+                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
+                print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
+                                            round(sensors['Accelerometer X'],3),\
+                                            round(sensors['Accelerometer Y'],3),\
+                                            round(sensors['Accelerometer Z'],3),'g)')
+                print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
+                                            round(sensors['Geomagnetic X'],1),\
+                                            round(sensors['Geomagnetic Y'],1),\
+                                            round(sensors['Geomagnetic Z'],1),'uT)')
+                print('    RSSI          =',sensors['RSSI'],'dB')
+            isRohmMedal = ''
+            # センサ値の取得処理の終了
+    # 受信後の処理
+
+    # センサ個別値のファイルを保存
+    date=datetime.datetime.today()
+    if savedata:
+        for sensor in sensors:
+            if (sensor.find(' ') >= 0 or len(sensor) <= 5 or sensor == 'Magnetic') and sensor != 'Color R':
+                continue
+            s = date.strftime('%Y/%m/%d %H:%M')
+          # s += ', ' + sensor
+            s += ', ' + str(round(sensors[sensor],3))
+            if sensor == 'Color R':
+                s += ', ' + str(round(sensors['Color R'],3))
+                s += ', ' + str(round(sensors['Color G'],3))
+                s += ', ' + str(round(sensors['Color B'],3))
+                s += ', ' + str(round(sensors['Color IR'],3))
+                sensor = 'Color'
+            if sensor == 'Accelerometer':
+                s += ', ' + str(round(sensors['Accelerometer X'],3))
+                s += ', ' + str(round(sensors['Accelerometer Y'],3))
+                s += ', ' + str(round(sensors['Accelerometer Z'],3))
+            if sensor == 'Geomagnetic':
+                s += ', ' + str(round(sensors['Geomagnetic X'],3))
+                s += ', ' + str(round(sensors['Geomagnetic Y'],3))
+                s += ', ' + str(round(sensors['Geomagnetic Z'],3))
+          # print(s, '-> ' + sensor + '.csv') 
+            save(sensor + '.csv', s)
+
+    # クラウドへの送信処理
+    if int(ambient_chid) == 0 or not isMedalAvail or time < ambient_interval / interval:
+        time += 1
+        continue
+    time = 0
+    isMedalAvail = False
+    body_dict['d1'] = sensors['Temperature']
+    body_dict['d2'] = sensors['Humidity']
+    body_dict['d3'] = sensors['Pressure']
+    body_dict['d4'] = sensors['Illuminance']
+    body_dict['d5'] = sensors['Accelerometer']
+    body_dict['d6'] = sensors['Geomagnetic']
+    body_dict['d7'] = sensors['Steps']
+    body_dict['d8'] = sensors['Battery Level']
+
+    print(head_dict)                                # 送信ヘッダhead_dictを表示
+    print(body_dict)                                # 送信内容body_dictを表示
+    post = urllib.request.Request(url_s, json.dumps(body_dict).encode(), head_dict)
+                                                    # POSTリクエストデータを作成
+    try:                                            # 例外処理の監視を開始
+        res = urllib.request.urlopen(post)          # HTTPアクセスを実行
+    except Exception as e:                          # 例外処理発生時
+        print(e,url_s)                              # エラー内容と変数url_sを表示
+    res_str = res.read().decode()                   # 受信テキストを変数res_strへ
+    res.close()                                     # HTTPアクセスの終了
+    if len(res_str):                                # 受信テキストがあれば
+        print('Response:', res_str)                 # 変数res_strの内容を表示
+    else:
+        print('Done')                               # Doneを表示
+
+
+''' 実行結果の一例
+pi@raspberrypi:~ $ cd
+pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/esp
+pi@raspberrypi:~ $ cd ~/esp/rohm_sensors
+pi@raspberrypi:~/esp/rohm_sensors $ sudo ./ble_logger_sens_scan_rh.py
+
+Device xx:xx:xx:XX:XX:XX (public), RSSI=-56 dB
+  Flags = 06
+  Complete Local Name = R
+  Manufacturer = 01004c6cf10093009aff59ff0a0fc40080fee0fcdf521f
+    ID            = 0x1
+    SEQ           = 147
+    Temperature   = 29.03 ℃
+    Pressure      = 1002.359 hPa
+    Illuminance   = 200.8 lx
+    Accelerometer = 0.941 g ( -0.025 -0.041 0.94 g)
+    Geomagnetic   = 90.9 uT ( 19.6 -38.4 -80.0 uT)
+    RSSI          = -69 dB
+'''
