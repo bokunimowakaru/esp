@@ -34,7 +34,7 @@ ambient_chid='0000'                 # ここにAmbientで取得したチャネ�
 ambient_wkey='0123456789abcdef'     # ここにはライトキーを入力
 ambient_interval = 30               # Ambientへの送信間隔
 interval = 1.01                     # 動作間隔
-savedata = True                    # ファイル保存の要否
+savedata = True                     # ファイル保存の要否
 username = 'pi'                     # ファイル保存時の所有者名
 
 from bluepy import btle
@@ -73,10 +73,26 @@ def payval(num, bytes=1, sign=False):
             a -= 2 ** (bytes * 8)
     return a
 
+def printval(dict, name, n, unit):
+    value = dict.get(name)
+    if value == None:
+        return
+    if type(value) is not str:
+        if n == 0:
+            value = round(value)
+        else:
+            value = round(value,n)
+    print('    ' + name + ' ' * (14 - len(name)) + '=', value, unit, end='')
+    if name == 'Accelerometer' or name == 'Geomagnetic':
+        print(' (',round(sensors[name + ' X'],n),\
+            round(sensors[name + ' Y'],n),\
+            round(sensors[name + ' Z'],n), unit + ')')
+    else:
+        print()
+
 scanner = btle.Scanner()
 time = 999
 isMedalAvail = False
-sensors = dict()
 if ambient_interval < 30:
     ambient_interval = 30
 
@@ -91,6 +107,7 @@ while True:
             exit()
         sleep(interval)
         continue
+    sensors = dict()
 
     # 受信データについてBLEデバイス毎の処理
     for dev in devices:
@@ -137,40 +154,14 @@ while True:
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
 
-                # 画面へ表示
-                print('    ID            =',sensors['ID'])
-                print('    SEQ           =',sensors['SEQ'])
-                print('    Temperature   =',round(sensors['Temperature'],2),'℃')
-                print('    Humidity      =',round(sensors['Humidity'],2),'%')
-                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
-                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
-                print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
-                                            round(sensors['Accelerometer X'],3),\
-                                            round(sensors['Accelerometer Y'],3),\
-                                            round(sensors['Accelerometer Z'],3),'g)')
-                print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
-                                            round(sensors['Geomagnetic X'],1),\
-                                            round(sensors['Geomagnetic Y'],1),\
-                                            round(sensors['Geomagnetic Z'],1),'uT)')
-                print('    Magnetic      =',sensors['Magnetic'])
-                print('    Steps         =',sensors['Steps'],'歩')
-                print('    Battery Level =',sensors['Battery Level'],'%')
-                continue
-
             if isRohmMedal == 'Sensor Kit espRohm' and len(val) < 17 * 2:
                 sensors['ID'] = hex(payval(2,2))
                 sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
                 sensors['Pressure'] = payval(6,3) / 2048
                 sensors['SEQ'] = payval(9)
                 sensors['RSSI'] = dev.rssi
-                print('    ID            =',sensors['ID'])
-                print('    SEQ           =',sensors['SEQ'])
-                print('    Temperature   =',round(sensors['Temperature'],2),'℃')
-                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
-                print('    RSSI          =',sensors['RSSI'],'dB')
-                continue
 
-            if isRohmMedal == 'Sensor Kit espRohm':
+            if isRohmMedal == 'Sensor Kit espRohm' and len(val) >= 17 * 2:
                 sensors['ID'] = hex(payval(2,2))
                 sensors['Temperature'] = payval(4,1) / 4 - 15
                 sensors['Pressure'] = payval(5,1,True) + 1027
@@ -198,26 +189,6 @@ while True:
                                          + sensors['Geomagnetic Z'] ** 2) ** 0.5
                 sensors['SEQ'] = payval(18)
                 sensors['RSSI'] = dev.rssi
-                print('    ID            =',sensors['ID'])
-                print('    SEQ           =',sensors['SEQ'])
-                print('    Temperature   =',round(sensors['Temperature'],1),'℃')
-                print('    Pressure      =',round(sensors['Pressure']),'hPa')
-                print('    Proximity     =',round(sensors['Proximity']),'count')
-                print('    Illuminance   =',round(sensors['Illuminance']),'lx')
-                print('    Color RGB     =',round(sensors['Color R']),\
-                                            round(sensors['Color G']),\
-                                            round(sensors['Color B']),'%')
-                print('    Color IR      =',round(sensors['Color IR']),'%')
-                print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
-                                            round(sensors['Accelerometer X'],3),\
-                                            round(sensors['Accelerometer Y'],3),\
-                                            round(sensors['Accelerometer Z'],3),'g)')
-                print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
-                                            round(sensors['Geomagnetic X']),\
-                                            round(sensors['Geomagnetic Y']),\
-                                            round(sensors['Geomagnetic Z']),'uT)')
-                print('    RSSI          =',sensors['RSSI'],'dB')
-                continue
 
             if isRohmMedal == 'Sensor Kit RH':
                 sensors['ID'] = hex(payval(2,2))
@@ -239,20 +210,26 @@ while True:
                                          + sensors['Geomagnetic Z'] ** 2) ** 0.5
                 sensors['Pressure'] = payval(22,3) / 2048
                 sensors['RSSI'] = dev.rssi
-                print('    ID            =',sensors['ID'])
-                print('    SEQ           =',sensors['SEQ'])
-                print('    Temperature   =',round(sensors['Temperature'],2),'℃')
-                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
-                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
-                print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
-                                            round(sensors['Accelerometer X'],3),\
-                                            round(sensors['Accelerometer Y'],3),\
-                                            round(sensors['Accelerometer Z'],3),'g)')
-                print('    Geomagnetic   =',round(sensors['Geomagnetic'],1),'uT (',\
-                                            round(sensors['Geomagnetic X'],1),\
-                                            round(sensors['Geomagnetic Y'],1),\
-                                            round(sensors['Geomagnetic Z'],1),'uT)')
-                print('    RSSI          =',sensors['RSSI'],'dB')
+
+            if sensors:
+                printval(sensors, 'ID', 0, '')
+                printval(sensors, 'SEQ', 0, '')
+                printval(sensors, 'Temperature', 2, '℃')
+                printval(sensors, 'Humidity', 2, '%')
+                printval(sensors, 'Pressure', 3, 'hPa')
+                printval(sensors, 'Illuminance', 1, 'lx')
+                printval(sensors, 'Proximity', 0, 'count')
+                if(sensors.get('Color R')):
+                    print('    Color RGB     =',round(sensors['Color R']),\
+                                                round(sensors['Color G']),\
+                                                round(sensors['Color B']),'%')
+                    print('    Color IR      =',round(sensors['Color IR']),'%')
+                printval(sensors, 'Accelerometer', 3, 'g')
+                printval(sensors, 'Geomagnetic', 1, 'uT')
+                printval(sensors, 'Magnetic', 0, '')
+                printval(sensors, 'Steps', 0, '歩')
+                printval(sensors, 'Battery Level', 0, '%')
+                printval(sensors, 'RSSI', 1, 'dB')
             isRohmMedal = ''
             # センサ値の取得処理の終了
     # 受信後の処理
