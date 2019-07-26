@@ -122,6 +122,8 @@ while True:
                 isRohmMedal = 'Sensor Kit espRohm'
             if desc == 'Complete Local Name' and value == 'R':
                 isRohmMedal = 'Sensor Kit RH'
+            if adtype == 8 and value[0:10] == 'LapisDev':
+                isRohmMedal = 'Spresense Rohm IoT'
             if desc == 'Manufacturer':
                 val = value
             if isRohmMedal == '' or val == '':
@@ -210,6 +212,13 @@ while True:
                                          + sensors['Geomagnetic Y'] ** 2\
                                          + sensors['Geomagnetic Z'] ** 2) ** 0.5
                 sensors['Pressure'] = payval(22,3) / 2048
+                sensors['RSSI'] = dev.rssi
+
+            if isRohmMedal == 'Spresense Rohm IoT':
+                sensors['ID'] = hex(payval(2,2))
+                sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
+                sensors['Pressure'] = payval(6,3) / 2048
+                sensors['SEQ'] = payval(9)
                 sensors['RSSI'] = dev.rssi
 
             if sensors:
