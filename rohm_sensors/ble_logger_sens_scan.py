@@ -153,6 +153,7 @@ while True:
                 sensors['Magnetic'] = hex(payval(27))
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
+                sensors['RSSI'] = dev.rssi
 
             if isRohmMedal == 'Sensor Kit espRohm' and len(val) < 17 * 2:
                 sensors['ID'] = hex(payval(2,2))
@@ -229,7 +230,7 @@ while True:
                 printval(sensors, 'Magnetic', 0, '')
                 printval(sensors, 'Steps', 0, '歩')
                 printval(sensors, 'Battery Level', 0, '%')
-                printval(sensors, 'RSSI', 1, 'dB')
+                printval(sensors, 'RSSI', 0, 'dB')
             isRohmMedal = ''
             # センサ値の取得処理の終了
     # 受信後の処理
