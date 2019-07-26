@@ -305,9 +305,9 @@ while True:
 pi@raspberrypi:~ $ cd
 pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/esp
 pi@raspberrypi:~ $ cd ~/esp/rohm_sensors
-pi@raspberrypi:~/esp/rohm_sensors $ sudo ./ble_logger_sens_scan_rh.py
+pi@raspberrypi:~/esp/rohm_sensors $ sudo ./ble_logger_sens_scan.py
 
-Device xx:xx:xx:XX:XX:XX (public), RSSI=-56 dB
+Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB
   Flags = 06
   Complete Local Name = R
   Manufacturer = 01004c6cf10093009aff59ff0a0fc40080fee0fcdf521f
@@ -319,4 +319,22 @@ Device xx:xx:xx:XX:XX:XX (public), RSSI=-56 dB
     Accelerometer = 0.941 g ( -0.025 -0.041 0.94 g)
     Geomagnetic   = 90.9 uT ( 19.6 -38.4 -80.0 uT)
     RSSI          = -69 dB
+
+Device xx:xx:xx:xx:xx:xx (public), RSSI=-27 dB, Connectable=True
+  255 Manufacturer = 0100b1e4c90000308147ff0041f1bbbada
+    1 Flags = 06
+    9 Complete Local Name = espRohm
+    isRohmMedal   = Sensor Kit espRohm
+    ID            = 0x1
+    SEQ           = 218
+    Temperature   = 29.25 ℃
+    Pressure      = 999 hPa
+    Illuminance   = 167.5 lx
+    Proximity     = 0 count
+    Color RGB     = 19 28 50 %
+    Color IR      = 3 %
+    Accelerometer = 1.016 g ( -0.016 0.0 1.016 g)
+    Geomagnetic   = 99.4 uT ( -15 -69 -70 uT)
+    RSSI          = -27 dB
+
 '''
