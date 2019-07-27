@@ -115,13 +115,17 @@ while True:
         isRohmMedal = ''
         val = ''
         for (adtype, desc, value) in dev.getScanData():
-            print("  %3d %s = %s" % (adtype, desc, value))
-            if desc == 'Short Local Name' and value[0:10] == 'ROHMMedal2':
+            print("  %3d %s = %s" % (adtype, desc, value))  # ad_t=[{8:'Short Local Name'},{9:'Complete Local Name'}]
+            # ローム製 センサメダル
+            if adtype == 8 and value[0:10] == 'ROHMMedal2':
                 isRohmMedal = 'Sensor Medal'
+            # ローム製 センサ・シールド・キット
             if adtype == 9 and value[0:7] == 'espRohm':
                 isRohmMedal = 'Sensor Kit espRohm'
-            if desc == 'Complete Local Name' and value == 'R':
+            # ローム製 センサ・シールド・キット
+            if adtype == 9 and value == 'R':
                 isRohmMedal = 'Sensor Kit RH'
+            # Spresens用 IoTセンサ
             if adtype == 8 and value[0:10] == 'LapisDev':
                 isRohmMedal = 'Spresense Rohm IoT'
             if desc == 'Manufacturer':
@@ -271,19 +275,25 @@ while True:
             save(sensor + '.csv', s)
 
     # クラウドへの送信処理
-    if int(ambient_chid) == 0 or not isMedalAvail or time < ambient_interval / interval:
+    if int(ambient_chid) == 0 or not sensors or time < ambient_interval / interval:
         time += 1
         continue
     time = 0
     isMedalAvail = False
-    body_dict['d1'] = sensors['Temperature']
-    body_dict['d2'] = sensors['Humidity']
-    body_dict['d3'] = sensors['Pressure']
-    body_dict['d4'] = sensors['Illuminance']
-    body_dict['d5'] = sensors['Accelerometer']
-    body_dict['d6'] = sensors['Geomagnetic']
-    body_dict['d7'] = sensors['Steps']
-    body_dict['d8'] = sensors['Battery Level']
+    body_dict['d1'] = sensors.get('Temperature')
+    body_dict['d2'] = sensors.get('Humidity')
+    if not body_dict['d2']:
+        body_dict['d2'] = sensors.get('Proximity')
+    body_dict['d3'] = sensors.get('Pressure')
+    body_dict['d4'] = sensors.get('Illuminance')
+    body_dict['d5'] = sensors.get('Accelerometer')
+    body_dict['d6'] = sensors.get('Geomagnetic')
+    body_dict['d7'] = sensors.get('Steps')
+    if not body_dict['d7']:
+        body_dict['d7'] = sensors.get('Proximity')
+    body_dict['d8'] = sensors.get('Battery Level')
+    if not body_dict['d8']:
+        body_dict['d8'] = sensors.get('Color IR')
 
     print(head_dict)                                # 送信ヘッダhead_dictを表示
     print(body_dict)                                # 送信内容body_dictを表示
