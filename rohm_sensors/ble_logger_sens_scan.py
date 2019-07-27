@@ -317,10 +317,11 @@ pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/esp
 pi@raspberrypi:~ $ cd ~/esp/rohm_sensors
 pi@raspberrypi:~/esp/rohm_sensors $ sudo ./ble_logger_sens_scan.py
 
-Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB
-  Flags = 06
-  Complete Local Name = R
-  Manufacturer = 01004c6cf10093009aff59ff0a0fc40080fee0fcdf521f
+Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB, Connectable=True
+    1 Flags = 06
+    9 Complete Local Name = R
+  255 Manufacturer = 01004c6cf10093009aff59ff0a0fc40080fee0fcdf521f
+    isRohmMedal   = Sensor Kit RH
     ID            = 0x1
     SEQ           = 147
     Temperature   = 29.03 ℃
@@ -331,9 +332,9 @@ Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB
     RSSI          = -69 dB
 
 Device xx:xx:xx:xx:xx:xx (public), RSSI=-27 dB, Connectable=True
-  255 Manufacturer = 0100b1e4c90000308147ff0041f1bbbada
     1 Flags = 06
     9 Complete Local Name = espRohm
+  255 Manufacturer = 0100b1e4c90000308147ff0041f1bbbada
     isRohmMedal   = Sensor Kit espRohm
     ID            = 0x1
     SEQ           = 218
