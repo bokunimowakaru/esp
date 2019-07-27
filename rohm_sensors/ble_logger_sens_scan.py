@@ -317,7 +317,7 @@ pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/esp
 pi@raspberrypi:~ $ cd ~/esp/rohm_sensors
 pi@raspberrypi:~/esp/rohm_sensors $ sudo ./ble_logger_sens_scan.py
 
-Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB, Connectable=True
+Device xx:xx:xx:xx:xx:xx (public), RSSI=-69 dB, Connectable=True
     1 Flags = 06
     9 Complete Local Name = R
   255 Manufacturer = 01004c6cf10093009aff59ff0a0fc40080fee0fcdf521f

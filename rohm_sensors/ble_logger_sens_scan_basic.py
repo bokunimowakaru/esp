@@ -131,10 +131,10 @@ pi@raspberrypi:~ $ git clone http://github.com/bokunimowakaru/rohm_iot_sensor_sh
 pi@raspberrypi:~ $ cd ~/rohm_iot_sensor_shield
 pi@raspberrypi:~/rohm_iot_sensor_shield $ sudo ./ble_logger_sens_scan_basic.py
 
-Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB
-  255 Manufacturer = 0100b1e9c00001308147ff0041efbbabfa
+Device xx:xx:xx:xx:xx:xx (public), RSSI=-55 dB
     1 Flags = 06
     9 Complete Local Name = espRohm
+  255 Manufacturer = 0100b1e9c00001308147ff0041efbbabfa
     ID            = 0x1
     SEQ           = 250
     Temperature   = 29.25 ℃
@@ -147,10 +147,10 @@ Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB
     Geomagnetic   = 110.8 uT
     RSSI          = -55 dB
 
-Device xx:xx:xx:xx:xx:xx (public), RSSI=-56 dB
-  255 Manufacturer = 0100b76dc45e1f4c
+Device xx:xx:xx:xx:xx:xx (public), RSSI=-45 dB
     1 Flags = 06
     9 Complete Local Name = espRohmPress
+  255 Manufacturer = 0100b76dc45e1f4c
     ID            = 0x1
     SEQ           = 76
     Temperature   = 30.0 ℃
