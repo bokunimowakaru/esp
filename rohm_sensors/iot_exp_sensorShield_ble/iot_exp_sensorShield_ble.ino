@@ -44,16 +44,17 @@ BLEAdvertising *pAdvertising;
 #define DAT_N 18                            // 送信データ用バイト数
 
 RTC_DATA_ATTR byte SEQ_N = 0;               // 送信番号
+int wake;
 
 void setup(){                               // 起動時に一度だけ実行する関数
 //  WiFi.mode(WIFI_OFF);                    // 無線LANをOFFに設定
-    int waiting=0;                          // アクセスポイント接続待ち用
-    pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
+    pinMode(PIN_EN,OUTPUT);                 // LEDを出力に
+    digitalWrite(PIN_EN,1);                 // LEDをON
     pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
     chimeBellsSetup(PIN_BUZZER);            // ブザー/LED用するPWM制御部の初期化
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("IoT SensorShield EVK"); // 「IoT SensorShield EVK」を表示
-    int wake = TimerWakeUp_init();
+    wake = TimerWakeUp_init();
     BLEDevice::init(BLE_DEVICE);            // Create the BLE Device
     Wire.begin();
     if(wake<2){
@@ -219,7 +220,14 @@ void loop() {
 
 void sleep(){
     delay(150);                             // 送信待ち時間
+    if(wake<2) for(int i=0; i<20;i++){
+        ledcWrite(0, 0);
+        delay(490);
+        ledcWriteNote(0,NOTE_D,8);
+        delay(10);
+    }
     ledcWrite(0, 0);
+    digitalWrite(PIN_EN,0);                 // LEDをOFF
     pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }

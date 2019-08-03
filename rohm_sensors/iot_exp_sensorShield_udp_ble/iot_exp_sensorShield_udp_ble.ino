@@ -54,15 +54,17 @@ boolean wifi_enable = true;
 #define DAT_N 18                            // 送信データ用バイト数
 
 RTC_DATA_ATTR byte SEQ_N = 0;               // 送信番号
+int wake;
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
-    pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
+    pinMode(PIN_EN,OUTPUT);                 // LEDを出力に
+    digitalWrite(PIN_EN,1);                 // LEDをON
     pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
     delay(10);                              // 起動待ち時間
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     Serial.println("IoT SensorShield EVK"); // 「IoT SensorShield EVK」を表示
-    int wake = TimerWakeUp_init();
+    wake = TimerWakeUp_init();
     BLEDevice::init(BLE_DEVICE);            // Create the BLE Device
     Wire.begin();
     bm1383aglv.init();                      // 気圧センサの初期化
@@ -254,7 +256,14 @@ void loop() {
 void sleep(){
     ledcWriteNote(0,NOTE_D,8);              // 送信中の音
     delay(150);                             // 送信待ち時間
+    if(wake<2) for(int i=0; i<20;i++){
+        ledcWrite(0, 0);
+        delay(490);
+        ledcWriteNote(0,NOTE_D,8);
+        delay(10);
+    }
     ledcWrite(0, 0);
+    digitalWrite(PIN_EN,0);                 // LEDをOFF
     pAdvertising->stop();
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }

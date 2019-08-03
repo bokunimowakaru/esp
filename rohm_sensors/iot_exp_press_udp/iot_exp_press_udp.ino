@@ -25,7 +25,8 @@ IPAddress IP_BC;                            // ブロードキャストIPアド�
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
-    pinMode(PIN_EN,OUTPUT);                 // センサ用の電源を出力に
+    pinMode(PIN_EN,OUTPUT);                 // LEDを出力に
+    digitalWrite(PIN_EN,1);                 // LEDをON
     pinMode(PIN_BUZZER,OUTPUT);             // ブザーを接続したポートを出力に
     delay(10);                              // 起動待ち時間
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
@@ -76,5 +77,6 @@ void sleep(){
     ledcWriteNote(0,NOTE_D,8);              // 送信中の音
     delay(200);                             // 送信待ち時間
     ledcWrite(0, 0);
+    digitalWrite(PIN_EN,0);                 // LEDをOFF
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
 }
