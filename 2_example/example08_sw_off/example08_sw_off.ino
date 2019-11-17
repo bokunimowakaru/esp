@@ -57,11 +57,11 @@ void loop(){
     udp.println(reed);                      // 現在のスイッチの状態を送信
     Serial.println(reed);                   // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
-    writeRtcInt(reed);                      // RTCメモリへ保存
     sleep();
 }
 
 void sleep(){
+    writeRtcInt(reed);                      // RTCメモリへ保存
     digitalWrite(PIN_LED,LOW);              // LEDの消灯
     pinMode(PIN_SW,INPUT);                  // スイッチを接続したポートを入力に
     delay(200);                             // 送信待ち時間
