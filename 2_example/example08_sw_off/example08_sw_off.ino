@@ -24,10 +24,12 @@ int reed;                                   // リードスイッチの状態用
 
 void setup(){                               // 起動時に一度だけ実行する関数
     int waiting=0;                          // アクセスポイント接続待ち用
+    int mem=readRtcInt();                   // RTCメモリからの数値データ保存用
+
     pinMode(PIN_SW,INPUT_PULLUP);           // スイッチを接続したポートを入力に
     pinMode(PIN_LED,OUTPUT);                // LEDを接続したポートを出力に
     reed=digitalRead(PIN_SW);               // スイッチの状態を取得
-    if(reed==LOW) sleep();                  // センサが無反応だった場合は終了
+    if(reed == 0 && mem == 0) sleep();      // センサに変化が無かった場合は終了
     Serial.begin(9600);                     // 動作確認のためのシリアル出力開始
     Serial.println("Example 08 REED SW");   // 「Example 08」をシリアル出力表示
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
@@ -55,6 +57,7 @@ void loop(){
     udp.println(reed);                      // 現在のスイッチの状態を送信
     Serial.println(reed);                   // シリアル出力表示
     udp.endPacket();                        // UDP送信の終了(実際に送信する)
+    writeRtcInt(reed);                      // RTCメモリへ保存
     sleep();
 }
 
