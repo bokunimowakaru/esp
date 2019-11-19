@@ -62,9 +62,6 @@ bool writeRtcInt(int in) {
     #ifdef DEBUG
         Serial.println("Write to RTC Memory");
         printRtcInt(mem.iot, mem.count, mem.data, sizeof(mem));
-    #else
-        Serial.print(mem.count); Serial.print(" ");
-        Serial.println(mem.data);
     #endif
     ok = system_rtc_mem_write(kOffset, &mem, sizeof(mem));
     if(!ok) Serial.println("Error : writeRtcInt : system_rtc_mem_write fail");
