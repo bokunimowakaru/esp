@@ -5,6 +5,10 @@ Webサーバ機能を使って、カメラのシャッターを制御し、撮�
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
+/*
+★★★ 写真データの転送に失敗するときは ★★★
+Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください
+*/
 
 #include <SoftwareSerial.h>
 #include <FS.h>
@@ -91,11 +95,15 @@ void loop() {
         client.println();                                   // ヘッダの終了
         size=CamReadFileSize();             // ファイルサイズを読み取る
         j=0;                                // 変数j(総受信長)を0に設定
+        int ms = millis();                  // 転送時間計測用(追加)
         while(j<size){                      // 終了フラグが0の時に繰り返す
             len = CamRead(data);            // カメラからデータを取得
             j += len;                       // データサイズの合算
-            for(i=0;i<len;i++) client.write((byte)data[i]); // データ送信
+            client.write((byte *)data,len); // データ送信(高速化)
+        //  for(i=0;i<len;i++) client.write((byte)data[i]); // データ送信
         }
+        Serial.print(millis() - ms);        // 経過時間をシリアル出力表示(追加)
+        Serial.println(" ms");              // シリアル出力表示
         CamStopTakePhotoCmd();              // 撮影の終了(静止画の破棄)の実行
         CamReadADR0();                      // 読み出しアドレスのリセット
     //  client.stop();                      // クライアントの切断
@@ -109,9 +117,13 @@ void loop() {
     }
     if(strncmp(s,"GET /?BPS=",10)==0){      // ビットレート設定命令時
         i = atoi(&s[10]);                   // 受信値を変数iに代入
-        CamBaudRateCmd(i);                  // ビットレート設定
-        delay(100);                         // 処理完了待ち
-        softwareSerial.begin(i);            // ビットレート変更
+        if(i >= 38400){                     // 38400bps以上の時(追加)
+            Serial.print(i);                // 速度をシリアル出力表示(追加)
+            Serial.println(" BPS");         // シリアル出力表示(追加)
+            CamBaudRateCmd(i);              // ビットレート設定
+            softwareSerial.end();           // シリアルの停止(追加)
+            softwareSerial.begin(i);        // ビットレート変更
+        }
     }
     if(strncmp(s,"GET /?SIZE=",11)==0){     // JPEGサイズ設定命令時
         i = atoi(&s[11]);                   // 受信値を変数iに代入
@@ -123,6 +135,7 @@ void loop() {
     }
     if(strncmp(s,"GET /?RESET=",12)==0){    // リセット命令時
         CamSendResetCmd();                  // リセットコマンド
+        softwareSerial.end();               // シリアルの停止(追加)
         softwareSerial.begin(38400);        // シリアル速度を初期値に戻す
         s[11]='\0';                         // RESET=以降に続く文字を捨てる
     }

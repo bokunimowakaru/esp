@@ -12,6 +12,10 @@ Arduino IDEのタブ「html」をクリックするとコンテンツのスケ�
 できます。スケッチ先頭の「#define PICT_NUM」を変更することで、写真の表示枚数を
 変更することが出来ます。初期値は6枚です。
 */
+/*
+★★★ 写真データの転送に失敗するときは ★★★
+Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください
+*/
 
 #include <SoftwareSerial.h>
 #include <FS.h>
