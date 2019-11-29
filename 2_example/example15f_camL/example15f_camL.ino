@@ -4,7 +4,7 @@ SparkFun SEN-11610・LynkSprite JPEG Color Camera TTL用 FTP版
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真をFTPで転送します。
 
-Example 15: 監視カメラ for SparkFun SEN-11610 (LynkSprite JPEG Color Camera TTL)
+Example 15: 監視カメラ for Adafruit SEN-11610, SparkFun JPEG Color Camera TTL
  [FTP送信機能付き]
 
 ※本スケッチ内define部のFTP_TO、FTP_USER、FTP_PASS、FTP_DIRを設定して下さい。

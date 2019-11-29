@@ -1,6 +1,6 @@
 /*******************************************************************************
 Example 15: (IoTセンサ) Wi-Fi カメラ
-SparkFun SEN-11610・LynkSprite JPEG Color Camera TTL用 HTTP版
+Adafruit SEN-11610, SparkFun LynkSprite JPEG Color Camera TTL用 HTTP版
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真はHTTPで取得することが出来ます。
 
