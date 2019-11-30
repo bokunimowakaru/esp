@@ -1,10 +1,13 @@
 /*******************************************************************************
-Example 15f: (IoTセンサ) Wi-Fi カメラ
-SparkFun SEN-11610・LynkSprite JPEG Color Camera TTL用 FTP版
+Example 15f: (IoTセンサ) Wi-Fi カメラ FTP版
+Adafruit 1386, SparkFun SEN-11610 LynkSprite JPEG Color Camera TTL用
+
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真をFTPで転送します。
 
-Example 15: 監視カメラ for Adafruit SEN-11610, SparkFun JPEG Color Camera TTL
+Example 15: 監視カメラ HTTP版
+                    for Adafruit 1386, SparkFun SEN-11610 JPEG Color Camera TTL
+
  [FTP送信機能付き]
 
 ※本スケッチ内define部のFTP_TO、FTP_USER、FTP_PASS、FTP_DIRを設定して下さい。
@@ -24,6 +27,11 @@ Example 15: 監視カメラ for Adafruit SEN-11610, SparkFun JPEG Color Camera T
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
+
+/*
+★★★ 写真データの転送に失敗するときは ★★★
+Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください
+*/
 
 #include <SoftwareSerial.h>
 #include <FS.h>

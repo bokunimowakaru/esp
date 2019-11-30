@@ -1,11 +1,17 @@
 /*******************************************************************************
-Example 15: (IoTセンサ) Wi-Fi カメラ
-Adafruit SEN-11610, SparkFun LynkSprite JPEG Color Camera TTL用 HTTP版
+Example 15: (IoTセンサ) Wi-Fi カメラ HTTP版
+Adafruit 1386, SparkFun SEN-11610 LynkSprite JPEG Color Camera TTL用
+
 定期的にカメラ撮影を行い、撮影後に通知を送信する監視カメラです。
 撮影した写真はHTTPで取得することが出来ます。
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
+
+/*
+★★★ 写真データの転送に失敗するときは ★★★
+Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください
+*/
 
 #include <SoftwareSerial.h>
 #include <FS.h>
