@@ -158,6 +158,7 @@ void loop(){
         }
         delay(1); t++;                      // 変数tの値を1だけ増加させる
     }
+    delay(1);
     if(!client.connected()) return;         // 切断されていた場合はloopの先頭へ
     Serial.println(s);                      // 受信した命令をシリアル出力表示
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
@@ -174,7 +175,7 @@ void loop(){
         }
         file.close();                       // ファイルを閉じる
     }
-//  client.stop();                          // クライアントの切断
+    client.stop();                          // クライアントの切断
     Serial.print(size);                     // ファイルサイズをシリアル出力表示
     Serial.println(" Bytes");               // シリアル出力表示
     sleep();                                // sleep()へ

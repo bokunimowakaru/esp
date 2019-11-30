@@ -27,6 +27,7 @@ Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定し�
 #define SLEEP_P 59*60*1000000ul             // スリープ時間 59分(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
+
 void sleep();
 
 File file;
@@ -121,6 +122,7 @@ void loop(){
         }
         delay(1); t++;                      // 変数tの値を1だけ増加させる
     }
+    delay(1);
     if(!client.connected()) return;         // 切断されていた場合はloopの先頭へ
     Serial.println(s);                      // 受信した命令をシリアル出力表示
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
@@ -148,7 +150,8 @@ void loop(){
         if(t>0 && client.connected()) client.write((byte *)s,t);
         file.close();                       // ファイルを閉じる
     }
-//  client.stop();                          // クライアントの切断
+    client.println();
+    client.stop();                          // クライアントの切断
     Serial.print(size);                     // ファイルサイズをシリアル出力表示
     Serial.println(" Bytes");               // シリアル出力表示
     sleep();                                // sleep()へ
