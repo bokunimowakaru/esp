@@ -163,7 +163,7 @@ void loop(){
         file.close();                       // ファイルを閉じる
     }
 //  client.stop();                          // クライアントの切断
-    Serial.print(size);                     // ファイルサイズをシリアル出力表示
+    Serial.print(len);                      // ファイルサイズをシリアル出力表示
     Serial.println(" Bytes");               // シリアル出力表示
     sleep();                                // sleep()へ
 }

@@ -113,6 +113,7 @@ void loop(){
         }
         delay(1); t++;                      // 変数tの値を1だけ増加させる
     }
+    delay(1);                               // クライアントの準備待ち時間
     if(!client.connected()) return;         // 切断されていた場合はloopの先頭へ
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
     file = SPIFFS.open(FILENAME,"r");       // 読み込みのためにファイルを開く
