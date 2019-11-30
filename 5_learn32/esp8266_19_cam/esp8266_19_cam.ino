@@ -21,7 +21,7 @@ Practice esp8266 19 cam 【カメラ for SeeedStudio Grove Serial Camera Kit】
 #define PASS "password"                     // パスワード
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
-#define SLEEP_P 60*60*1000000ul             // スリープ時間 60分(uint32_t)
+#define SLEEP_P 59*60*1000000ul             // スリープ時間 59分(uint32_t)
 #define DEVICE "cam_a_1,"                   // デバイス名(5文字+"_"+番号+",")
 #define FILENAME "/cam.jpg"                 // 画像ファイル名(ダウンロード用)
 void sleep();
@@ -62,7 +62,7 @@ void setup(){
     CamCapture();                           // カメラで写真を撮影する
     size=CamGetData(file);                  // 撮影した画像をファイルに保存
     file.close();                           // ファイルを閉じる
-    digitalWrite(PIN_CAM,HIGH);             // FETをOFFにする(WiFiと排他動作)
+    pinMode(PIN_CAM,INPUT);                 // FETをOFFにする(WiFiと排他動作)
     WiFi.mode(WIFI_STA);                    // 無線LANをSTAモードに設定
     WiFi.begin(SSID,PASS);                  // 無線LANアクセスポイントへ接続
     while(WiFi.status() != WL_CONNECTED){   // 接続に成功するまで待つ
@@ -92,7 +92,7 @@ void loop(){
     
     if(millis() > TIME) sleep();            // 終了時刻になったらsleep()を実行
     client = server.available();            // 接続されたクライアントを生成
-    if(!client)return;                      // loop()の先頭に戻る
+    if(client==0)return;                    // loop()の先頭に戻る
     while(client.connected()){              // 当該クライアントの接続状態を確認
         if(client.available()){             // クライアントからのデータを確認
             t=0;                            // 待ち時間変数をリセット
@@ -113,7 +113,6 @@ void loop(){
         }
         delay(1); t++;                      // 変数tの値を1だけ増加させる
     }
-    delay(1);                               // クライアントの準備待ち時間
     if(!client.connected()) return;         // 切断されていた場合はloopの先頭へ
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
     file = SPIFFS.open(FILENAME,"r");       // 読み込みのためにファイルを開く
@@ -143,6 +142,11 @@ void loop(){
 
 void sleep(){
     lcdPrint("Sleepingzzz...");             // 「Sleeping」を液晶に表示
+    pinMode(PIN_CAM,INPUT);                 // FETを接続したポートをオープンに
+    Serial.end();
+    pinMode(3,INPUT);                       // RXDをオープンに
+    pinMode(1,INPUT);                       // TXDをオープンに(PUP抵抗の節電)
+
     delay(200);                             // 送信待ち時間
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理
