@@ -34,3 +34,5 @@
 
 *.log
 *.csv
+*.xlsx
+tools/photo/*
