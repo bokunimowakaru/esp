@@ -82,6 +82,7 @@ void loop(){
         t++;                                // 変数tの値を1だけ増加させる
         if(t>TIMEOUT) break; else delay(1); // TIMEOUTに到達したらwhileを抜ける
     }
+    delay(1);                               // クライアント側の応答待ち時間
     if(!client.connected()||len<6) return;  // 切断された場合はloop()の先頭へ
     Serial.println(s);                      // 受信した命令をシリアル出力表示
     lcdPrint(&s[5]);                        // 受信した命令を液晶に表示
@@ -92,12 +93,12 @@ void loop(){
     }
     if(strncmp(s,"GET /cam.jpg",12)==0){    // 画像取得指示の場合
         CamCapture();                       // カメラで写真を撮影する
+        size=CamGetData(client);
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Content-Length: " + String(size));  // ファイルサイズ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
-        size=CamGetData(client);
     //  client.stop();                      // クライアントの切断
         Serial.print(size);                 // ファイルサイズをシリアル出力表示
         Serial.println(" Bytes");           // シリアル出力表示
@@ -111,6 +112,13 @@ void loop(){
         i = atoi(&s[11]);                   // 受信値を変数iに代入
         CamSizeCmd(i);                      // JPEGサイズ設定
     }
+    if(!strncmp(s,"GET /favicon.ico",16)){  // Google Chrome対応(追加)
+        client.println("HTTP/1.0 404 Not Found");
+        client.println();                   // ヘッダの終了
+    //  client.stop();                      // クライアントの切断
+        return;                             // 処理の終了・loop()の先頭へ
+    }
+    
     for(i=6;i<strlen(s);i++) if(s[i]==' '||s[i]=='+') s[i]='\0';
     htmlMesg(client,&s[6],WiFi.localIP());  // メッセージ表示
 //  client.stop();                          // クライアント切断
