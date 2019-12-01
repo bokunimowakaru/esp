@@ -9,8 +9,17 @@ Adafruit 1386, SparkFun SEN-11610 LynkSprite JPEG Color Camera TTL用
 *******************************************************************************/
 
 /*
-★★★ 写真データの転送に失敗するときは ★★★
-Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください
+ご注意
+    本サンプルではSPIFFSを使用します。Arduino IDE のFlash Sizeの設定で
+    使用するESPモジュールに合わせて2MB(1MB SPIFFS)又は4MB(3MB SPIFFS)を
+    選択してください。
+    本スケッチを実行するとSPIFFS内のファイルは消去されます。
+    
+    ★★★ 写真データの転送に失敗するときは ★★★
+    Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください
+    （80MHzで正しく動作する場合は変更しないでください。）
+    
+    その他、上手く動作しないときは、本フォルダ内のREADME.mdをご覧ください。
 */
 
 #include <SoftwareSerial.h>
@@ -130,6 +139,7 @@ void loop(){
     if(file){                               // ファイルを開けることが出来た時、
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
+        client.println("Content-Length: " + String(size));  // ファイルサイズ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
         /*  以下(計4行)、処理速度が遅かった

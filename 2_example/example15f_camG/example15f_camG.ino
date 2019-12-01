@@ -138,6 +138,7 @@ void loop(){
     if(file){                               // ファイルを開けることが出来た時、
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
+        client.println("Content-Length: " + String(size));  // ファイルサイズ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
         /*  以下(計4行)、処理速度が遅かった

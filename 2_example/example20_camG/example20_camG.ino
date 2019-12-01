@@ -5,6 +5,14 @@ Webサーバ機能を使って、カメラのシャッターを制御し、撮�
 
                                           Copyright (c) 2016-2019 Wataru KUNINO
 *******************************************************************************/
+/*
+ご注意
+    ★★★ 写真データの転送に失敗するときは ★★★
+    Arduino IDEの[ツール]メニューの[CPU Frequency]で[160MHz]を設定してください。
+    （80MHzで正しく動作する場合は変更しないでください。）
+    
+    その他、上手く動作しないときは、本フォルダ内のREADME.mdをご覧ください。
+*/
 
 #include <SoftwareSerial.h>
 #include <FS.h>
@@ -86,6 +94,7 @@ void loop(){
         CamCapture();                       // カメラで写真を撮影する
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
+        client.println("Content-Length: " + String(size));  // ファイルサイズ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
         size=CamGetData(client);
