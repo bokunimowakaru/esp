@@ -1,6 +1,6 @@
-# ボクにもわかる IoTモジュール ESP-WROOM-02 ESP-WROOM-32
+# ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32
 
-Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。
+Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。
 
 ## 1_practice
 

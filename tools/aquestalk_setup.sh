@@ -13,7 +13,8 @@ if [ ! -e "./aquestalkpi/AquesTalkPi" ]; then
     yes)
     echo "ダウンロードを実行中です。"
     # wget http://www.a-quest.com/download/package/aquestalkpi-20130827.tgz
-    wget https://www.a-quest.com/archive/package/aquestalkpi-20130827.tgz
+    # wget https://www.a-quest.com/archive/package/aquestalkpi-20130827.tgz
+    wget https://www.a-quest.com/archive/package/aquestalkpi-20201010.tgz
     echo "インストールを実行中です。"
     tar xzvf aquestalkpi-*.tgz
     echo "セットアップ完了です。"
