@@ -33,11 +33,10 @@ TFTPはネットワーク機器などの設定ファイルやファームウェ�
 
 ## 転送用のファイルを保存
 
-    $ echo "; Hello! This is from RasPi" > /srv/tftp/tftpc_1.ini
-    $ echo "ADC_PIN=32" >> /srv/tftp/tftpc_1.ini
-    $ echo "SLEEP_SEC=50" >> /srv/tftp/tftpc_1.ini
-    $ chmod 644 /srv/tftp/tftpc_1.ini
-    $ cat /srv/tftp/tftpc_1.ini
+    $ sudo echo "; Hello! This is from RasPi" | sudo tee /srv/tftp/tftpc_1.ini
+    $ sudo echo "ADC_PIN=32" | sudo tee -a /srv/tftp/tftpc_1.ini
+    $ sudo echo "SLEEP_SEC=50" | sudo tee -a /srv/tftp/tftpc_1.ini
+    $ sudo chmod 644 /srv/tftp/tftpc_1.ini
     ; Hello! This is from RasPi
     ADC_PIN=32
     SLEEP_SEC=50
