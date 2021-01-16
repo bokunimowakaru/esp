@@ -29,10 +29,9 @@ TFTPサーバの起動と停止
     $ sudo /etc/init.d/tftpd-hpa stop
 
 転送用のファイルを保存
-    $ echo "; Hello! This is from RasPi" > /srv/tftp/tftpc_1.ini
-    $ echo "ADC_PIN=32" >> /srv/tftp/tftpc_1.ini
-    $ echo "SLEEP_SEC=50" >> /srv/tftp/tftpc_1.ini
-    $ chmod 644 /srv/tftp/tftpc_1.ini
+    $ sudo echo "; Hello! This is from RasPi" | sudo tee /srv/tftp/tftpc_1.ini
+    $ sudo echo "SLEEP_SEC=50" | sudo tee -a /srv/tftp/tftpc_1.ini
+    $ sudo chmod 644 /srv/tftp/tftpc_1.ini
     $ cat /srv/tftp/tftpc_1.ini
     ; Hello! This is from RasPi
     SLEEP_SEC=50
@@ -54,6 +53,7 @@ extern "C" {
 #define PIN_EN 13                           // IO 13(5番ピン)をセンサ用の電源に
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
 #define PASS "password"                     // パスワード
+#define TFTP   "192.168.0.255"              // TFTPサーバのIPアドレス
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 uint32_t SLEEP_P=10*1000000;                // スリープ時間 10秒(uint32_t)
@@ -75,7 +75,7 @@ void setup(){                               // 起動時に一度だけ実行す
         Serial.print(".");
     }
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    tftpStart();                            // TFTPの開始
+    tftpStart(TFTP);                        // TFTPの開始
     do{
         len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
         if(len_tftp>0){
@@ -109,7 +109,6 @@ void loop(){
     sleep();                                // Deep Sleepモードへ移行
 }
 
-/* ADC入力用スケッチ */
 void sleep(){
     ESP.deepSleep(SLEEP_P,WAKE_RF_DEFAULT); // スリープモードへ移行する
     while(1){                               // 繰り返し処理

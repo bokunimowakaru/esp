@@ -10,32 +10,64 @@ TFTPクライアント
 ・TFTPクライアントは少なくともローカルネット内のみで動作させるようにして下さい。
 ・TFTPが不必要なときは、極力、停止させてください。
 
-                                     Copyright (c) 2016-2019 Wataru KUNINO
+                                     Copyright (c) 2016-2021 Wataru KUNINO
 *******************************************************************************/
 
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
-
 #define TFTP_PORT_C 69                      // TFTP接続用ポート番号(既定)
-#define TFTP_PORT_T 1234                    // TFTP転送用ポート番号(任意)
+#define TFTP_PORT_R 12345                   // TFTP待ち受け用ポート番号(任意)
 #define TFTP_TIMEOUT 10                     // TFTP待ち受け時間(ms)
 #define TFTP_FILE "/srv/tftp/tftpc_1.ini"   // TFTP受信ファイル名
 WiFiUDP tftp;                               // TFTP通信用のインスタンスを定義
 
-void tftpStart(){
-    tftp.begin(TFTP_PORT_T);                // TFTP(受信)の開始
-    tftp.beginPacket(SENDTO, TFTP_PORT_C);  // TFTP送信先を設定
-    tftp.write((byte)0); tftp.write(0x1);   // Read Requestコマンド(RRQ)
+int tftpStart(IPAddress IP_TFTP,int port){
+    tftp.begin(TFTP_PORT_R);                // TFTP(受信)の開始
+    tftp.beginPacket(IP_TFTP, port);        // TFTP送信先を設定
+    tftp.write(0x0); tftp.write(0x01);      // Read Requestコマンド(RRQ)
     tftp.print(TFTP_FILE);                  // ファイル名
-    tftp.write((byte)0);                    // ファイル名の終端
-    tftp.print("netascii");                 // ASCIIモード
-    tftp.write((byte)0);                    // モード名の終端
+    tftp.write(0x0);                        // ファイル名の終端
+    tftp.print("netascii");                 // ASCII:netascii バイナリ:octect
+    tftp.write(0x0);                        // モード名の終端
     tftp.endPacket();                       // TFTP送信の終了(実際に送信する)
-    Serial.println("Send TFTP RRQ");        // 送信完了をシリアル端末へ表示
+    Serial.print("Send TFTP RRQ to ");      // 送信完了をシリアル端末へ表示
+    Serial.println(IP_TFTP);
+    return 1; // OK
 }
+
+int tftpStart(IPAddress IP_TFTP){
+    return tftpStart(IP_TFTP,TFTP_PORT_C);
+}
+
+int tftpStart(char *s){
+    byte ip[4];
+    int v=0;
+    int len=strlen(s);
+    for(int i=0;i<4;i++) ip[i]=0;
+    for(int i=0;i<len;i++){
+        if(s[i] >= '0' && s[i] <= '9'){
+            ip[v] *= 10;
+            ip[v] += (byte)s[i] - (byte)'0';
+        }
+        if(s[i] == '.'){
+            v++;
+            if(v >= 4) break;
+        }
+    }
+    if(v == 3){
+        IPAddress IP_TFTP(ip[0],ip[1],ip[2],ip[3]);
+        tftpStart(IP_TFTP,TFTP_PORT_C);
+        return 1;
+    }
+    return -1;
+}
+
 
 int tftpGet(char *data){
     int len=0,time=0,i;
+    uint16_t num, port;
+    char s[517];
     IPAddress ip;
+    memset(s,0,516);
     
     while(len<5){                           // 未受信の間、繰り返し実行
         delay(1);                           // 1msの待ち時間
@@ -43,30 +75,44 @@ int tftpGet(char *data){
         time++;                             // 時間のカウント
         if(time>TFTP_TIMEOUT) return 0;     // タイムアウト(応答値は0)
     }
-    ip=tftp.remoteIP();                     // サーバのIPアドレスを取得
-    memset(data,0,512);                     // 512バイトを消去
-    tftp.read(data, 511);                   // 最大511バイトまで受信する
-    Serial.print("Recieved (");
-    for(int i=0;i<4;i++) Serial.print(data[i],DEC); // コマンド、ブロック番号
+    ip = tftp.remoteIP();                   // サーバのIPアドレスを取得
+    port = tftp.remotePort();               // サーバのポート番号を取得
+    tftp.read(s, 516);                      // 最大516バイトまで受信する
+    Serial.print("\nRecieved (0x");
+    for(int i=0;i<4;i++){
+        if(i == 2) Serial.print(" 0x");
+        if(s[i] <= 10) Serial.print('0');
+        Serial.print(s[i],HEX);             // コマンド、ブロック番号
+    }
     Serial.print(") ");
     Serial.print(len - 4);                  // 受信データ長を表示
     Serial.print(" Bytes from ");
-    Serial.println(ip);                     // サーバのIPアドレスを表示
-    if(len > 511){
-        Serial.println("FILE SIZE ERROR");  // 複数ブロックの転送には対応しない
+    Serial.print(ip);                       // サーバのIPアドレスを表示
+    Serial.print(':');
+    Serial.println(port);                   // サーバのIPアドレスを表示
+    if(len > 516 || len < 0){
+        Serial.println("FILE SIZE ERROR");
+        data[0] = '\0';
         return -1;                          // ERROR(応答値は-1),変数dataは破壊
     }
-    if(data[0]==0x0 && data[1]==0x3){       // TFTP転送データの時
-        Serial.print(&data[4]);             // TFTP受信データを表示する
-        Serial.println("[EOF]");
-        tftp.beginPacket(ip, TFTP_PORT_T);  // TFTP ACK送信先を設定
-        tftp.write((byte)0); tftp.write(4); // 受信成功コマンド(ACK)を送信
-        tftp.write(data[2]);                // ブロック番号の上位1バイトを送信
-        tftp.write(data[3]);                // ブロック番号の下位1バイトを送信
+    s[len] = '\0';
+    num = (((uint16_t)s[2]) << 8) + (uint16_t)s[3];
+    if(s[0]==0x0 && s[1]==0x3){             // TFTP転送データの時
+    //  Serial.print(&s[4]);                // TFTP受信データを表示する
+    //  Serial.println("[EOF]");
+        tftp.beginPacket(ip, port);         // TFTP ACK送信先を設定
+        tftp.write(0x0); tftp.write(0x04);  // 受信成功コマンド(ACK)を送信
+        tftp.write(s[2]);                   // ブロック番号の上位1バイトを送信
+        tftp.write(s[3]);                   // ブロック番号の下位1バイトを送信
         tftp.endPacket();                   // TFTP送信の終了(実際に送信する)
-        for(i=4;i<len;i++) data[i-4]=data[i];
+        for(i=4;i<len;i++) data[i-4]=s[i];
         data[len-4]='\0';
         return len-4;
     }
+    if(s[0]==0x0 && s[1]==0x5){             // ERROR 05の時
+        Serial.print("ERROR TFTP: ");
+        Serial.println(&s[4]);
+    }
+    data[0] = '\0';
     return -1;                              // ERROR(応答値は-1),変数dataは破壊
 }
