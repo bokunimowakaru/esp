@@ -22,6 +22,7 @@ Raspberry PiへのTFTPサーバのインストール方法
     TFTP_USERNAME="tftp"
     TFTP_DIRECTORY="/srv/tftp"
     TFTP_ADDRESS="0.0.0.0:69"
+    TFTP_OPTIONS="--secure"
 
 TFTPサーバの起動と停止
     $ chmod 755 /srv/tftp
@@ -51,9 +52,10 @@ extern "C" {
 }
 #include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_EN 13                           // IO 13(5番ピン)をセンサ用の電源に
-#define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
-#define PASS "password"                     // パスワード
-#define TFTP   "192.168.0.255"              // TFTPサーバのIPアドレス
+#define SSID "1234ABCD"                     // ★要変更★無線LAN APのSSID
+#define PASS "password"                     // ★要変更★パスワード
+#define TFTP_SERV "192.168.0.123"           // ★要変更★TFTPサーバのIPアドレス
+#define FILENAME  "tftpc_1.ini"             // ★要変更★転送ファイル名
 #define SENDTO "192.168.0.255"              // 送信先のIPアドレス
 #define PORT 1024                           // 送信のポート番号
 uint32_t SLEEP_P=10*1000000;                // スリープ時間 10秒(uint32_t)
@@ -75,7 +77,7 @@ void setup(){                               // 起動時に一度だけ実行す
         Serial.print(".");
     }
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    tftpStart(TFTP);                        // TFTPの開始
+    tftpStart(TFTP_SERV, FILENAME);         // TFTPの開始
     do{
         len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
         if(len_tftp>0){

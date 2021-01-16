@@ -17,28 +17,30 @@ TFTPクライアント
 #define TFTP_PORT_C 69                      // TFTP接続用ポート番号(既定)
 #define TFTP_PORT_R 12345                   // TFTP待ち受け用ポート番号(任意)
 #define TFTP_TIMEOUT 10                     // TFTP待ち受け時間(ms)
-#define TFTP_FILE "/srv/tftp/tftpc_1.ini"   // TFTP受信ファイル名
+#define TFTP_FILE "tftpc_1.ini"             // TFTP受信ファイル名
 WiFiUDP tftp;                               // TFTP通信用のインスタンスを定義
 
-int tftpStart(IPAddress IP_TFTP,int port){
+int tftpStart(IPAddress IP_TFTP, const char *filename){
     tftp.begin(TFTP_PORT_R);                // TFTP(受信)の開始
-    tftp.beginPacket(IP_TFTP, port);        // TFTP送信先を設定
+    tftp.beginPacket(IP_TFTP, TFTP_PORT_C); // TFTP送信先を設定
     tftp.write(0x0); tftp.write(0x01);      // Read Requestコマンド(RRQ)
-    tftp.print(TFTP_FILE);                  // ファイル名
+    tftp.print(filename);                   // ファイル名
     tftp.write(0x0);                        // ファイル名の終端
     tftp.print("netascii");                 // ASCII:netascii バイナリ:octect
     tftp.write(0x0);                        // モード名の終端
     tftp.endPacket();                       // TFTP送信の終了(実際に送信する)
     Serial.print("Send TFTP RRQ to ");      // 送信完了をシリアル端末へ表示
-    Serial.println(IP_TFTP);
+    Serial.print(IP_TFTP);                  // サーバのIPアドレスを表示
+    Serial.print(':');
+    Serial.println(TFTP_PORT_C);            // サーバのポート番号を表示
     return 1; // OK
 }
 
 int tftpStart(IPAddress IP_TFTP){
-    return tftpStart(IP_TFTP,TFTP_PORT_C);
+    return tftpStart(IP_TFTP,TFTP_FILE);
 }
 
-int tftpStart(char *s){
+int tftpStart(const char *s, const char *filename){     // sは文字列のIPアドレス
     byte ip[4];
     int v=0;
     int len=strlen(s);
@@ -55,12 +57,15 @@ int tftpStart(char *s){
     }
     if(v == 3){
         IPAddress IP_TFTP(ip[0],ip[1],ip[2],ip[3]);
-        tftpStart(IP_TFTP,TFTP_PORT_C);
+        tftpStart(IP_TFTP,filename);
         return 1;
     }
     return -1;
 }
 
+int tftpStart(const char *s){    // sは文字列のIPアドレス
+    return tftpStart(s,TFTP_FILE);
+}
 
 int tftpGet(char *data){
     int len=0,time=0,i;
@@ -89,7 +94,7 @@ int tftpGet(char *data){
     Serial.print(" Bytes from ");
     Serial.print(ip);                       // サーバのIPアドレスを表示
     Serial.print(':');
-    Serial.println(port);                   // サーバのIPアドレスを表示
+    Serial.println(port);                   // サーバのポート番号を表示
     if(len > 516 || len < 0){
         Serial.println("FILE SIZE ERROR");
         data[0] = '\0';
@@ -98,8 +103,8 @@ int tftpGet(char *data){
     s[len] = '\0';
     num = (((uint16_t)s[2]) << 8) + (uint16_t)s[3];
     if(s[0]==0x0 && s[1]==0x3){             // TFTP転送データの時
-    //  Serial.print(&s[4]);                // TFTP受信データを表示する
-    //  Serial.println("[EOF]");
+        Serial.print(&s[4]);                // TFTP受信データを表示する
+        Serial.println("[EOF]");
         tftp.beginPacket(ip, port);         // TFTP ACK送信先を設定
         tftp.write(0x0); tftp.write(0x04);  // 受信成功コマンド(ACK)を送信
         tftp.write(s[2]);                   // ブロック番号の上位1バイトを送信

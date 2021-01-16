@@ -21,6 +21,7 @@ Raspberry PiへのTFTPサーバのインストール方法
     TFTP_USERNAME="tftp"
     TFTP_DIRECTORY="/srv/tftp"
     TFTP_ADDRESS="0.0.0.0:69"
+    TFTP_OPTIONS="--secure"
 
 TFTPサーバの起動と停止
     $ chmod 755 /srv/tftp
@@ -56,9 +57,10 @@ TFTPサーバの起動と停止
 #include "esp_sleep.h"                      // ESP32用Deep Sleep ライブラリ
 #define PIN_EN 2                            // GPIO 2(24番ピン)をセンサの電源に
 int     PIN_AIN=34;                         // GPIO 34 ADC1_CH6(6番ピン)をADCに
-#define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID
-#define PASS "password"                     // パスワード
-#define TFTP   "192.168.0.255"              // TFTPサーバのIPアドレス
+#define SSID "1234ABCD"                     // ★要変更★無線LAN APのSSID
+#define PASS "password"                     // ★要変更★パスワード
+#define TFTP_SERV "192.168.0.123"           // ★要変更★TFTPサーバのIPアドレス
+#define FILENAME  "tftpc_1.ini"             // ★要変更★転送ファイル名
 #define SENDTO "192.168.0.255"              // UDP送信先のIPアドレス
 #define PORT 1024                           // UDP送信のポート番号
 uint32_t SLEEP_P=10*1000000;                // スリープ時間 10秒(uint32_t)
@@ -80,12 +82,13 @@ void setup(){                               // 起動時に一度だけ実行す
         Serial.print(".");
     }
     Serial.println(WiFi.localIP());         // 本機のIPアドレスをシリアル出力
-    tftpStart(TFTP);                        // TFTPの開始
+    tftpStart(TFTP_SERV, FILENAME);         // TFTPの開始
     do{
         len_tftp = tftpGet(data);           // TFTP受信(data=受信データ)
         if(len_tftp>0){
             initialize(data);               // INIファイル内の内容を変数へ代入
             ini_save(data);                 // INIファイルをSPIFFSへ書込み
+            break;                          // 複数ブロックには対応しない
         }
     }while(len_tftp);
     pinMode(PIN_AIN,INPUT);                 // アナログ入力の設定
