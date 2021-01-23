@@ -11,7 +11,7 @@ buf_n= 128                                              # 受信バッファ容�
 argc = len(sys.argv)                                    # 引数の数をargcへ代入
 print('UDP Logger (usage: '+sys.argv[0]+' port)')       # タイトル表示
 if argc >= 2:                                           # 入力パラメータ数の確認
-    port = sys.argv[1]                                  # ポート番号を設定
+    port = int(sys.argv[1])                             # ポート番号を設定
     if port < 1 or port > 65535:                        # ポート1未満or65535超の時
         port = 1024                                     # UDPポート番号を1024に
 else:
