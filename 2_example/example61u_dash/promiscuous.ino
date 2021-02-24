@@ -52,10 +52,9 @@ void promisc_cb(void *buf, wifi_promiscuous_pkt_type_t type) {
 	int len = p->rx_ctrl.sig_len;
 	len -= sizeof(WifiMgmtHdr);
 	if (len < 0){
-		Serial.println("Received 0");
+		if(DEBUG_MAC) Serial.println("Received 0");
 		return;
 	}
-	
 	if(memcmp(mac->sa,mac->bssid,6)==0)return;	// ビーコンの除去
 	if(_mac_prev_n && !memcmp(_mac_prev,mac->sa,6)){
 		if( _mac_fc_hold || _fc_prev == mac->fctl){
@@ -69,6 +68,18 @@ void promisc_cb(void *buf, wifi_promiscuous_pkt_type_t type) {
 	
 	if(!_mac_read_i) memcpy(_recieved_mac,mac->sa,6);
 	_mac_read_i++;
+
+	if( DEBUG_MAC ){
+		Serial.printf("FC=%04x from=%02x:%02x:%02x:%02x:%02x:%02x\n",
+			_fc_prev,
+			mac->sa[0],
+			mac->sa[1],
+			mac->sa[2],
+			mac->sa[3],
+			mac->sa[4],
+			mac->sa[5]
+		);
+	}
 }
 
 int promiscuous_get_mac(byte *mac){
@@ -85,7 +96,7 @@ int promiscuous_get_mac(byte *mac){
 
 void promiscuous_start(byte channel){
 	if( DEBUG_MAC ){
-		Serial.print("ESP8266 promiscuous mode started. Channel: ");
+		Serial.print("ESP32 promiscuous mode started. Channel: ");
 		Serial.println(channel);
 		Serial.println("Please turn on your wi-fi STA or push Amazon Dash Button");
 	}
