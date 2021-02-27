@@ -74,6 +74,7 @@ MACブロードキャスト／ Amazon Dash ボタンを検出 [UART出力版]
 *******************************************************************************/
 #include <SPIFFS.h>
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
+// #include <BLEDevice.h>
 #include <esp_wifi.h>
 #define PIN_EN 13                           // IO 13 をLEDなどへ接続
 #define WAIT_A 10000                        // adash用の保持時間 10 秒
@@ -95,6 +96,8 @@ byte adash_time_s=0x00;
 byte phone[5][6];
 unsigned long phone_time[5];
 byte phone_time_s=0x00;
+
+// BLEScan* bleScan;                           // BLE用インスタンス
 
 boolean mac_parser(byte *mac, char *s){
     char in[3],*err;
@@ -175,6 +178,7 @@ byte set_filter(byte i){
 
 void setup(){                               // 起動時に一度だけ実行する関数
     pinMode(PIN_EN,OUTPUT);                 // LEDなど用の出力
+    pinMode(0,INPUT);                       // BOOTボタン入力
     Serial.begin(115200);                   // 動作確認のためのシリアル出力開始
     // Serial.println("Started");
     wifi_second_chan_t secondChan;
@@ -198,6 +202,7 @@ void setup(){                               // 起動時に一度だけ実行す
     set_filter(filter);
     promiscuous_uart(false);                // ライブラリ側のUART出力を無効に
     promiscuous_start(channel);             // プロミスキャスモードへ移行する
+    // BLEDevice::init("");
 }
 
 void loop(){
@@ -352,6 +357,11 @@ void loop(){
         uart[uart_n]=c;
         uart_n++;
         if(uart_n>31)uart_n=31;             // 最大値は31(32文字)
+    }
+    if(digitalRead(0) == 0){
+        Serial.println("QUITTED!");
+        promiscuous_stop();
+        delay(100);
     }
     if(p_time%PIN_HOLD != reset_time) return;
     digitalWrite(PIN_EN,LOW);               // LEDなどを点灯

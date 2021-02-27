@@ -113,7 +113,9 @@ void promiscuous_start(byte channel){
 }
 
 void promiscuous_stop(){
+	Serial.println("promiscuous_stop: esp_wifi_set_promiscuous false");
 	esp_wifi_set_promiscuous(false);
+	delay(200);
 }
 
 void promiscuous_uart(boolean in){
