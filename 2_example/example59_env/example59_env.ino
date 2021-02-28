@@ -8,8 +8,9 @@ CO2センサ  SENSIRION製 SGP30
 ※CO2センサの本来の使い方は、12時間以上の通電が必要です。
         （本来の使い方をしたい場合は、 SLEEP_P = 0を設定してください。）
 
-二酸化炭素や有機ガスなどによる室内の空気環境状態を測定する乾電池駆動が可能な
+二酸化炭素や有機ガスなどによる室内の空気環境状態を測定する乾電池駆動※が可能な
 ワイヤレスCO2センサです。  
+　※SGP30の電源をGPIO（PIN_CCS_EN_）で制御する必要があります。
 
         ガスセンサ SENSIRION製 SGP30
         環境センサ SENSIRION製 SHT31 / SHT30 / Bosch製 BME280 / BMP280
@@ -155,6 +156,7 @@ void sleep(){
         delay(19800);                       // 20秒間隔
         return;
     }
+    if(bme280_en) bme280_stop();
     digitalWrite(PIN_CCS_EN_,HIGH);         // センサ用の電源をOFFに
     delay(200);                             // 送信待ち時間
     esp_deep_sleep(SLEEP_P);                // Deep Sleepモードへ移行
