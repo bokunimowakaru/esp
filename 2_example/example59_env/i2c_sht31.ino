@@ -40,8 +40,10 @@ float sht31_getHum(){
     return _i2c_sht31_hum;
 }
 
-void sht31_Setup(){
+boolean sht31_Setup(){
     delay(2);                   // 1ms以上
     Wire.begin();               // I2Cインタフェースの使用を開始
     delay(18);                  // 15ms以上
+    float temp = sht31_getTemp();
+    if(temp >= -45) return true; else return false;
 }

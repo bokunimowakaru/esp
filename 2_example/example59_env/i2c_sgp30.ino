@@ -49,7 +49,10 @@ Absolute humidity values dV in unit g/m3 can be calculated by the following form
 dv(T, RH)=216.7∙ [RH/100% ∙ 6.112 ∙ exp(17.62 ∙ T/(243.12 + T))/(273.15+T))]
 出典：https://www.sensirion.com/jp/download-center/gas-sensors/sgp30/
 */
-	return 216.7 * (RH/100*6.112*exp(17.62*T/(243.12+T)) / (273.15+T));
+
+    if( T < -45 || T > 130 ) T = 25;
+    if( RH < 0 || RH > 100 ) RH = 50;
+    return 216.7 * (RH/100*6.112*exp(17.62*T/(243.12+T)) / (273.15+T));
 }
 
 uint8_t gencrc(uint8_t *data, size_t len){
@@ -99,13 +102,14 @@ For instance, sending a value of 0x0F80 corresponds to a humidity value of
     return (int)ahum_u16;
 }
 
-void sgp30_Setup(){
+boolean sgp30_Setup(){
     delay(1);                   // 0.6ms以上
     Wire.begin();               // I2Cインタフェースの使用を開始
     delay(1);                   // 0.6ms以上
     Wire.beginTransmission(I2C_sgp);
     Wire.write(0x20);           // sgp30_iaq_init
     Wire.write(0x03);           //            0x2003
-    Wire.endTransmission();
+    boolean ret = !Wire.endTransmission();
     delay(1012);                // 10ms(設定待ち) + 1000 ms(測定間隔)
+    return ret;
 }
