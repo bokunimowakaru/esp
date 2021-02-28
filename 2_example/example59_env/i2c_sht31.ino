@@ -10,7 +10,7 @@ SENSIRION社 SHT31
 
 #include <Wire.h> 
 #define I2C_sht 0x45            // SHT31 の I2C アドレス 
-// #define I2C_sht 0x44            // M5用SHT30 の I2C アドレス 
+// #define I2C_sht 0x44         // M5用SHT30 の I2C アドレス 
 
 float _i2c_sht31_hum;
 
