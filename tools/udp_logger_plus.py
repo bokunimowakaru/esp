@@ -83,7 +83,10 @@ def get_dev_name(s):                                    # デバイス名を取�
 def get_val(s):                                         # データを数値に変換
     s = s.replace(' ','')                               # 空白文字を削除
     if s.replace('.','').replace('-','').isnumeric():   # 文字列が数値を示す
-        val = float(s)                                  # 小数値に変換
+        try:                                            # 小数変換の例外監視
+            val = float(s)                              # 小数値に変換
+        except ValueError:                              # 小数変換失敗時
+            return None                                 # Noneを応答
         if float(int(val)) == val:                      # valが整数のとき
             return int(val)                             # 整数値を応答
         else:
