@@ -5,7 +5,7 @@
 ボタン（BOOT GPIO2）を2回押したときの速度をAmbientへ送信する実験です。
 
         IoTセンサ用クラウドサービスAmbient
-                https://ambidata.io/ch/channel.html?id=725
+                https://ambidata.io/bd/board.html?id=133
 
         関連ブログ（筆者）
                 http://blogs.yahoo.co.jp/bokunimowakaru/55622707.html

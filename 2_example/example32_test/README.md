@@ -8,7 +8,7 @@ Example 32
 
 ## IoTセンサ用クラウドサービスAmbient
 
-    https://ambidata.io/ch/channel.html?id=725
+    https://ambidata.io/bd/board.html?id=133
 
 ## 関連ブログ（筆者）
 
