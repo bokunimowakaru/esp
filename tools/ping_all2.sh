@@ -1,7 +1,7 @@
 #!/bin/bash
-# LAN���̋@���PING��ł��ď������W����
-# ~/.maclist.txt��MAC�A�h���X�ƃf�o�C�X��(�^�u��؂�)�̑Ή��\��ۑ����Ă���
-# �ގ��̕��@�Ƃ��� nbtscan ���֗�
+# LAN内の機器にPINGを打って情報を収集する
+# ~/.maclist.txtにMACアドレスとデバイス名(タブ区切り)の対応表を保存しておく
+# 類似の方法として nbtscan も便利
 # 
 # Copyright (c) 2016-2019 Wataru KUNINO
 
