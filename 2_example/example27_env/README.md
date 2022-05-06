@@ -39,7 +39,7 @@ ESP-WROOM-02のIO4（10番ピン）を各センサのI2CのSDAへ、IO5（14番�
 
 ## 製作例
 
-<https://blogs.yahoo.co.jp/bokunimowakaru/55886218.html>
+<https://bokunimo.net/blog/esp/53/>
 
 ## むすび
 
