@@ -92,13 +92,13 @@ void loop(){
         return;                             // 処理の終了・loop()の先頭へ
     }
     if(strncmp(s,"GET /cam.jpg",12)==0){    // 画像取得指示の場合
-        CamCapture();                       // カメラで写真を撮影する
-        size=CamGetData(client);
+        size=CamCapture();                  // カメラで写真を撮影する
         client.println("HTTP/1.0 200 OK");                  // HTTP OKを応答
         client.println("Content-Type: image/jpeg");         // JPEGコンテンツ
         client.println("Content-Length: " + String(size));  // ファイルサイズ
         client.println("Connection: close");                // 応答後に閉じる
         client.println();                                   // ヘッダの終了
+        size=CamGetData(client);
     //  client.stop();                      // クライアントの切断
         Serial.print(size);                 // ファイルサイズをシリアル出力表示
         Serial.println(" Bytes");           // シリアル出力表示

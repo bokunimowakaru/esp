@@ -168,7 +168,7 @@ void CamSizeCmd(int format){
 }
 
 //Send take picture command
-void CamCapture(){
+int CamCapture(){
   char cmd[] = { 0xaa, 0x06 | cameraAddr, 0x08, PIC_PKT_LEN & 0xff, (PIC_PKT_LEN>>8) & 0xff ,0}; 
   unsigned char resp[6];
 
@@ -213,6 +213,7 @@ void CamCapture(){
       }
     }
   }
+  return (int)picTotalLen;
 }
 
 
