@@ -17,7 +17,6 @@ Arduino IDEのタブ「html」をクリックするとコンテンツのスケ�
 #include <FS.h>
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
 #include <ESP8266WebServer.h>
-#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_CAM 13                          // IO 13(5番ピン)にPch-FETを接続する
 #define TIMEOUT 20000                       // タイムアウト 20秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID

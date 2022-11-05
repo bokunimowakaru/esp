@@ -13,7 +13,6 @@ Webサーバ機能を使って、カメラのシャッターを制御し、撮�
 *******************************************************************************/
 
 #include <WiFi.h>                           // ESP32用WiFiライブラリ
-#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 #define PIN_CAM 2                           // GPIO 2(24番ピン)にPch-FETを接続
 #define TIMEOUT 20000                       // タイムアウト 20秒
 #define SSID "1234ABCD"                     // 無線LANアクセスポイントのSSID

@@ -17,7 +17,6 @@ Webサーバ機能を使って、カメラのシャッターを制御し、撮�
 #include <SoftwareSerial.h>
 #include <FS.h>
 #include <ESP8266WiFi.h>                    // ESP8266用ライブラリ
-#include <WiFiUdp.h>                        // UDP通信を行うライブラリ
 extern "C" {
 #include "user_interface.h"                 // ESP8266用の拡張IFライブラリ
 }
