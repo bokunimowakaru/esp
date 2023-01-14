@@ -38,7 +38,7 @@ def payval(num, bytes=1, sign=False):
     for i in range(0, bytes):
         a += (256 ** i) * int(val[(num - 2 + i) * 2 : (num - 1 + i) * 2],16)
     if sign:
-        if a >= 2 ** (bytes * 8 - 1):
+        if a >= 2 ** (bytes * 8):
             a -= 2 ** (bytes * 8)
     return a
 
