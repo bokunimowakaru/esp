@@ -1,29 +1,28 @@
 #!/bin/bash
 # 天気をLEDの状態で表示する(フルカラーLED対応版)
 #
-# http://rss.weather.yahoo.co.jp/rss/days/7.xml		福島県（福島市）
-# http://rss.weather.yahoo.co.jp/rss/days/13.xml	東京都（東京）
-# http://rss.weather.yahoo.co.jp/rss/days/23.xml	愛知県（西部・名古屋）
-# http://rss.weather.yahoo.co.jp/rss/days/26.xml	京都府（南部・京都市）
-# http://rss.weather.yahoo.co.jp/rss/days/27.xml	大阪府（大阪市）
-# http://rss.weather.yahoo.co.jp/rss/days/28.xml	兵庫県（神戸市）
-# http://rss.weather.yahoo.co.jp/rss/days/43.xml	熊本県（熊本市）
-#
-# ご注意：
-#   ・Yahoo!天気・災害の情報を商用で利用する場合はYahoo! Japanの承諾が必要です。
-#   ・Yahoo!サービスの利用規約にしたがって利用ください。
-#           https://about.yahoo.co.jp/docs/info/terms/
 
 IP_LED="192.168.0.2"                                        # ワイヤレスLEDのIP
+
+city_id=130000                              # 気象庁=130000(東京地方など)
+                                            # 大阪管区気象台=270000(大阪府など)
+                                            # 京都地方気象台=260000(南部など)
+                                            # 横浜地方気象台=140000(東部など)
+                                            # 銚子地方気象台=120000(北西部など)
+                                            # 名古屋地方気象台=230000(西部など)
+                                            # 福岡管区気象台=400000(福岡地方など)
+
 while true; do                                              # 永久ループ
-WEATHER=`curl -s rss.weather.yahoo.co.jp/rss/days/43.xml\
-|cut -d'<' -f17|cut -d'>' -f2|tail -1\
-|cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
+#WEATHER=`curl -s rss.weather.yahoo.co.jp/rss/days/43.xml\
+#|cut -d'<' -f17|cut -d'>' -f2|tail -1\
+#|cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
+WEATHER=`curl -s https://www.jma.go.jp/bosai/forecast/data/forecast/{$city_id}.json\
+|tr "," "\n"|grep weathers|head -1|cut -d'"' -f4|rev|sed -e "s/\(.*\)　//1"|rev`
 echo -n `date "+%Y/%m/%d %R"`", "$WEATHER", "               # テキスト表示
 case $WEATHER in                                            # 天気に応じた処理
     # 解説 変数COMへ制御コマンドR,G,Bのいずれかを代入する
     "晴" )  COM="R";;                                       # 晴の時は赤色点灯
-    "曇" )  COM="G";;                                       # 曇の時は緑色点灯
+    "くもり" )  COM="G";;                                   # 曇の時は緑色点灯
     * ) COM="B";;                                           # その他の青色点灯
 esac                                                        # caseの終了
 

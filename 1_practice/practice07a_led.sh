@@ -1,20 +1,26 @@
 #!/bin/bash
 # 天気をLEDの状態で表示する
-#
-# ご注意：
-#   ・Yahoo!天気・災害の情報を商用で利用する場合はYahoo! Japanの承諾が必要です。
-#   ・Yahoo!サービスの利用規約にしたがって利用ください。
-#           https://about.yahoo.co.jp/docs/info/terms/
 
 IP_LED="192.168.0.2"                                        # ワイヤレスLEDのIP
+
+city_id=130000                              # 気象庁=130000(東京地方など)
+                                            # 大阪管区気象台=270000(大阪府など)
+                                            # 京都地方気象台=260000(南部など)
+                                            # 横浜地方気象台=140000(東部など)
+                                            # 銚子地方気象台=120000(北西部など)
+                                            # 名古屋地方気象台=230000(西部など)
+                                            # 福岡管区気象台=400000(福岡地方など)
+
 while true; do                                              # 永久ループ
-WEATHER=`curl -s rss.weather.yahoo.co.jp/rss/days/43.xml\
-|cut -d'<' -f17|cut -d'>' -f2|tail -1\
-|cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
+#WEATHER=`curl -s rss.weather.yahoo.co.jp/rss/days/43.xml\
+#|cut -d'<' -f17|cut -d'>' -f2|tail -1\
+#|cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
+WEATHER=`curl -s https://www.jma.go.jp/bosai/forecast/data/forecast/{$city_id}.json\
+|tr "," "\n"|grep weathers|head -1|cut -d'"' -f4|rev|sed -e "s/\(.*\)　//1"|rev`
 echo -n `date "+%Y/%m/%d %R"`", "$WEATHER", "               # テキスト表示
 case $WEATHER in                                            # 天気に応じた処理
     "晴" )  LED=1;;                                         # 晴の時は明るく点灯
-    "曇" )  LED=-1;;                                        # 曇の時は暗く点灯
+    "くもり" )  LED=-1;;                                    # 曇の時は暗く点灯
     * ) LED=5;;                                             # その他の時は点滅
 esac                                                        # caseの終了
 RES=`curl -s -m3 $IP_LED -XPOST -d"L=$LED"|grep "<p>"|grep -v "http"\
