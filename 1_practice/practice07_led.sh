@@ -15,7 +15,7 @@ city_id=130000                              # 気象庁=130000(東京地方な�
 #|cut -d'<' -f17|cut -d'>' -f2|tail -1\
 #|cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
 WEATHER=`curl -s https://www.jma.go.jp/bosai/forecast/data/forecast/{$city_id}.json\
-|tr "," "\n"|grep weathers|head -1|cut -d'"' -f4|rev|sed -e "s/\(.*\)　//1"|rev`
+|tr "," "\n"|grep weathers|head -1|cut -d'"' -f4|sed  "s/　/\t/g"|cut -f1`
 echo -n `date "+%Y/%m/%d %R"`", "$WEATHER", "               # テキスト表示
 case $WEATHER in                                            # 天気に応じた処理
     "晴" )  LED=1;;                                         # 晴の時は明るく点灯

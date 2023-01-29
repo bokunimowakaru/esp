@@ -17,7 +17,7 @@ while true; do                                              # 永久ループ
 #|cut -d'<' -f17|cut -d'>' -f2|tail -1\
 #|cut -d' ' -f5|cut -c1-3`                                   # 天気を取得する
 WEATHER=`curl -s https://www.jma.go.jp/bosai/forecast/data/forecast/{$city_id}.json\
-|tr "," "\n"|grep weathers|head -1|cut -d'"' -f4|rev|sed -e "s/\(.*\)　//1"|rev`
+|tr "," "\n"|grep weathers|head -1|cut -d'"' -f4|sed  "s/　/\t/g"|cut -f1`
 echo -n `date "+%Y/%m/%d %R"`", "$WEATHER", "               # テキスト表示
 case $WEATHER in                                            # 天気に応じた処理
     # 解説 変数COMへ制御コマンドR,G,Bのいずれかを代入する
