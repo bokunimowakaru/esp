@@ -440,7 +440,7 @@ Node-RED 用のサンプル・フローです。
 
 差分と同じ場所を変更していた場合、競合が発生します。競合を自分で解決できない場合は、フォルダ名「esp」を他の名前に書き換えて、git clone で新たにダウンロードする方法が簡単です。
 
-# サポートページ  
+# 書籍サポートページ  
 <https://bokunimo.net/bokunimowakaru/cq/esp/>
 
 # ライセンス
@@ -449,5 +449,17 @@ Node-RED 用のサンプル・フローです。
 使用・変更・配布は可能ですが、権利表示を残してください。  
 また、提供情報や配布ソフトによって生じたいかなる被害についても，一切，補償いたしません。  
 
-Copyright (c) 2016-2021 Wataru KUNINO  
+Copyright (c) 2016-2023 Wataru KUNINO  
 <https://bokunimo.net/>
+
+----------------------------------------------------------------
+
+## GitHub Pages (This Document)
+* [https://git.bokunimo.com/esp/](https://git.bokunimo.com/esp/)  
+
+----------------------------------------------------------------
+
+# git.bokunimo.com GitHub Pages site
+[http://git.bokunimo.com/](http://git.bokunimo.com/)  
+
+----------------------------------------------------------------
