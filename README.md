@@ -1,14 +1,14 @@
 # ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32
 
-Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。
+Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。  
+5_learn32 フォルダ内のプログラムの解説書は、下記から無料でダウンロードできます。  
+
+- PDF解説書ダウンロード(5_learn32 フォルダ)  
+    [https://bokunimo.net/esp32/esp32](https://bokunimo.net/esp32/esp32) (PDF)
 
 ## 1_practice フォルダ
 
 マイコン練習用サンプル・プログラムが含まれているフォルダです。  
-このフォルダ内のプログラムの解説書は、下記から無料でダウンロードできます。  
-
-- PDF解説書ダウンロード  
-    [https://bokunimo.net/esp32/esp32](https://bokunimo.net/esp32/esp32) (PDF)
 
 ## 2_example フォルダ
 
