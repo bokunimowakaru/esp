@@ -2,13 +2,31 @@
 
 Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。
 
-## 1_practice
+## 1_practice フォルダ
 
-マイコン練習用サンプル・プログラムが含まれているフォルダです。
+マイコン練習用サンプル・プログラムが含まれているフォルダです。  
+このフォルダ内のプログラムの解説書は、下記から無料でダウンロードできます。  
 
-## 2_example
+- PDF解説書ダウンロード  
+    [https://bokunimo.net/esp32/esp32](https://bokunimo.net/esp32/esp32) (PDF)
 
-IoT機器用のサンプル・プログラムが含まれているフォルダです。
+## 2_example フォルダ
+
+IoT機器用のサンプル・プログラムが含まれているフォルダです。  
+こちらのプログラムの解説書は、書籍として販売しています。
+前記の無料PDFをお読みいただいてから購入していただけると理解が深まると思います。
+
+- 書籍サポートページ  
+    [https://bokunimo.net/bokunimowakaru/cq/esp/](https://bokunimo.net/bokunimowakaru/cq/esp/)
+
+- 書籍販売(CQ出版社)  
+    [https://shop.cqpub.co.jp/detail/2276/](https://shop.cqpub.co.jp/detail/2276/)
+
+- 書籍販売(Amazon)  
+    [https://www.amazon.co.jp/dp/4789847047](https://www.amazon.co.jp/dp/4789847047)
+
+以下は 2_example フォルダ内のコンテンツです。
+書籍では下記をブレッドボードで製作する方法やプログラムの動作内容について解説しています（一部のサンプル・プログラムを除く）。
 
 ### 1-1 Wi-Fi インジケータ
 

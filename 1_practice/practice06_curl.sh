@@ -2,6 +2,11 @@
 hr="----------------------------------------------------------------------------"
 echo $hr                                                    # 水平線を表示
 
+# NICTによるネットワークを利用した時刻配信サービスは終了しました。
+# https://jjy.nict.go.jp/httphttps-index.html
+#
+# 技術情報
+# https://jjy.nict.go.jp/QandA/reference/http-archive.html
 #echo -n "現在の時刻 (NICT): "                              # テキスト表示
 #curl -s ntp-a1.nict.go.jp/cgi-bin/time                     # 時刻を取得して表示
 echo -n "現在の時刻 (bokunimo.net): "                       # テキスト表示
