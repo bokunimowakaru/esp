@@ -1,9 +1,9 @@
 # ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32
 
 Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。  
-5_learn32 フォルダ内のプログラムの解説書は、下記から無料でダウンロードできます。  
+[5_learn32](https://github.com/bokunimowakaru/esp/tree/master/5_learn32) フォルダ内のプログラムの解説書は、下記から無料でダウンロードできます。  
 
-- PDF解説書ダウンロード(5_learn32 フォルダ)  
+- PDF解説書ダウンロード(「5_learn32」フォルダのみ対応)  
     [https://bokunimo.net/esp32/esp32](https://bokunimo.net/esp32/esp32) (PDF)
 
 ## 1_practice フォルダ
@@ -440,10 +440,10 @@ Node-RED 用のサンプル・フローです。
 
 差分と同じ場所を変更していた場合、競合が発生します。競合を自分で解決できない場合は、フォルダ名「esp」を他の名前に書き換えて、git clone で新たにダウンロードする方法が簡単です。
 
-# 書籍サポートページ  
+## 書籍サポートページ  
 <https://bokunimo.net/bokunimowakaru/cq/esp/>
 
-# ライセンス
+## ライセンス
 
 ライセンスについては各ソースリストならびに各フォルダ内のファイルに記載の通りです。  
 使用・変更・配布は可能ですが、権利表示を残してください。  
@@ -459,7 +459,7 @@ Copyright (c) 2016-2023 Wataru KUNINO
 
 ----------------------------------------------------------------
 
-# git.bokunimo.com GitHub Pages site
+## git.bokunimo.com GitHub Pages site
 [http://git.bokunimo.com/](http://git.bokunimo.com/)  
 
 ----------------------------------------------------------------
