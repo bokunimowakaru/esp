@@ -1,12 +1,29 @@
 # ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32
 
 Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用し、さまざまな IoT 機器や応用システムの製作を行うためのサンプル・スケッチ集です。
+[5_learn32](https://github.com/bokunimowakaru/esp/tree/master/5_learn32) フォルダ内のプログラムの解説書は、下記から無料でダウンロードできます。  
 
-## 1_practice
+- PDF解説書ダウンロード(「5_learn32」フォルダのみ対応)  
+    [https://bokunimo.net/esp32/esp32](https://bokunimo.net/esp32/esp32) (PDF)
+
+その他のプログラムの解説は、書籍として販売しています。
+書籍ではArduino言語の説明や様々な機器をブレッドボードで製作する方法、プログラムの動作内容などについて詳しく解説しています（一部のサンプル・プログラムを除く）。
+前記の無料PDFをお読みいただいてから購入していただけると理解が深まると思います。
+
+- 書籍「超特急Web接続！ESP マイコン・プログラム全集」サポートページ  
+    [https://bokunimo.net/esp/](https://bokunimo.net/esp/)
+
+- 書籍販売(CQ出版社)  
+    [https://shop.cqpub.co.jp/detail/2276/](https://shop.cqpub.co.jp/detail/2276/)
+
+- 書籍販売(Amazon)  
+    [https://www.amazon.co.jp/dp/4789847047](https://www.amazon.co.jp/dp/4789847047)
+
+## 1_practice フォルダ
 
 マイコン練習用サンプル・プログラムが含まれているフォルダです。
 
-## 2_example
+## 2_example フォルダ
 
 IoT機器用のサンプル・プログラムが含まれているフォルダです。
 
@@ -226,14 +243,26 @@ Node-RED 用のサンプル・フローです。
 
 各IoTセンサのデータを収集することができるudp_logger.shなどの関連ツールです。
 
-# サポートページ  
-<https://bokunimo.net/bokunimowakaru/cq/esp/>
+## 書籍サポートページ  
+<https://bokunimo.net/esp/>
 
-# ライセンス
+## ライセンス
 
 ライセンスについては各ソースリストならびに各フォルダ内のファイルに記載の通りです。  
 使用・変更・配布は可能ですが、権利表示を残してください。  
 また、提供情報や配布ソフトによって生じたいかなる被害についても，一切，補償いたしません。  
 
-Copyright (c) 2016-2021 Wataru KUNINO  
+Copyright (c) 2016-2023 Wataru KUNINO  
 <https://bokunimo.net/>
+
+----------------------------------------------------------------
+
+## GitHub Pages (This Document)
+* [https://git.bokunimo.com/esp/](https://git.bokunimo.com/esp/)  
+
+----------------------------------------------------------------
+
+## git.bokunimo.com GitHub Pages site
+[http://git.bokunimo.com/](http://git.bokunimo.com/)  
+
+----------------------------------------------------------------

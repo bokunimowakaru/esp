@@ -6,18 +6,12 @@ Espressif Systems社の IoTモジュール ESP-WROOM-02 ESP32-WROOM-32 を使用
 - PDF解説書ダウンロード(「5_learn32」フォルダのみ対応)  
     [https://bokunimo.net/esp32/esp32](https://bokunimo.net/esp32/esp32) (PDF)
 
-## 1_practice フォルダ
-
-マイコン練習用サンプル・プログラムが含まれているフォルダです。  
-
-## 2_example フォルダ
-
-IoT機器用のサンプル・プログラムが含まれているフォルダです。  
-こちらのプログラムの解説書は、書籍として販売しています。
+その他のプログラムの解説は、書籍として販売しています。
+書籍ではArduino言語の説明や様々な機器をブレッドボードで製作する方法、プログラムの動作内容などについて詳しく解説しています（一部のサンプル・プログラムを除く）。
 前記の無料PDFをお読みいただいてから購入していただけると理解が深まると思います。
 
-- 書籍サポートページ  
-    [https://bokunimo.net/bokunimowakaru/cq/esp/](https://bokunimo.net/bokunimowakaru/cq/esp/)
+- 書籍「超特急Web接続！ESP マイコン・プログラム全集」サポートページ  
+    [https://bokunimo.net/esp/](https://bokunimo.net/esp/)
 
 - 書籍販売(CQ出版社)  
     [https://shop.cqpub.co.jp/detail/2276/](https://shop.cqpub.co.jp/detail/2276/)
@@ -25,8 +19,13 @@ IoT機器用のサンプル・プログラムが含まれているフォルダ�
 - 書籍販売(Amazon)  
     [https://www.amazon.co.jp/dp/4789847047](https://www.amazon.co.jp/dp/4789847047)
 
-以下は 2_example フォルダ内のコンテンツです。
-書籍では下記をブレッドボードで製作する方法やプログラムの動作内容について解説しています（一部のサンプル・プログラムを除く）。
+## 1_practice フォルダ
+
+マイコン練習用サンプル・プログラムが含まれているフォルダです。  
+
+## 2_example フォルダ
+
+IoT機器用のサンプル・プログラムが含まれているフォルダです。  
 
 ### 1-1 Wi-Fi インジケータ
 
@@ -441,7 +440,7 @@ Node-RED 用のサンプル・フローです。
 差分と同じ場所を変更していた場合、競合が発生します。競合を自分で解決できない場合は、フォルダ名「esp」を他の名前に書き換えて、git clone で新たにダウンロードする方法が簡単です。
 
 ## 書籍サポートページ  
-<https://bokunimo.net/bokunimowakaru/cq/esp/>
+<https://bokunimo.net/esp/>
 
 ## ライセンス
 
@@ -451,15 +450,3 @@ Node-RED 用のサンプル・フローです。
 
 Copyright (c) 2016-2023 Wataru KUNINO  
 <https://bokunimo.net/>
-
-----------------------------------------------------------------
-
-## GitHub Pages (This Document)
-* [https://git.bokunimo.com/esp/](https://git.bokunimo.com/esp/)  
-
-----------------------------------------------------------------
-
-## git.bokunimo.com GitHub Pages site
-[http://git.bokunimo.com/](http://git.bokunimo.com/)  
-
-----------------------------------------------------------------
