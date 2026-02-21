@@ -98,6 +98,7 @@ do                                                      # 繰り返し
             fi
             kill `pidof aplay` &> /dev/null
             sleep 0.5
+            amixer cset numid=${MIX_VOL_ID} ${MIX} &> /dev/null     # 音量(ミキサ)設定
             aplay ../3_misc/sound/se_maoudamashii_chime10.wav &
             sleep 0.5
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
@@ -112,6 +113,8 @@ do                                                      # 繰り返し
             |nkf --url-input\
             |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
             # echo -E "MUSIC="${MUSIC}
+            kill `pidof mpg123` &> /dev/null
+            sleep 0.5
             mpg123 /home/pi/Music/${MUSIC} &
         elif [ "$HTTP" = "GET /?MIX" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
