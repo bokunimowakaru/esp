@@ -102,6 +102,17 @@ do                                                      # 繰り返し
             sleep 0.5
             aquestalkpi/AquesTalkPi -g ${VOL} "${TALK}"|aplay &     # 音声再生
             # (sleep 10; kill `pidof aplay`) &> /dev/null &
+        elif [ "$HTTP" = "GET /?MUSIC"  ]; then
+            echo -E $DATE, $TCP                         # 取得日時とデータを表示
+            MUSIC=`echo -E $TCP\
+            |cut -d"=" -f2\
+            |cut -d" " -f1\
+            |cut -d"&" -f1\
+            |sed -e "s/+/ /g"\
+            |nkf --url-input\
+            |tr -d "\!\"\$\%\&\'\(\)\*\+\-\;\<\>\[\\\]\^\{\|\}"`    # 文字抽出
+            # echo -E "MUSIC="${MUSIC}
+            mpg123 /home/pi/Music/${MUSIC} &
         elif [ "$HTTP" = "GET /?MIX" ]; then
             echo -E $DATE, $TCP                         # 取得日時とデータを表示
             MIX=`echo -E $TCP\
@@ -114,8 +125,8 @@ do                                                      # 繰り返し
             fi
             echo -E "VOL(Mixer)="${MIX}
             amixer cset numid=${MIX_VOL_ID} ${MIX} &> /dev/null     # 音量設定
-        elif [ "$HTTP" = "GET /" ]; then
-            echo -E $DATE, $TCP                         # 取得日時とデータを表示
+        # elif [ "$HTTP" = "GET /" ]; then
+        #     echo -E $DATE, $TCP                       # 取得日時とデータを表示
         fi
     done
 done                                                    # 繰り返しここまで
